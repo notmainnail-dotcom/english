@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="English">
+<meta name="theme-color" content="#f3f4fa">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<title>English</title>
+<style>
+:root{--bg:#f3f4fa;--card:#fff;--soft:#eceef7;--tx:#141933;--mu:#6b7190;--bd:rgba(20,25,70,.08);--sh:0 8px 28px rgba(35,40,100,.08);--ac:#2563eb;--at:rgba(37,99,235,.12);--ok:#059669;--okt:rgba(16,185,129,.14);--wr:#e11d48;--wrt:rgba(244,63,94,.12);--amt:#b45309;--nav:rgba(255,255,255,.82);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b0d17;--card:#151929;--soft:#1f2438;--tx:#eef0fb;--mu:#8a90ad;--bd:rgba(255,255,255,.07);--sh:0 8px 28px rgba(0,0,0,.35);--ac:#60a5fa;--at:rgba(96,165,250,.14);--ok:#34d399;--okt:rgba(52,211,153,.14);--wr:#fb7185;--wrt:rgba(251,113,133,.14);--amt:#fbbf24;--nav:rgba(21,25,41,.82);color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0b0d17;--card:#151929;--soft:#1f2438;--tx:#eef0fb;--mu:#8a90ad;--bd:rgba(255,255,255,.07);--sh:0 8px 28px rgba(0,0,0,.35);--ac:#60a5fa;--at:rgba(96,165,250,.14);--ok:#34d399;--okt:rgba(52,211,153,.14);--wr:#fb7185;--wrt:rgba(251,113,133,.14);--amt:#fbbf24;--nav:rgba(21,25,41,.82);color-scheme:dark}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{background:var(--bg)}
+body{margin:0 auto;max-width:560px;min-height:100vh;color:var(--tx);font:16px/1.4 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif;padding:calc(env(safe-area-inset-top,0px) + 14px) 16px calc(env(safe-area-inset-bottom,0px) + 110px);background:radial-gradient(520px 320px at 0% -60px,rgba(37,99,235,.2),transparent 70%),radial-gradient(480px 300px at 100% -40px,rgba(6,182,212,.16),transparent 70%),var(--bg);background-repeat:no-repeat}
+button{font:inherit;color:inherit;cursor:pointer}
+.top{margin:4px 2px 14px}
+.top small{color:var(--mu);font-weight:700;text-transform:uppercase;letter-spacing:.6px;font-size:12px}
+h1{font-size:32px;margin:2px 0 0;letter-spacing:-.7px;font-weight:800}
+h1.h1s{font-size:26px;letter-spacing:-.4px}
+h2{font-size:13px;text-transform:uppercase;letter-spacing:.7px;color:var(--mu);margin:26px 4px 10px;font-weight:800}
+.mu{color:var(--mu);font-size:14px}
+.card{background:var(--card);border-radius:22px;padding:16px;margin:0 0 12px;box-shadow:var(--sh);border:1px solid var(--bd)}
+.hero{background:linear-gradient(135deg,#2563eb 0%,#0ea5e9 55%,#06b6d4 100%);color:#fff;border-radius:26px;padding:18px;display:flex;gap:16px;align-items:center;box-shadow:0 14px 34px rgba(14,165,233,.32);margin-bottom:14px}
+.hero.wrap{flex-wrap:wrap}
+.hero .info{flex:1;min-width:0}
+.hero b{font-size:19px;display:block}
+.hero p{margin:4px 0 0;opacity:.92;font-size:14px}
+.chip{display:inline-block;background:rgba(255,255,255,.22);padding:4px 11px;border-radius:99px;font-size:12px;font-weight:800;margin-top:9px}
+.stats{display:flex;gap:8px;width:100%}
+.stats div{flex:1;background:rgba(255,255,255,.18);border-radius:14px;padding:9px 10px;min-width:0}
+.stats small{display:block;opacity:.85;font-size:12px}
+.stats b{font-size:16px}
+.ring{position:relative;flex:none}
+.ring svg{display:block;transform:rotate(-90deg)}
+.ring span{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:800}
+.seg{display:flex;background:var(--soft);border-radius:14px;padding:4px;gap:4px;margin:0 0 12px}
+.seg button{flex:1;border:0;background:none;padding:9px 2px;border-radius:10px;font-weight:700;color:var(--mu);font-size:14px}
+.seg button.on{background:var(--card);color:var(--tx);box-shadow:0 2px 8px rgba(0,0,0,.1)}
+.note{display:block;width:100%;border:0;text-align:left;border-radius:18px;padding:12px 14px;margin:0 0 12px;font-size:14px;font-weight:600}
+.note.am{background:rgba(245,158,11,.15);color:var(--amt)}
+.note.in{background:var(--at);color:var(--ac)}
+.gh{display:flex;gap:14px;align-items:center}
+.gh .t{flex:1;min-width:0;font-weight:700}
+.gh .mu{font-weight:500;margin-top:2px}
+.st{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border:0;border-top:1px solid var(--bd);width:100%;background:none;text-align:left}
+.card>.st:first-child{border-top:0;padding-top:0}
+.st b{flex:none;width:24px;height:24px;border-radius:8px;border:2px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:13px;color:#fff}
+.st.d b{background:var(--ok);border-color:var(--ok)}
+.st.d span{color:var(--mu)}
+.ib{border:0;background:var(--soft);color:var(--mu);width:34px;height:34px;border-radius:11px;font-size:15px;flex:none;font-weight:700}
+.btn{display:block;width:100%;padding:14px;border-radius:16px;border:0;background:linear-gradient(135deg,#2563eb,#0ea5e9);color:#fff;font-weight:700;margin:0 0 10px;box-shadow:0 8px 20px rgba(37,99,235,.28);transition:transform .1s}
+.btn:active{transform:scale(.98)}
+.btn:disabled{opacity:.45}
+.btn.g{background:var(--soft);color:var(--ac);box-shadow:none}
+.btn.r{background:var(--wrt);color:var(--wr);box-shadow:none}
+.li{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--bd)}
+.li:first-child{border-top:0;padding-top:0}
+.li:last-child{padding-bottom:0}
+.lr{width:100%;border-left:0;border-right:0;border-bottom:0;background:none;text-align:left}
+.ico{width:38px;height:38px;border-radius:12px;background:var(--at);color:var(--ac);display:flex;align-items:center;justify-content:center;font-weight:800;flex:none}
+.ico.dn{background:var(--ok);color:#fff}
+.ht{flex:1;min-width:0}
+.ht b{display:block;font-size:15px}
+.ht small{display:block;color:var(--mu);font-size:13px}
+.plain{border:0;background:none;text-align:left;padding:0}
+.in{width:100%;border-radius:14px;border:1px solid var(--bd);background:var(--soft);color:var(--tx);padding:12px;font:16px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+textarea.mono{font:13px/1.4 ui-monospace,Menlo,monospace;margin-top:4px}
+.lb{display:block;font-size:13px;font-weight:700;color:var(--mu);margin:14px 2px 6px}
+.hint{font-size:12px;color:var(--mu);margin:8px 2px 0}
+.sb{display:flex;gap:10px;margin-top:14px}
+.sb .btn{margin:0}
+.lh{display:flex;justify-content:space-between;align-items:center;margin:0 0 4px}
+.back{border:0;background:none;color:var(--ac);font-weight:700;padding:6px 0}
+.qb{border:0;background:var(--soft);color:var(--mu);font-weight:700;font-size:13px;padding:7px 12px;border-radius:99px}
+.rule p{margin:0 0 10px}.rule p:last-child{margin:0}
+.rule b{color:var(--ac)}
+.sn{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-top:1px solid var(--bd)}
+.sn:first-child{border-top:0;padding-top:0}
+.sn:last-child{padding-bottom:0}
+.sn .en{flex:1;min-width:0;font-size:17px;line-height:1.45;transition:color .2s,filter .3s}
+.sn .tr{display:block;color:var(--mu);font-size:14px;margin-top:2px}
+.sn.pl .en{color:var(--ac)}
+.blur .en{filter:blur(6px);-webkit-user-select:none;user-select:none}
+.say{border:0;background:var(--at);color:var(--ac);width:36px;height:36px;border-radius:11px;flex:none;font-size:15px}
+.bar{height:8px;border-radius:9px;background:var(--soft);overflow:hidden;margin:0 0 12px}
+.bar i{display:block;height:100%;background:var(--ac);border-radius:9px;transition:width .3s}
+.q{font-size:19px;font-weight:700;margin:4px 0 14px;line-height:1.45}
+.gap{display:inline-block;min-width:56px;border-bottom:2px solid var(--ac);text-align:center;color:var(--ac);padding:0 4px}
+.opt{display:block;width:100%;text-align:left;padding:13px 14px;border-radius:14px;border:2px solid transparent;background:var(--soft);margin:0 0 8px;font-weight:600}
+.opt:disabled{color:var(--tx);opacity:1}
+.opt.ok{border-color:var(--ok);background:var(--okt)}
+.opt.no{border-color:var(--wr);background:var(--wrt)}
+.ans{min-height:56px;border-bottom:2px dashed var(--bd);margin:0 0 12px;padding:0 0 4px}
+.tok{display:inline-block;border:0;background:var(--soft);padding:9px 12px;border-radius:12px;margin:0 6px 8px 0;font-weight:600;font-size:16px}
+.ans .tok{background:var(--at);color:var(--ac)}
+.end{font-weight:700;font-size:18px}
+.fb{border-radius:16px;padding:12px 14px;margin:0 0 12px;font-weight:700;font-size:15px}
+.fb.ok{background:var(--okt);color:var(--ok)}
+.fb.no{background:var(--wrt);color:var(--wr)}
+.fe{font-weight:500;color:var(--tx);margin-top:6px}
+.fc{text-align:center;padding:30px 16px}
+.fc .w{font-size:30px;font-weight:800;letter-spacing:-.5px;margin:8px 0 12px;overflow-wrap:anywhere}
+.fc .a{font-size:21px;font-weight:600;margin:14px 0 12px;color:var(--ac);overflow-wrap:anywhere}
+.fc .say{margin:0 auto;display:block}
+.three{display:flex;gap:8px}
+.three .btn{margin:0;padding:14px 4px;font-size:15px}
+.pre{white-space:pre-wrap}
+nav{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 10px);width:calc(100% - 24px);max-width:536px;display:flex;gap:4px;background:var(--nav);-webkit-backdrop-filter:blur(20px) saturate(1.6);backdrop-filter:blur(20px) saturate(1.6);border:1px solid var(--bd);border-radius:24px;padding:6px;box-shadow:0 10px 30px rgba(0,0,0,.15);z-index:5}
+nav button{flex:1;border:0;background:none;padding:8px 2px 7px;border-radius:18px;font-size:11px;font-weight:700;color:var(--mu);display:flex;flex-direction:column;align-items:center;gap:3px}
+nav svg{width:22px;height:22px}
+nav button.on{color:var(--ac);background:var(--at)}
+#sh{position:fixed;inset:0;z-index:10;display:none}
+#sh.open{display:block}
+#sh .ov{position:absolute;inset:0;background:rgba(5,8,20,.5);animation:fd .2s}
+#sh .pn{position:absolute;left:0;right:0;bottom:0;max-width:560px;margin:0 auto;background:var(--card);border-radius:26px 26px 0 0;padding:10px 18px calc(env(safe-area-inset-bottom,0px) + 18px);max-height:90vh;overflow-y:auto;animation:up .28s cubic-bezier(.2,.8,.2,1)}
+.grab{width:40px;height:5px;border-radius:9px;background:var(--mu);opacity:.35;margin:0 auto 12px}
+#sh h3{margin:0 0 4px;font-size:21px}
+#toast{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 12px);transform:translate(-50%,-150%);background:var(--tx);color:var(--bg);padding:10px 18px;border-radius:99px;font-weight:700;font-size:14px;z-index:20;transition:transform .3s;white-space:nowrap}
+#toast.on{transform:translate(-50%,0)}
+@keyframes up{from{transform:translateY(100%)}}
+@keyframes fd{from{opacity:0}}
+</style></head><body>
+<div id="app"></div>
+<nav id="nav"></nav>
+<div id="sh"></div>
+<div id="toast"></div>
+<script src="lessons.js"></script>
+<script>
+const K='eng_v1',APP_V='1.0';
+const KNOW=3,BOX=[0,1,2,4,7,14,30]; // «знаю» = коробка 3+; интервалы повторения в днях по коробкам
+const LS=window.LESSONS||[],WK=window.WEEKS||[];
+const SN={rule:'Правило',text:'Текст',tasks:'Задания',own:'Своё'};
+let S,tab='learn',open=null,T={},TR=new Set(),cs=null,shownDay='',sheetSave=null,VO=[];
+
+const p=n=>String(n).padStart(2,'0');
+const dk=d=>d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate());
+const tm=d=>p(d.getHours())+':'+p(d.getMinutes());
+const today=()=>dk(new Date());
+const nowS=()=>today()+' '+tm(new Date());
+const pd=s=>{const a=s.split('-');return new Date(+a[0],a[1]-1,+a[2])};
+const add=(s,n)=>{const d=pd(s);d.setDate(d.getDate()+n);return dk(d)};
+const ago=n=>add(today(),-n);
+const diff=(a,b)=>Math.round((pd(b)-pd(a))/864e5);
+const fmtD=s=>pd(s).toLocaleDateString('ru-RU',{day:'numeric',month:'long'});
+const fmtS=s=>pd(s).toLocaleDateString('ru-RU',{day:'numeric',month:'short'});
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const $=id=>document.getElementById(id);
+const pct=(a,b)=>b?Math.round(a/b*100):0;
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+
+// ---------- уроки ----------
+const les=id=>LS.find(l=>l.id==id);
+const lnum=l=>l.w+'.'+l.n;
+const stepsOf=l=>l.review?['tasks','own']:['rule','text','tasks','own'];
+const pr=id=>S.L[id]||{};
+const P=id=>S.L[id]||(S.L[id]={st:null,ti:0,r:[],own:'',ownD:null,show:false,heard:false,done:null,sc:null,pass:0});
+const curL=()=>LS.find(l=>!pr(l.id).done);
+const okN=q=>(q.r||[]).filter(x=>x>0).length;
+
+// ---------- данные ----------
+function init(){return{v:1,start:today(),L:{},cards:{},q:[],err:[],act:{},rate:0.8,voice:'',theme:'auto',bk:null}}
+// новые поля в будущих версиях получают значения по умолчанию, старый прогресс не трогаем
+function migrate(o){const d=init();for(const k in d)if(!(k in o))o[k]=d[k];o.v=1;return o}
+function load(){try{S=JSON.parse(localStorage.getItem(K))}catch(e){S=null}S=S&&S.v?migrate(S):init();
+// если Claude поправил перевод слова в уроках, карточка тоже получает новый перевод
+LS.forEach(l=>(l.words||[]).forEach(([en,ru])=>{if(S.cards[en])S.cards[en].ru=ru}))}
+function save(){try{localStorage.setItem(K,JSON.stringify(S))}catch(e){toast('Не удалось сохранить')}}
+const act=()=>{const d=today();return S.act[d]||(S.act[d]={c:0,t:0,h:0,o:0})};
+const busy=A=>A&&(A.c||A.t||A.h||A.o);
+
+// ---------- карточки ----------
+function addWords(l){(l.words||[]).forEach(([en,ru])=>{if(!S.cards[en])S.cards[en]={ru,b:0,due:today(),n:0,x:0,l:l.id}})}
+function dueList(){const t=today();return Object.keys(S.cards).filter(k=>S.cards[k].due<=t).sort((a,b)=>{const A=S.cards[a],B=S.cards[b];return (A.n?0:1)-(B.n?0:1)||(A.due<B.due?-1:A.due>B.due?1:0)})}
+function cstats(){let nw=0,lr=0,kn=0;for(const k in S.cards){const c=S.cards[k];if(!c.n)nw++;else if(c.b>=KNOW)kn++;else lr++}return{all:nw+lr+kn,nw,lr,kn}}
+const hardW=()=>Object.keys(S.cards).filter(k=>S.cards[k].x).sort((a,b)=>S.cards[b].x-S.cards[a].x).slice(0,8);
+function nextDue(){let m=null;for(const k in S.cards){const d=S.cards[k].due;if(d>today()&&(!m||d<m))m=d}return m}
+
+// ---------- проверка ответов ----------
+const CONTR=[[/\bi'm\b/g,'i am'],[/\b(he|she|it|that|what|there|who)'s\b/g,'$1 is'],[/\b(you|we|they)'re\b/g,'$1 are'],[/\b(i|you|we|they)'ve\b/g,'$1 have'],[/\b(i|you|he|she|it|we|they)'ll\b/g,'$1 will'],[/\bcan't\b/g,'cannot'],[/\bcan not\b/g,'cannot'],[/\bwon't\b/g,'will not'],[/n't\b/g,' not']];
+// регистр, знаки препинания и сокращения (isn't = is not) не влияют на проверку
+function norm(s){s=String(s).toLowerCase().replace(/[’‘`ʼ]/g,"'");CONTR.forEach(([r,t])=>{s=s.replace(r,t)});return s.replace(/[^a-z0-9' ]+/g,' ').replace(/\s+/g,' ').trim()}
+const tQ=t=>t.q||t.ru;
+const tA=t=>t.k=='ch'?t.o[t.a]:t.k=='or'?t.a:t.a[0];
+function ensureT(l,k,t){const id=l.id+':'+k;if(T.id==id)return;T={id,k};
+if(t.k=='ch')T.o=shuffle(t.o.map((_,i)=>i));
+if(t.k=='or'){const m=t.a.match(/^(.*?)([.?!]?)$/);T.w=m[1].split(' ');T.end=m[2];T.pk=[];
+let o;do{o=shuffle(T.w.map((_,i)=>i))}while(T.w.length>1&&o.every((v,i)=>T.w[v]==T.w[i]));T.o=o}}
+function answer(l,q,k,t,y,ok){
+q.r[k]=ok?1:0;q.ti=Math.max(q.ti,k+1);act().t++;
+if(!ok){S.err.push({l:l.id,q:tQ(t),y,a:tA(t),d:today()});if(S.err.length>80)S.err.splice(0,S.err.length-80)}
+if(q.ti>=l.tasks.length&&!q.pass&&!q.sc)q.sc=[okN(q),l.tasks.length,today()];
+T.show=true;T.ok=ok;T.y=y}
+function doCheck(){const l=les(open),q=P(open),t=l&&l.tasks[q.ti];if(!t||T.show)return;let y,ok;
+if(t.k=='or'){if(T.pk.length<T.w.length)return;y=T.pk.map(i=>T.w[i]).join(' ')+T.end;ok=y==T.w.join(' ')+T.end}
+else{const el=$('ans');y=el?el.value.trim():'';if(!y){toast('Сначала впиши ответ');return}const n=norm(y);ok=t.a.some(a=>norm(a)==n)}
+answer(l,q,q.ti,t,y,ok);save();render()}
+
+// ---------- озвучка ----------
+function loadVoices(){if('speechSynthesis' in window)VO=speechSynthesis.getVoices().filter(v=>/^en[-_]/i.test(v.lang))}
+function pickVoice(){return VO.find(v=>v.voiceURI==S.voice)||VO.find(v=>/en[-_]US/i.test(v.lang)&&v.localService)||VO.find(v=>/en[-_]US/i.test(v.lang))||VO[0]||null}
+function say(list,onIdx){
+if(!('speechSynthesis' in window)){toast('Озвучка здесь недоступна');return}
+const ss=speechSynthesis,v=pickVoice();if(ss.speaking||ss.pending)ss.cancel();
+list.forEach((t,i)=>{const u=new SpeechSynthesisUtterance(t);u.lang=v?v.lang:'en-US';if(v)u.voice=v;u.rate=S.rate;
+if(onIdx){u.onstart=()=>onIdx(i);if(i==list.length-1)u.onend=()=>onIdx(-1)}ss.speak(u)})}
+function hush(){if('speechSynthesis' in window)speechSynthesis.cancel()}
+const hl=i=>document.querySelectorAll('[data-sn]').forEach(el=>el.classList.toggle('pl',+el.dataset.sn===i));
+
+// ---------- элементы ----------
+function ring(v,sz,sw,col,trk,fs){const r=(sz-sw)/2,c=2*Math.PI*r,o=sz/2;
+return `<div class="ring" style="width:${sz}px;height:${sz}px"><svg width="${sz}" height="${sz}"><circle cx="${o}" cy="${o}" r="${r}" fill="none" style="stroke:${trk}" stroke-width="${sw}"/>`+
+(v>0?`<circle cx="${o}" cy="${o}" r="${r}" fill="none" style="stroke:${col}" stroke-width="${sw}" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${c*(1-v/100)}"/>`:'')+
+`</svg><span style="font-size:${fs}px">${v}%</span></div>`}
+const head=(sub,t)=>`<div class="top"><small>${sub}</small><h1>${t}</h1></div>`;
+const sayB=t=>`<button class="say" data-a="say" data-t="${esc(t)}" aria-label="Слушать">🔊</button>`;
+const row=(en,ru)=>`<div class="sn"><div class="en">${esc(en)}<span class="tr">${esc(ru)}</span></div>${sayB(en)}</div>`;
+
+// ---------- экран «Уроки» ----------
+function lessonRow(l){const q=pr(l.id),sc=q.sc;
+const sub=esc(l.g)+(sc?' · '+pct(sc[0],sc[1])+'%':q.st&&!q.done?' · начат':'');
+return `<button class="li lr" data-a="open" data-l="${l.id}"><div class="ico ${q.done?'dn':''}">${q.done?'✓':l.review?'↻':l.n}</div><div class="ht"><b>${lnum(l)} · ${esc(l.t)}</b><small>${sub}</small></div><span class="mu">›</span></button>`}
+
+function vLearn(){
+const t=today(),c=curL(),due=dueList().length,C=cstats(),A=S.act[t]||{};
+const w=c?c.w:(LS.length?LS[LS.length-1].w:1),wl=LS.filter(l=>l.w==w),W=WK.find(x=>x.w==w)||{t:''};
+const dl=new Date().toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long'});
+let h=head(dl,'Английский');
+h+=`<div class="hero">${ring(pct(wl.filter(l=>pr(l.id).done).length,wl.length),86,9,'#fff','rgba(255,255,255,.25)',20)}<div class="info"><b>Неделя ${w} · ${esc(W.t)}</b><p>${c?'Урок '+c.n+' из '+wl.length+' · '+esc(c.g):'Все уроки недели пройдены'}</p><span class="chip">Карточек на сегодня: ${due}</span></div></div>`;
+if(!c&&LS.length)h+=`<button class="note in" data-a="tab" data-t="stats">🏁 Уроки недели ${w} пройдены. Составь отчёт во вкладке «Прогресс» и пройди проверку с Claude. Новые уроки появятся после неё.</button>`;
+const bd=S.bk?diff(S.bk,t):null;
+if((bd===null&&diff(S.start,t)>=3)||bd>=7)h+=`<button class="note am" data-a="tab" data-t="more">💾 ${bd===null?'Резервная копия ещё не делалась.':'Копия не делалась '+bd+' дн.'} Нажми, чтобы сделать.</button>`;
+if(c)h+=`<button class="btn" data-a="open" data-l="${c.id}">▶ ${pr(c.id).st?'Продолжить':'Начать'} урок ${lnum(c)}</button>`;
+const xl=c&&!c.review?c:[...LS].reverse().find(l=>!l.review&&pr(l.id).st)||LS.find(l=>!l.review),ol=c||xl;
+const mrow=(d,txt,a)=>`<button class="st ${d?'d':''}" ${a}><b>${d?'✓':''}</b><span>${txt}</span></button>`;
+h+='<h2>Минимум на сегодня · 15 минут</h2><div class="card">'+
+mrow(C.all&&!due,due?`Повторить карточки: ${due}`:C.all?'Карточки на сегодня повторены':'Карточки появятся, когда откроешь текст урока','data-a="tab" data-t="cards"')+
+(xl?mrow(A.h,`Послушать текст урока ${lnum(xl)}`,`data-a="open" data-l="${xl.id}" data-s="text"`):'')+
+(ol?mrow(A.o,'Написать 2 своих предложения',`data-a="open" data-l="${ol.id}" data-s="own"`):'')+
+'<div class="hint">Есть силы — пройди урок целиком. Это норма, около 45 минут.</div></div>';
+WK.forEach(W=>{const ls=LS.filter(l=>l.w==W.w);h+=`<h2>Неделя ${W.w} · ${esc(W.t)}</h2>`;
+h+=ls.length?'<div class="card">'+ls.map(lessonRow).join('')+'</div>':`<div class="card mu">${esc(W.g)}. Уроки появятся после проверки с Claude.</div>`});
+return h+'<div class="mu" style="padding:4px 4px 0">💡 Застрял: 5 минут разбираешься, потом жмёшь «❓ Непонятно» и идёшь дальше. Телефон с лентой — в другой комнате.</div>'}
+
+// ---------- урок ----------
+function sRule(l){return `<div class="card rule">${l.rule}</div><h2>Примеры</h2><div class="card">${l.ex.map(e=>row(e[0],e[1])).join('')}</div><button class="btn" data-a="step" data-s="text">Дальше: текст →</button>`}
+
+function sText(l,q){
+let h=`<div class="card"><div style="font-weight:700">🎧 ${q.show?'Слушай и читай. Нажми на предложение, чтобы увидеть перевод.':'Сначала послушай, не подглядывая. Потом открой текст.'}</div><div class="hint">Незнакомые слова — внизу страницы.</div><div class="sb"><button class="btn" data-a="play">▶ Слушать</button><button class="btn g" data-a="stop">⏹ Стоп</button></div></div>`;
+h+=`<div class="card${q.show?'':' blur'}">${l.text.map((s,i)=>`<div class="sn" data-sn="${i}"><button class="en plain" data-a="trn" data-i="${i}">${esc(s[0])}${TR.has(i)?`<span class="tr">${esc(s[1])}</span>`:''}</button>${sayB(s[0])}</div>`).join('')}</div>`;
+h+=q.show?'<button class="btn" data-a="step" data-s="tasks">Дальше: задания →</button>':'<button class="btn" data-a="show">Показать текст</button>';
+return h+`<h2>Новые слова · уже в карточках</h2><div class="card">${l.words.map(w=>row(w[0],w[1])).join('')}</div>`}
+
+function taskBody(t){
+const inp=ph=>`<input class="in" id="ans" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="${ph}"><button class="btn" data-a="check" style="margin:12px 0 0">Проверить</button>`;
+if(t.k=='ch')return `<div class="q">${esc(t.q)}</div>`+T.o.map(i=>{const c=T.show?(i==t.a?'ok':i==T.yi?'no':''):'';return `<button class="opt ${c}" data-a="pick" data-i="${i}" ${T.show?'disabled':''}>${esc(t.o[i])}</button>`}).join('');
+if(t.k=='in')return `<div class="mu">Впиши пропущенное слово</div><div class="q">${esc(t.q).replace('___',`<span class="gap">${T.show?esc(T.y):'&nbsp;'}</span>`)}</div>`+(T.show?'':inp('Слово'));
+if(t.k=='tr')return `<div class="mu">Переведи на английский</div><div class="q">${esc(t.ru)}</div>`+(T.show?'':inp('По-английски'));
+return `<div class="mu">Собери предложение</div><div class="q">${esc(t.ru)}</div><div class="ans">${T.pk.map((i,j)=>`<button class="tok" data-a="unpk" data-j="${j}">${esc(T.w[i])}</button>`).join('')}${T.pk.length==T.w.length?`<span class="end">${esc(T.end)}</span>`:''}</div><div>${T.o.filter(i=>!T.pk.includes(i)).map(i=>`<button class="tok" data-a="pk" data-i="${i}">${esc(T.w[i])}</button>`).join('')}</div>`+
+(T.show?'':`<div class="sb"><button class="btn g" data-a="rst">Сбросить</button><button class="btn" data-a="check" ${T.pk.length<T.w.length?'disabled':''}>Проверить</button></div>`)}
+
+function feedback(t){const right=tA(t);let h=`<div class="fb ${T.ok?'ok':'no'}">`;
+if(T.self)h+=`✓ Засчитано<div class="fe">Вариант из урока: ${esc(right)}</div>`;
+else if(T.ok)h+='✓ Верно'+(t.k=='tr'&&norm(T.y)!=norm(right)?`<div class="fe">Ещё вариант: ${esc(right)}</div>`:'');
+else h+=`✗ Правильно: ${esc(right)}`+(t.k=='tr'?`<div class="fe">Твой ответ: ${esc(T.y)}</div>`:'');
+if(t.e)h+=`<div class="fe">${esc(t.e)}</div>`;
+h+='</div>';
+if(!T.ok&&t.k=='tr')h+='<button class="btn g" data-a="self">У меня тоже верно — засчитать</button>';
+return h}
+
+function sTasks(l,q){const n=l.tasks.length;
+if(!T.show&&q.ti>=n){const ok=okN(q);
+return `<div class="card"><div class="gh">${ring(pct(ok,n),64,7,'var(--ac)','var(--soft)',15)}<div class="t">Задания пройдены<div class="mu">Верно ${ok} из ${n}${q.pass&&q.sc?` · в первый раз ${q.sc[0]} из ${q.sc[1]}`:''}</div></div></div></div>`+
+(q.done?'':'<button class="btn" data-a="step" data-s="own">Дальше: своё →</button>')+'<button class="btn g" data-a="redo">Пройти задания ещё раз</button>'}
+const k=T.show?T.k:q.ti,t=l.tasks[k];ensureT(l,k,t);
+let h=`<div class="mu" style="margin:0 4px 8px">Задание ${k+1} из ${n}</div><div class="bar"><i style="width:${pct(q.ti,n)}%"></i></div><div class="card">${taskBody(t)}</div>`;
+if(T.show)h+=feedback(t)+`<button class="btn" data-a="next">${k+1<n?'Дальше →':'Готово →'}</button>`;
+return h}
+
+function sOwn(l,q){const left=Math.max(0,l.tasks.length-q.ti);
+let h=`<div class="card"><b>Твоя очередь</b><p style="margin:6px 0 0">${esc(l.own)}</p></div>`;
+h+=`<textarea class="in" id="own" rows="6" autocorrect="off" spellcheck="false" placeholder="Пиши по-английски. Ошибки — это нормально, Claude их разберёт.">${esc(q.own||'')}</textarea>`;
+h+='<div class="hint">Сохраняется само. Потом скажи это вслух. Проверка произношения: в Заметках включи английскую клавиатуру, нажми микрофон и продиктуй. Записалось правильно — значит, тебя поймут.</div><div style="height:14px"></div>';
+if(q.done)h+='<button class="btn" data-a="step" data-s="done">Готово</button>';
+else if(left)h+=`<button class="btn g" data-a="step" data-s="tasks">Осталось заданий: ${left} — перейти к ним</button>`;
+else h+='<button class="btn" data-a="finish">Закончить урок ✓</button>';
+return h}
+
+function sDone(l,q){const n=l.tasks.length,sc=q.sc||[okN(q),n],c=curL();
+let h=`<div class="hero">${ring(pct(sc[0],sc[1]),86,9,'#fff','rgba(255,255,255,.25)',20)}<div class="info"><b>Урок пройден</b><p>Задания: ${sc[0]} из ${sc[1]}.${l.words?' Слов в карточках: '+l.words.length+'.':''}</p></div></div>`;
+if(LS.filter(x=>x.w==l.w).every(x=>pr(x.id).done))h+=`<button class="note in" data-a="tab" data-t="stats">🏁 Неделя ${l.w} пройдена. Открой «Прогресс», составь отчёт и пройди проверку с Claude в чате.</button>`;
+if((q.own||'').trim())h+=`<h2>Твои предложения</h2><div class="card pre">${esc(q.own.trim())}</div>`;
+if(c)h+=`<button class="btn" data-a="open" data-l="${c.id}">Следующий урок ${lnum(c)} →</button>`;
+return h+'<button class="btn g" data-a="tab" data-t="cards">Повторить карточки</button><button class="btn g" data-a="close">Ко всем урокам</button>'}
+
+function vLesson(){
+const l=les(open);if(!l){open=null;return vLearn()}
+const q=P(l.id),ss=stepsOf(l);if(!ss.includes(q.st)&&q.st!='done')q.st=ss[0];
+let h=`<div class="lh"><button class="back" data-a="close">‹ Все уроки</button><button class="qb" data-a="ask">❓ Непонятно</button></div><div class="top"><small>Урок ${lnum(l)} · ${esc(l.g)}</small><h1 class="h1s">${esc(l.t)}</h1></div>`;
+h+=`<div class="seg">${ss.map(s=>`<button class="${s==q.st?'on':''}" data-a="step" data-s="${s}">${SN[s]}${s=='tasks'&&q.ti>=l.tasks.length?' ✓':''}</button>`).join('')}</div>`;
+return h+{rule:sRule,text:sText,tasks:sTasks,own:sOwn,done:sDone}[q.st](l,q)}
+
+function goStep(l,s){const q=P(l.id);q.st=s;T={};TR=new Set();hush();if(s=='text')addWords(l)}
+
+// ---------- карточки ----------
+function vCards(){
+if(cs)return vSession();
+const d=dueList().length,C=cstats(),nd=nextDue();
+let h=head('Слова из уроков','Карточки');
+h+=`<div class="hero wrap">${ring(pct(C.kn,C.all),86,9,'#fff','rgba(255,255,255,.25)',20)}<div class="info"><b>${d?'На сегодня: '+d:'На сегодня всё'}</b><p>${d?'Примерно '+Math.max(1,Math.round(d/4))+' мин.':nd?'Следующие — '+fmtD(nd)+'.':'Слова появятся после текста урока.'}</p></div>`+
+`<div class="stats"><div><small>Новые</small><b>${C.nw}</b></div><div><small>Учу</small><b>${C.lr}</b></div><div><small>Знаю</small><b>${C.kn}</b></div></div></div>`;
+if(d)h+='<button class="btn" data-a="startc">Начать повторение</button>';
+h+='<div class="card mu">«Помню» — слово вернётся через несколько дней, и каждый раз всё позже. «Трудно» — вернётся скоро. «Не помню» — ещё раз сейчас и снова завтра. Когда слово начинает узнаваться, карточка переворачивается: видишь русское, вспоминаешь английское.</div>';
+const H=hardW();
+if(H.length)h+=`<h2>Трудные слова</h2><div class="card">${H.map(k=>row(k,S.cards[k].ru+' · ошибок: '+S.cards[k].x)).join('')}</div>`;
+return h}
+
+function vSession(){
+if(cs.i>=cs.q.length)return `<div class="hero"><div class="info"><b>Готово!</b><p>Повторено карточек: ${cs.done}. Завтра будут новые повторения.</p></div></div><button class="btn" data-a="cend">Закончить</button>`;
+const key=cs.q[cs.i],c=S.cards[key],rev=c.b>=2;
+let h=`<div class="lh"><button class="back" data-a="cend">‹ Карточки</button><span class="mu">${cs.i+1} из ${cs.q.length}</span></div><div class="bar"><i style="width:${pct(cs.i,cs.q.length)}%"></i></div>`;
+h+=`<div class="card fc"><div class="mu">${rev?'Вспомни по-английски':'Вспомни перевод'}</div><div class="w">${esc(rev?c.ru:key)}</div>${rev?'':sayB(key)}`;
+if(cs.flip)h+=`<div class="a">${esc(rev?key:c.ru)}</div>${rev?sayB(key):''}`;
+h+='</div>';
+return h+(cs.flip?'<div class="three"><button class="btn r" data-a="grade" data-g="0">Не помню</button><button class="btn g" data-a="grade" data-g="1">Трудно</button><button class="btn" data-a="grade" data-g="2">Помню</button></div>':'<button class="btn" data-a="flip">Показать ответ</button>')}
+
+function grade(g){const key=cs.q[cs.i],c=S.cards[key];
+if(!cs.again.includes(key)){c.n++;act().c++;cs.done++;
+if(g==0){c.b=1;c.x++;c.due=add(today(),1);cs.q.push(key);cs.again.push(key)}
+else if(g==1){c.b=Math.max(1,c.b);c.due=add(today(),Math.max(1,Math.round(BOX[c.b]/2)))}
+else{c.b=Math.min(BOX.length-1,c.b+1);c.due=add(today(),BOX[c.b])}}
+cs.i++;cs.flip=false}
+
+// ---------- прогресс ----------
+function vStats(){
+const dl=LS.filter(l=>pr(l.id).sc),ok=dl.reduce((a,l)=>a+pr(l.id).sc[0],0),tot=dl.reduce((a,l)=>a+pr(l.id).sc[1],0),C=cstats();
+let days=0;for(let i=0;i<7;i++)if(busy(S.act[ago(i)]))days++;
+let h=head('С '+fmtD(S.start),'Прогресс');
+h+=`<div class="hero wrap">${ring(pct(ok,tot),86,9,'#fff','rgba(255,255,255,.25)',20)}<div class="info"><b>Точность заданий</b><p>По первой попытке в пройденных уроках.</p></div>`+
+`<div class="stats"><div><small>Уроков</small><b>${LS.filter(l=>pr(l.id).done).length}</b></div><div><small>Слов знаю</small><b>${C.kn}</b></div><div><small>Дней из 7</small><b>${days}</b></div></div></div>`;
+h+='<button class="btn" data-a="rep">Составить отчёт для Claude</button><textarea class="in mono" id="io" rows="5" placeholder="Здесь появится отчёт. Он сразу копируется: вставь его в чат с Claude."></textarea>';
+h+='<h2>Когда переходить дальше</h2><div class="card">'+[[C.kn>=200,`Около 200 слов «знаю» — сейчас ${C.kn}`],[0,'Проверка с Claude на 80% и выше две недели подряд'],[0,'8–10 предложений о себе без переводчика'],[0,'Незнакомый текст A2 понятен примерно на 70%']].map(x=>`<div class="st ${x[0]?'d':''}"><b>${x[0]?'✓':''}</b><span>${x[1]}</span></div>`).join('')+'<div class="hint">Последние три пункта проверяет Claude в чате.</div></div>';
+const Q=S.q.map((x,i)=>[x,i]).reverse();
+h+='<h2>Непонятно</h2>'+(Q.length?'<div class="card">'+Q.map(([x,i])=>`<div class="li"><div class="ico ${x.ok?'dn':''}">${x.ok?'✓':'?'}</div><div class="ht"><b>${esc(x.t)}</b><small>${esc(x.c)} · ${fmtS(x.d)}${x.ok?' · разобрано':''}</small></div><button class="ib" data-a="qok" data-i="${i}" aria-label="Разобрано">✓</button><button class="ib" data-a="qdel" data-i="${i}" aria-label="Удалить">✕</button></div>`).join('')+'</div>':'<div class="card mu">Пока пусто. В уроке есть кнопка «❓ Непонятно».</div>');
+return h}
+
+function report(){
+const C=cstats();
+let r=`Английский — отчёт для Claude\n${nowS()} · приложение ${APP_V}, уроки от ${window.LESSONS_DATE||'?'}\n\nУроки:\n`,any=0;
+LS.forEach(l=>{const q=pr(l.id);if(!q.st&&!q.done)return;any=1;const sc=q.sc;
+r+=`- ${lnum(l)} ${l.g}: ${q.done?'пройден '+fmtS(q.done):'в процессе'}${sc?`, задания ${sc[0]}/${sc[1]} (${pct(sc[0],sc[1])}%)`:''}\n`});
+if(!any)r+='- пока не начинал\n';
+r+=`\nКарточки: всего ${C.all}, знаю ${C.kn}, учу ${C.lr}, новые ${C.nw}. На сегодня осталось: ${dueList().length}.\n`;
+const H=hardW();if(H.length)r+='Трудные слова: '+H.map(k=>`${k} (${S.cards[k].x})`).join(', ')+'\n';
+r+='\nАктивность за 7 дней:\n';
+for(let i=6;i>=0;i--){const d=ago(i),A=S.act[d];r+=`- ${fmtS(d)}: ${busy(A)?[A.t&&'заданий '+A.t,A.c&&'карточек '+A.c,A.h&&'слушал текст',A.o&&'писал своё'].filter(Boolean).join(', '):'—'}\n`}
+const E=S.err.filter(e=>diff(e.d,today())<=10).slice(-25);
+if(E.length){r+='\nОшибки в заданиях:\n';E.forEach(e=>{const l=les(e.l);r+=`- [${l?lnum(l):e.l}] ${e.q} → мой ответ: «${e.y}», в уроке: «${e.a}»${e.s?' (засчитал сам, проверь)':''}\n`})}
+const O=LS.filter(l=>{const q=pr(l.id);return (q.own||'').trim()&&q.ownD&&diff(q.ownD,today())<=10});
+if(O.length){r+='\nМои предложения (исправь ошибки):\n';O.forEach(l=>{const q=pr(l.id);r+=`[${lnum(l)}${q.done?'':', черновик'}]\n${q.own.trim()}\n`})}
+const Q=S.q.filter(x=>!x.ok);
+if(Q.length){r+='\nНепонятно:\n';Q.forEach(x=>{r+=`- [${x.c}] ${x.t}\n`})}
+return r}
+
+// ---------- ещё ----------
+function vMore(){
+let h=head('Настройки и данные','Ещё');
+h+='<h2>Голос</h2><div class="seg">'+[[0.6,'Медленно'],[0.8,'Спокойно'],[1,'Обычно']].map(o=>`<button class="${S.rate==o[0]?'on':''}" data-a="rate" data-v="${o[0]}">${o[1]}</button>`).join('')+'</div>';
+h+=`<select class="in" id="voice"><option value="">Голос: автоматически</option>${VO.map(v=>`<option value="${esc(v.voiceURI)}" ${v.voiceURI==S.voice?'selected':''}>${esc(v.name)} (${esc(v.lang)})</option>`).join('')}</select>`;
+h+='<button class="btn g" data-a="vtest" style="margin:10px 0 0">🔊 Проверить голос</button><div class="hint">Нет звука? Проверь беззвучный режим и громкость.</div>';
+h+=`<h2>Резервная копия</h2><div class="mu" style="margin:0 4px 10px">${S.bk?'Последняя копия: '+fmtD(S.bk)+'.':'Копия ещё не делалась.'} Прогресс хранится только в этом телефоне. Раз в неделю сохраняй копию в Заметки.</div>`+
+'<button class="btn" data-a="exp">Сделать резервную копию</button><button class="btn g" data-a="imp">Загрузить копию из текста</button>'+
+'<textarea class="in mono" id="io" rows="5" placeholder="Здесь появится текст копии, он сразу копируется. Чтобы восстановить прогресс, вставь сюда копию и нажми «Загрузить»."></textarea>';
+h+='<h2>Оформление</h2><div class="seg">'+[['auto','Как в системе'],['light','Светлая'],['dark','Тёмная']].map(o=>`<button class="${S.theme==o[0]?'on':''}" data-a="theme" data-v="${o[0]}">${o[1]}</button>`).join('')+'</div>';
+h+=`<h2>О приложении</h2><div class="mu" style="margin:0 4px 10px">Версия ${APP_V}, уроки от ${window.LESSONS_DATE?fmtD(window.LESSONS_DATE):'?'}. Прогресс хранится отдельно от приложения, поэтому при обновлении он не теряется.</div><button class="btn g" data-a="upd">Проверить обновление</button>`;
+return h}
+
+// ---------- общее ----------
+const ICONS={
+learn:'<path d="M4 19.5V5a2 2 0 0 1 2-2h14v16H6a2 2 0 0 0-2 2v0a2 2 0 0 0 2 2h14"/><path d="M8 7.5h8M8 11h5"/>',
+cards:'<rect x="3" y="7.5" width="13.5" height="13.5" rx="2.5"/><path d="M7.5 3.5h11A2.5 2.5 0 0 1 21 6v11"/>',
+stats:'<path d="M5 20v-8M11 20V5M17 20v-5M3 20h18"/>',
+more:'<rect x="4" y="4" width="6.5" height="6.5" rx="2"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="2"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="2"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="2"/>'};
+function render(){
+shownDay=today();
+$('app').innerHTML={learn:()=>open?vLesson():vLearn(),cards:vCards,stats:vStats,more:vMore}[tab]();
+$('nav').innerHTML=[['learn','Уроки'],['cards','Карточки'],['stats','Прогресс'],['more','Ещё']].map(x=>`<button class="${tab==x[0]?'on':''}" data-a="tab" data-t="${x[0]}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[x[0]]}</svg>${x[1]}</button>`).join('')}
+
+function openSheet(title,body,onSave){
+sheetSave=onSave;
+$('sh').innerHTML=`<div class="ov" data-a="sclose"></div><div class="pn"><div class="grab"></div><h3>${esc(title)}</h3>${body}<div class="sb"><button class="btn g" data-a="sclose">Отмена</button><button class="btn" data-a="ssave">Сохранить</button></div></div>`;
+$('sh').classList.add('open')}
+function closeSheet(){$('sh').classList.remove('open');$('sh').innerHTML='';sheetSave=null}
+
+let tt;function toast(m){const e=$('toast');e.textContent=m;e.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>e.classList.remove('on'),1800)}
+function copyIO(text){const io=$('io');io.value=text;io.select();
+if(navigator.clipboard)navigator.clipboard.writeText(text).then(()=>toast('Скопировано'),()=>toast('Выдели текст и скопируй'))}
+function applyTheme(){const r=document.documentElement;if(S.theme=='auto')r.removeAttribute('data-theme');else r.dataset.theme=S.theme;
+document.querySelector('meta[name=theme-color]').content=getComputedStyle(r).getPropertyValue('--bg').trim()}
+const top0=()=>window.scrollTo(0,0);
+
+document.addEventListener('click',e=>{
+const b=e.target.closest('[data-a]');if(!b||b.disabled)return;
+const a=b.dataset.a,D=b.dataset,l=open&&les(open),q=l&&P(open);
+switch(a){
+case 'tab':if(tab==D.t){if(D.t=='learn')open=null;if(D.t=='cards')cs=null}tab=D.t;hush();render();top0();return;
+case 'open':{tab='learn';open=D.l;const L=les(open),Q=P(open);goStep(L,D.s||(Q.done?'done':Q.st||stepsOf(L)[0]));save();render();top0();return}
+case 'close':open=null;hush();render();top0();return;
+case 'step':goStep(l,D.s);save();render();top0();return;
+case 'say':say([D.t]);return;
+case 'play':q.heard=true;act().h=1;save();say(l.text.map(s=>s[0]),hl);return;
+case 'stop':hush();hl(-1);return;
+case 'show':q.show=true;break;
+case 'trn':{if(!q.show)return;const i=+D.i;TR.has(i)?TR.delete(i):TR.add(i);render();return}
+case 'pick':{const t=l.tasks[q.ti];if(T.show||!t)return;T.yi=+D.i;answer(l,q,q.ti,t,t.o[+D.i],+D.i==t.a);break}
+case 'pk':if(T.show)return;T.pk.push(+D.i);render();return;
+case 'unpk':if(T.show)return;T.pk.splice(+D.j,1);render();return;
+case 'rst':if(T.show)return;T.pk=[];render();return;
+case 'check':doCheck();return;
+case 'self':{const t=l.tasks[T.k];q.r[T.k]=2;T.ok=T.self=true;const er=S.err[S.err.length-1];if(er&&er.l==l.id&&er.q==tQ(t))er.s=1;if(!q.pass&&q.sc)q.sc[0]=okN(q);break}
+case 'next':{T={};render();top0();const x=$('ans');if(x)x.focus();return}
+case 'redo':q.ti=0;q.r=[];q.pass=(q.pass||0)+1;T={};break;
+case 'finish':if(!(q.own||'').trim()&&!confirm('Закончить урок без своих предложений? Это самая полезная часть.'))return;
+q.done=today();q.st='done';T={};save();render();top0();return;
+case 'ask':{const t=q.st=='tasks'&&l.tasks[T.show?T.k:q.ti];
+const ctx=`${lnum(l)}, ${SN[q.st]||'урок'}`+(t?` №${(T.show?T.k:q.ti)+1}: ${tQ(t)}`:'');
+openSheet('Что непонятно?',`<div class="mu">Урок ${esc(ctx)}</div><textarea class="in" id="f_q" rows="4" style="margin-top:12px" placeholder="Например: почему здесь the, а не a?"></textarea><div class="hint">Записал — и иди дальше. Разберём с Claude.</div>`,
+()=>{const x=$('f_q').value.trim();if(!x)return;S.q.push({c:ctx,t:x,d:today(),ok:false});toast('Записал. Идём дальше');return true});
+setTimeout(()=>$('f_q')&&$('f_q').focus(),50);return}
+case 'startc':cs={q:dueList(),i:0,flip:false,done:0,again:[]};render();top0();return;
+case 'flip':cs.flip=true;say([cs.q[cs.i]]);render();return;
+case 'grade':grade(+D.g);break;
+case 'cend':cs=null;hush();render();top0();return;
+case 'rate':S.rate=+D.v;break;
+case 'vtest':say(['Hello! I am a network engineer. I work from home.']);return;
+case 'theme':S.theme=D.v;applyTheme();break;
+case 'rep':copyIO(report());return;
+case 'exp':S.bk=today();save();copyIO(JSON.stringify(S));toast('Копия готова. Сохрани её в Заметки');return;
+case 'imp':{let o;try{o=JSON.parse($('io').value)}catch(x){alert('Не удалось прочитать текст');return}
+if(!o||!o.v||!o.cards||!o.L){alert('Это не копия английского');return}
+if(!confirm('Заменить текущий прогресс этой копией?'))return;
+S=migrate(o);open=null;cs=null;T={};applyTheme();toast('Копия загружена');break}
+case 'qok':S.q[D.i].ok=!S.q[D.i].ok;break;
+case 'qdel':if(!confirm('Удалить вопрос?'))return;S.q.splice(+D.i,1);break;
+case 'upd':toast('Проверяю…');(navigator.serviceWorker?navigator.serviceWorker.getRegistration().then(r=>r&&r.update()).catch(()=>{}):Promise.resolve()).then(()=>location.reload());return;
+case 'sclose':closeSheet();return;
+case 'ssave':if(!(sheetSave&&sheetSave()))return;closeSheet();break;
+default:return}
+save();render()});
+
+document.addEventListener('input',e=>{if(e.target.id=='own'&&open){const q=P(open);q.own=e.target.value;q.ownD=today();if(q.own.trim().length>=15)act().o=1;save()}});
+document.addEventListener('keydown',e=>{if(e.key=='Enter'&&e.target.id=='ans'){e.preventDefault();doCheck()}});
+document.addEventListener('change',e=>{if(e.target.id=='voice'){S.voice=e.target.value;save()}});
+
+// если приложение висело открытым, после полуночи обновляем экран
+function refresh(){if(shownDay!=today()&&!document.activeElement.matches('input,textarea'))render()}
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh()});
+window.addEventListener('pageshow',refresh);
+setInterval(refresh,60000);
+
+load();applyTheme();loadVoices();
+if('speechSynthesis' in window)speechSynthesis.onvoiceschanged=()=>{loadVoices();if(tab=='more')render()};
+render();
+if('serviceWorker' in navigator&&location.protocol=='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script></body></html>
