@@ -180,7 +180,7 @@ nav button.on{color:var(--ac);background:var(--at)}
 <script src="lessons.js"></script>
 <script src="nets.js"></script>
 <script>
-const K='eng_v1',APP_V='2.0';
+const K='eng_v1',APP_V='2.1';
 const KNOW=3,BOX=[0,1,2,4,7,14,30]; // «знаю» = коробка 3+; интервалы повторения в днях по коробкам
 const EN=window.LESSONS||[],WK=window.WEEKS||[],ND=window.NET||{modules:[],lessons:[],levels:[]};
 const NL=ND.lessons||[];NL.forEach(l=>{l.s='net'});
@@ -270,17 +270,30 @@ answer(l,q,q.ti,t,y,ok);save();render()}
 
 // ---------- подсказки при письме: его типичные ошибки ----------
 const VERBS='work|start|finish|check|watch|like|want|go|have|get|live|drink|make|fix|play|read|write|need|know|say|use|help|study|open|call|end|love|eat|sleep|run|walk';
+// слова, которые он писал с ошибкой (по отчётам)
+const SPELL={becouse:'because',bocouse:'because',becuse:'because',becaus:'because',nigth:'night',usualy:'usually',ussualy:'usually',usally:'usually',coffe:'coffee',quet:'quiet',collegs:'colleagues',collegues:'colleagues',wundefrul:'wonderful',wonderfull:'wonderful',nessesery:'necessary',neccesary:'necessary',necesary:'necessary',swith:'switch',swithes:'switches',adress:'address',neigbor:'neighbor',neigbors:'neighbors',metwork:'network',engeneer:'engineer',beatiful:'beautiful',beautifull:'beautiful',dosent:'doesn’t',freind:'friend',wich:'which'};
+const spellOf=s=>[...new Set((s.toLowerCase().match(/[a-z]+/g)||[]).filter(w=>SPELL[w]))];
 const HINTS=[
 [s=>/(^|[\s(“"])i(?=[\s'’,.!?]|$)/.test(s),'Пиши «I» с большой буквы — всегда, даже в середине предложения.'],
-[s=>/(^|[.!?]\s+)[a-z]/.test(s),'Новое предложение начинается с большой буквы.'],
-[s=>/\bits\s+(is|a|an|the|not)\b/i.test(s)||/\bits\s+(very\s+)?(good|ok|fine|old|new|small|big|bad|cool|great|black|white)\s*([.!?,]|$)/i.test(s),'«its» — это «его / её» (чей). Если хочешь сказать «это / он есть» — пиши «it’s» или «it is».'],
+[s=>spellOf(s).length,s=>'Проверь написание: '+spellOf(s).map(w=>w+' → '+SPELL[w]).join(', ')+'.'],
+[s=>/\b(dont|doesnt|isnt|arent|cant|didnt|wont)\b/i.test(s),'Ставь апостроф: don’t, doesn’t, isn’t, can’t.'],
+[s=>/(^|[.!?]\s+)[a-z]/.test(s.replace(/\b([ap])\.m\./gi,'$1m')),'Новое предложение начинается с большой буквы.'],
+[s=>/\b(is|are|am)\s+not\s+(work|start|like|know|understand|have|want|need)\b/i.test(s),'Обычный глагол отрицаем через don’t / doesn’t: it doesn’t work, а не is not work.'],
+[s=>/\b(should|can|must)\s+to\b/i.test(s),'После should / can / must — без to: I should walk.'],
+[s=>/\bhow\s+(find|fix|solve|do|make|check|get|use|learn|write|say)\b/i.test(s),'Как сделать — how to + глагол: how to find.'],
+[s=>/\b(i am|i'm|i’m)\s+(very\s+|so\s+)?boring\b/i.test(s),'«I am boring» — «я скучный». «Мне скучно» — I am bored.'],
+[s=>/\bwanna\b/i.test(s),'В письме лучше want to.'],
+[s=>/\bat\s+(my\s+)?days?\s+off\b/i.test(s),'Дни — с on: on my days off.'],
+[s=>/\bon\s+\d{1,2}(?!\s*(st|nd|rd|th|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec))\b/i.test(s),'Время по часам — at: at 7. Срок — for: for 3 years.'],
+[s=>/\bon\s+(the\s+)?chat\b/i.test(s),'В чате — in the chat.'],
+[s=>/\b(work|live|am|is|are)\s+hear\b/i.test(s),'Здесь — here. hear — слышать.'],
+[s=>/\bits\s+(is|a|an|the|not|work|works)\b/i.test(s)||/\bits\s+(very\s+)?(good|ok|fine|old|new|small|big|bad|cool|great|black|white)\s*([.!?,]|$)/i.test(s),'«its» — это «его / её» (чей). Если хочешь сказать «это / он есть» — пиши «it’s» или «it is».'],
 [s=>/\bquit\b/i.test(s),'«quit» — бросить. «Тихий» пишется «quiet».'],
 [s=>/\b(am|is|are)\s+(network|engineer|teacher|builder|driver|doctor|student|electrician|programmer|manager)\b/i.test(s),'Перед профессией нужен a / an: I am a network engineer.'],
 [s=>/\b(have|has)\s+(laptop|pc|computer|car|dog|cat|desk|job|router|switch|phone|house|flat)\b/i.test(s),'Перед одним предметом нужен a / an или my: I have a laptop.'],
 [s=>s.split(/[.!?]+/).some(x=>!/\b(do|does|did|will|can|can’t|can't|cannot|don’t|don't|doesn’t|doesn't|didn’t|didn't|won’t|won't|to|must|should|let’s|let's)\b/i.test(x)&&new RegExp('\\b(he|she|it)\\s+('+VERBS+')\\b','i').test(x)),'После he / she / it в Present Simple у глагола окончание -s: he works, she has.'],
-[s=>/\b(doesn[’']?t|does not|don[’']?t|do not)\s+(works|starts|checks|likes|wants|goes|has|gets|lives|drinks|makes|fixes|plays|reads|writes|needs|knows|says|uses|helps|studies|opens|calls|ends|understands)\b/i.test(s),'После don’t / doesn’t глагол без -s: he doesn’t work.'],
-[s=>/\b(engeneer|metwork|beatiful|beautifull|quite\s+dog)\b/i.test(s),'Проверь написание: engineer, network, beautiful, quiet.']];
-const hintsHtml=t=>HINTS.filter(h=>h[0](t||'')).slice(0,6).map(h=>`<div>💡 ${h[1]}</div>`).join('');
+[s=>/\b(doesn[’']?t|does not|don[’']?t|do not|does|do)\s+(\w+\s+)?(works|starts|checks|likes|wants|goes|has|gets|lives|drinks|makes|fixes|plays|reads|writes|needs|knows|says|uses|helps|studies|opens|calls|ends|understands)\b/i.test(s),'После do / does / don’t / doesn’t глагол без -s: he doesn’t work, does he work?']];
+const hintsHtml=t=>HINTS.filter(h=>h[0](t||'')).slice(0,6).map(h=>`<div>💡 ${typeof h[1]=='function'?h[1](t):h[1]}</div>`).join('');
 // мягкое напоминание после верного ответа: регистр в переводе не проверяется, но привычку тренируем
 function capNote(y){const n=[];if(/(^|\s)i(\s|'|’|$)/.test(y))n.push('«I» пишется с большой буквы.');else if(/^[a-z]/.test(y))n.push('Предложение начинается с большой буквы.');return n.join(' ')}
 
@@ -418,7 +431,10 @@ function sText(l,q){
 let h=`<div class="card"><div style="font-weight:700">🎧 ${q.show?'Слушай и читай. Нажми на предложение, чтобы увидеть перевод.':'Сначала послушай, не подглядывая. Потом открой текст.'}</div><div class="hint">Незнакомые слова — внизу страницы.</div><div class="sb"><button class="btn" data-a="play">▶ Слушать</button><button class="btn g" data-a="stop">⏹ Стоп</button></div></div>`;
 h+=`<div class="card${q.show?'':' blur'}">${l.text.map((s,i)=>`<div class="sn" data-sn="${i}"><button class="en plain" data-a="trn" data-i="${i}">${esc(s[0])}${TR.has(i)?`<span class="tr">${esc(s[1])}</span>`:''}</button>${sayB(s[0])}</div>`).join('')}</div>`;
 h+=q.show?nextBtn(l,'text'):'<button class="btn" data-a="show">Показать текст</button>';
-return h+((l.words||[]).length?`<h2>Новые слова · уже в карточках</h2><div class="card">${l.words.map(w=>row(w[0],w[1])).join('')}</div>`:'')}
+h+=(l.words||[]).length?`<h2>Новые слова · уже в карточках</h2><div class="card">${l.words.map(w=>row(w[0],w[1])).join('')}</div>`:'';
+// дополнительное чтение по желанию: индексы с 1000, чтобы подсветка и перевод не путались с основным текстом
+if(l.more)h+=`<h2>Ещё почитать · по желанию</h2><div class="card"><div class="mu">Без заданий — просто читай и слушай. Нажми на предложение — появится перевод.</div><div class="sb" style="margin:10px 0 12px"><button class="btn g" data-a="playm">▶ Слушать</button><button class="btn g" data-a="stop">⏹ Стоп</button></div>${l.more.map((s,i)=>`<div class="sn" data-sn="${1000+i}"><button class="en plain" data-a="trn" data-i="${1000+i}">${esc(s[0])}${TR.has(1000+i)?`<span class="tr">${esc(s[1])}</span>`:''}</button>${sayB(s[0])}</div>`).join('')}</div>`;
+return h}
 
 function sTheory(l){
 const lv=lvOf(l.topic),weak=lv==null||lv<=5;
@@ -564,7 +580,7 @@ let r=`Отчёт для Claude · ${nowS()} · приложение ${APP_V}, �
 r+='\n=== СЕТИ ===\nУровни (оценка Claude от '+(ND.levelsDate||'?')+'): '+LV.map(x=>`${x.t} ${x.v==null?'—':x.v}`).join(', ')+'\n'+repPart('net');
 r+=`Тренажёр подсетей: всего ${S.sub.n}, верно ${S.sub.ok} (${pct(S.sub.ok,S.sub.n)}%).\n`;
 r+='\nАктивность за 7 дней:\n';
-for(let i=6;i>=0;i--){const A=S.act[ago(i)]||{},e=[A.t&&'заданий '+A.t,A.c&&'карточек '+A.c,A.h&&'слушал текст',A.o&&'писал своё'].filter(Boolean),n=[A.th&&'теория',A.nt&&'вопросов '+A.nt,A.nc&&'карточек '+A.nc,A.s&&`подсетей ${A.s} (верно ${A.so||0})`,A.no&&'объяснял'].filter(Boolean);
+for(let i=6;i>=0;i--){const A=S.act[ago(i)]||{},e=[A.t&&'заданий '+A.t,A.c&&'карточек '+A.c,A.h&&'слушал текст',A.x&&'доп. чтение',A.o&&'писал своё'].filter(Boolean),n=[A.th&&'теория',A.nt&&'вопросов '+A.nt,A.nc&&'карточек '+A.nc,A.s&&`подсетей ${A.s} (верно ${A.so||0})`,A.no&&'объяснял'].filter(Boolean);
 r+=`- ${fmtS(ago(i))}: ${e.length||n.length?(e.length?'англ — '+e.join(', '):'')+(e.length&&n.length?'; ':'')+(n.length?'сети — '+n.join(', '):''):'—'}\n`}
 const Q=S.q.filter(x=>!x.ok);if(Q.length){r+='\nНепонятно:\n';Q.forEach(x=>{r+=`- [${x.c}] ${x.t}\n`})}
 return r}
@@ -621,7 +637,8 @@ case 'copy':copyText(D.t);return;
 case 'play':q.heard=true;act().h=1;save();say(l.text.map(s=>s[0]),hl);return;
 case 'stop':hush();hl(-1);return;
 case 'show':q.show=true;break;
-case 'trn':{if(!q.show)return;const i=+D.i;TR.has(i)?TR.delete(i):TR.add(i);render();return}
+case 'trn':{const i=+D.i;if(!q.show&&i<1000)return;if(i>=1000)act().x=1;TR.has(i)?TR.delete(i):TR.add(i);save();render();return}
+case 'playm':act().x=1;save();say(l.more.map(s=>s[0]),i=>hl(i<0?-1:1000+i));return;
 case 'lck':{const i=+D.i,arr=q.lab||(q.lab=[]),j=arr.indexOf(i);if(j<0)arr.push(i);else arr.splice(j,1);save();
 b.closest('.ls').classList.toggle('d',j<0);b.textContent=j<0?'✓':i+1;const c=$('labc');if(c)c.textContent=arr.length+' из '+l.lab.steps.length;return}
 case 'pick':{const t=l.tasks[q.ti];if(T.show||!t)return;T.yi=+D.i;answer(l,q,q.ti,t,t.o[+D.i],+D.i==t.a);break}
