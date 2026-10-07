@@ -98,6 +98,74 @@ code{font:13px ui-monospace,Menlo,Consolas,monospace;background:var(--soft);padd
 .frame span.w{flex:1 1 60%}
 @media (min-width:480px){.frame{flex-wrap:nowrap}.frame span{flex:1}.frame span.w{flex:1.7}}
 .frame small{display:block;font-weight:500;color:var(--mu);font-size:10px;margin-top:3px}
+/* главы СДСМ и книжный текст */
+.book p{line-height:1.62;font-size:16.5px}
+.book h3,.rule h3{font-size:18px;margin:20px 0 8px;letter-spacing:-.2px}
+.book>h3:first-child,.rule>h3:first-child{margin-top:0}
+h3.bh{font-size:21px;font-weight:800;margin:28px 4px 12px;letter-spacing:-.3px;line-height:1.25;scroll-margin-top:16px}
+.an{background:rgba(124,58,237,.09);border-radius:14px;padding:12px 14px;margin:12px 0;font-size:15.5px;line-height:1.55}
+.an>b:first-child{display:block;color:#7c3aed;margin-bottom:4px}
+.an>b:first-child::before{content:"🧩 "}
+:root[data-theme="dark"] .an>b:first-child{color:#a78bfa}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .an>b:first-child{color:#a78bfa}}
+.callout{border-left:3px solid var(--ac);background:var(--at);border-radius:0 12px 12px 0;padding:10px 12px;margin:12px 0;font-size:15px;line-height:1.5}
+.callout>b:first-child{display:block;margin-bottom:4px;color:var(--tx)}
+.callout.pro{border-color:#0d9488;background:rgba(13,148,136,.1)}.callout.pro>b:first-child::before{content:"🏢 "}
+.callout.warn{border-color:#d97706;background:rgba(245,158,11,.12)}.callout.warn>b:first-child::before{content:"⚠️ "}
+.callout.bad{border-color:var(--wr);background:var(--wrt)}.callout.bad>b:first-child::before{content:"⛔ "}
+.callout.ok{border-color:var(--ok);background:var(--okt)}.callout.ok>b:first-child::before{content:"✅ "}
+.callout.info>b:first-child::before{content:"💡 "}
+.callout ol,.callout ul{margin:6px 0 0;padding-left:20px}
+.rule table{width:100%;border-collapse:collapse;font-size:14px;margin:8px 0 12px}
+.rule th,.rule td{border-top:1px solid var(--bd);padding:7px 5px;text-align:left;vertical-align:top;overflow-wrap:anywhere}
+.rule th{color:var(--mu);font-size:12px;border-top:0}
+.rule th:first-child,.rule td:first-child{padding-left:0}
+.vs{display:grid;grid-template-columns:1fr;gap:10px;margin:10px 0}
+.vs>div{background:var(--soft);border-radius:12px;padding:10px 12px;font-size:15px}
+@media (min-width:480px){.vs{grid-template-columns:1fr 1fr}}
+.steps{counter-reset:s;list-style:none;padding-left:0!important}
+.steps>li{counter-increment:s;position:relative;padding-left:36px;margin:10px 0!important}
+.steps>li::before{content:counter(s);position:absolute;left:0;top:1px;width:26px;height:26px;border-radius:50%;background:var(--at);color:var(--ac);font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center}
+.kbd{font:12px ui-monospace,Menlo,Consolas,monospace;border:1px solid var(--bd);border-bottom-width:2px;border-radius:5px;padding:0 5px;background:var(--soft)}
+mark{background:rgba(245,158,11,.3);color:inherit;border-radius:3px;padding:0 1px}
+.muted{color:var(--mu)}
+.pkt{display:flex;margin:12px 0;border-radius:8px;overflow:hidden;font-size:11px;text-align:center;line-height:1.25}
+.pkt>span{padding:7px 3px;border-right:1px solid rgba(0,0,0,.25);color:#fff;display:flex;flex-direction:column;justify-content:center;min-width:0;overflow-wrap:anywhere}
+.pkt>span small{opacity:.85;font-size:10px}
+.pkt .l2{background:#2563eb}.pkt .l3{background:#16a34a}.pkt .l4{background:#d97706}.pkt .l7{background:#7c3aed}.pkt .tg{background:#db2777}.pkt .lb{background:#0891b2}.pkt .fcs{background:#475569}
+.toc{margin:8px 0 0;padding-left:22px}.toc li{margin:0 0 6px}
+.lk{color:var(--ac);font-weight:600;text-align:left}
+.cg{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--mu);margin:14px 0 4px}
+.cg:first-child{margin-top:0}
+.cmd pre{margin:2px 0 4px}
+.kk{margin:4px 0 0;padding-left:20px}
+.li.off{opacity:.5}
+/* схемы в книге (inline SVG): цвета из темы, подписи — классы */
+.dg{margin:14px 0 16px}
+.dg svg{display:block;width:100%;height:auto;overflow:visible}
+.dg figcaption{font-size:13px;color:var(--mu);margin-top:8px;line-height:1.45}
+.dg .bx{fill:var(--card);stroke:var(--mu);stroke-width:1.5}
+.dg .bx2{fill:var(--soft)}
+.dg .bxd{fill:none;stroke:var(--mu);stroke-width:1.5;stroke-dasharray:5 4}
+.dg .tx{fill:var(--tx);font:700 12px -apple-system,"Segoe UI",Roboto,sans-serif}
+.dg .sm{fill:var(--mu);font:500 10.5px -apple-system,"Segoe UI",Roboto,sans-serif}
+.dg .ln{stroke:var(--mu);stroke-width:2;fill:none}
+.dg .tk{stroke:var(--tx);stroke-width:4;fill:none}
+.dg .lr{stroke:#e11d48;stroke-width:2.2;fill:none}
+.dg .env{fill:#fff;stroke:#475569;stroke-width:1.2}
+.dg .envl{fill:none;stroke:#475569;stroke-width:1.2}
+.dg .pp{fill:rgba(37,99,235,.16);stroke:#2563eb;stroke-width:1.5}
+.dg .b{fill:#2563eb}.dg .g{fill:#16a34a}.dg .o{fill:#d97706}.dg .gr{fill:#64748b}.dg .rr{fill:#e11d48}
+.dg .wt{fill:#fff;font:700 7.5px -apple-system,"Segoe UI",Roboto,sans-serif}
+.dg .wt2{fill:#fff;font:700 9px -apple-system,"Segoe UI",Roboto,sans-serif}
+.dg .am{fill:var(--mu)}.dg .amr{fill:#e11d48}
+.dg .bt{fill:#2563eb}.dg .rd{fill:#e11d48}.dg .gn{fill:#16a34a}.dg .og{fill:#d97706}
+:root[data-theme="dark"] .dg .bt{fill:#60a5fa}:root[data-theme="dark"] .dg .rd{fill:#fb7185}:root[data-theme="dark"] .dg .gn{fill:#4ade80}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .dg .bt{fill:#60a5fa}:root:not([data-theme="light"]) .dg .rd{fill:#fb7185}:root:not([data-theme="light"]) .dg .gn{fill:#4ade80}}
+details.chk{background:var(--soft);border-radius:12px;padding:10px 12px;margin:8px 0}
+details.chk summary{color:var(--tx);font-weight:600;line-height:1.4}
+details.chk p{margin:8px 0 0}
+.opt.sel{border-color:var(--ac);background:var(--at)}
 .isp{border-left:3px solid var(--ac);background:var(--at);border-radius:0 12px 12px 0;padding:10px 12px;margin:10px 0;font-size:15px}
 details summary{cursor:pointer;font-weight:700;color:var(--ac);list-style-position:inside}
 details.dp[open] summary{margin-bottom:12px}
@@ -179,13 +247,30 @@ nav button.on{color:var(--ac);background:var(--at)}
 <div id="toast"></div>
 <script src="lessons.js"></script>
 <script src="nets.js"></script>
+<script src="sdsm/course.js"></script>
+<script src="sdsm/ch01.js"></script>
+<script src="sdsm/ch02.js"></script>
+<script src="sdsm/ch03.js"></script>
+<script src="sdsm/ch04.js"></script>
+<script src="sdsm/ch05.js"></script>
+<script src="book/ch01.js"></script>
+<script src="book/ch02.js"></script>
 <script>
-const K='eng_v1',APP_V='2.1';
+const K='eng_v1',APP_V='2.4';
 const KNOW=3,BOX=[0,1,2,4,7,14,30]; // «знаю» = коробка 3+; интервалы повторения в днях по коробкам
 const EN=window.LESSONS||[],WK=window.WEEKS||[],ND=window.NET||{modules:[],lessons:[],levels:[]};
 const NL=ND.lessons||[];NL.forEach(l=>{l.s='net'});
-const ALL=EN.concat(NL);
-const subj=s=>s=='net'?NL:EN;
+// главы СДСМ: те же файлы, что в программе на компьютере (app/sdsm), плюс книжный текст для телефона (app/book)
+const CO=window.COURSE||{parts:[],list:[],ch:{}},BK=window.BOOK||{};
+const SDTOPIC={ch02:'vlan',ch03:'l3',ch04:'l2',ch05:'l3',ch06:'ospf',ch08:'bgp',ch08b:'bgp',ch09:'mcast',ch10:'mpls',ch11:'mpls',ch11b:'mpls',ch12:'l2vpn',ch12b:'l2vpn',ch12c:'l2vpn'};
+// отложенные главы: в списке остаются, но приложение не предлагает их первыми (гл. 1 — управление устройством, на его работе не настраивают)
+const SDLATER=['ch01'];
+const SD=CO.list.filter(x=>CO.ch[x.id]).map(x=>{const c=CO.ch[x.id];return{id:'sd_'+x.id,s:'net',sd:1,cid:x.id,num:x.num,part:x.part,t:x.title,g:'Глава '+x.num,topic:SDTOPIC[x.id]||null,c,book:BK[x.id]||null,later:SDLATER.includes(x.id),
+tasks:(c.quiz||[]).map(z=>({k:Array.isArray(z.a)?'mc':'ch',q:z.q,o:z.o,a:z.a,e:z.e,c:z.code,h:1})),brk:(c.lab&&c.lab.brk)||null,und:c.und||null,cards:c.cards||[],ch:1}});
+const NETALL=SD.concat(NL);
+const ALL=EN.concat(NETALL);
+const subj=s=>s=='net'?SD:EN;
+const subjAll=s=>s=='net'?NETALL:EN;
 let S,tab='en',open={en:null,net:null},T={},TR=new Set(),cs=null,deck='en',tz=null,shownDay='',sheetSave=null,VO=[];
 
 const p=n=>String(n).padStart(2,'0');
@@ -209,14 +294,19 @@ function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor
 const les=id=>ALL.find(l=>l.id==id);
 const isNet=l=>!!l&&l.s=='net';
 const sOf=l=>isNet(l)?'net':'en';
-const lnum=l=>(isNet(l)?'С':'')+l.w+'.'+l.n;
+const lnum=l=>l.sd?'Гл. '+l.num:(isNet(l)?'С':'')+l.w+'.'+l.n;
 // шаги урока — только те, для которых в уроке есть содержимое
-function stepsOf(l){return isNet(l)?['theory','lab','tasks','own'].filter(s=>s=='tasks'?(l.tasks||[]).length:l[s]):['rule','text','tasks','own'].filter(s=>s=='tasks'||s=='own'||l[s])}
-const SN=(l,s)=>({rule:'Правило',text:'Текст',theory:'Теория',lab:'Лаба',tasks:isNet(l)?'Вопросы':'Задания',own:isNet(l)?'Объясни':'Своё',done:'Итог'})[s];
+function stepsOf(l){if(l.sd)return ['book','tasks','brk','und'].filter(s=>s=='book'||(l[s]||[]).length);
+return isNet(l)?['theory','lab','tasks','own'].filter(s=>s=='tasks'?(l.tasks||[]).length:l[s]):['rule','text','tasks','own'].filter(s=>s=='tasks'||s=='own'||l[s])}
+const SN=(l,s)=>({rule:'Правило',text:'Текст',theory:'Теория',lab:'Лаба',book:l.book?'Книга':'Теория',brk:'Поломки',und:'Объясни',tasks:l.sd?'Тест':isNet(l)?'Вопросы':'Задания',own:isNet(l)?'Объясни':'Своё',done:'Итог'})[s];
+const partT=id=>(CO.parts.find(x=>x.id==id)||{}).title||'';
+const cl=h=>String(h).replace(/\[\[(.+?)\]\]/g,'<mark>$1</mark>');
+const strip=h=>String(h).replace(/<[^>]+>/g,'').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&');
+const txt=(t,s)=>t.h?s:esc(s);
 const pr=id=>S.L[id]||{};
 const P=id=>S.L[id]||(S.L[id]={st:null,ti:0,r:[],own:'',ownD:null,show:false,heard:false,done:null,sc:null,pass:0,lab:[]});
-const curL=s=>subj(s).find(l=>!pr(l.id).done);
-const doneToday=s=>subj(s).some(l=>pr(l.id).done==today());
+const curL=s=>subj(s).find(l=>!pr(l.id).done&&!l.later);
+const doneToday=s=>subjAll(s).some(l=>pr(l.id).done==today());
 const okN=q=>(q.r||[]).filter(x=>x>0).length;
 const cur=()=>(tab=='en'||tab=='net')&&open[tab]?les(open[tab]):null;
 const LV=ND.levels||[];
@@ -230,7 +320,7 @@ function migrate(o){const d=init();for(const k in d)if(!(k in o))o[k]=d[k];o.v=1
 function load(){try{S=JSON.parse(localStorage.getItem(K))}catch(e){S=null}S=S&&S.v?migrate(S):init();
 // если Claude поправил перевод или ответ в уроках, карточка подхватит новый текст
 ALL.forEach(l=>{(l.words||[]).concat(l.terms||[]).forEach(([en,ru])=>{const c=S.cards[en];if(c&&!c.d)c.ru=ru});
-(l.cards||[]).forEach(([q,a],i)=>{const c=S.cards['n:'+l.id+':'+i];if(c){c.q=q;c.a=a}})})}
+(l.cards||[]).forEach(([q,a],i)=>{const c=S.cards['n:'+l.id+':'+i];if(c){c.q=q;c.a=a;if(l.ch)c.h=1}})})}
 function save(){try{localStorage.setItem(K,JSON.stringify(S))}catch(e){toast('Не удалось сохранить')}}
 const act=()=>{const d=today();return S.act[d]||(S.act[d]={})};
 const inc=k=>{const A=act();A[k]=(A[k]||0)+1};
@@ -240,7 +330,7 @@ const busy=A=>!!A&&Object.keys(A).some(k=>A[k]);
 const dOf=c=>c.d||'en';
 function addWords(l){
 (l.words||[]).concat(l.terms||[]).forEach(([en,ru])=>{if(!S.cards[en])S.cards[en]={ru,b:0,due:today(),n:0,x:0,l:l.id}});
-(l.cards||[]).forEach(([q,a],i)=>{const k='n:'+l.id+':'+i;if(!S.cards[k])S.cards[k]={d:'net',q,a,b:0,due:today(),n:0,x:0,l:l.id}})}
+(l.cards||[]).forEach(([q,a],i)=>{const k='n:'+l.id+':'+i;if(!S.cards[k]){S.cards[k]={d:'net',q,a,b:0,due:today(),n:0,x:0,l:l.id};if(l.ch)S.cards[k].h=1}})}
 const keysOf=d=>Object.keys(S.cards).filter(k=>dOf(S.cards[k])==d);
 function dueList(d){const t=today();return keysOf(d).filter(k=>S.cards[k].due<=t).sort((a,b)=>{const A=S.cards[a],B=S.cards[b];return (A.n?0:1)-(B.n?0:1)||(A.due<B.due?-1:A.due>B.due?1:0)})}
 function cstats(d){let nw=0,lr=0,kn=0;keysOf(d).forEach(k=>{const c=S.cards[k];if(!c.n)nw++;else if(c.b>=KNOW)kn++;else lr++});return{all:nw+lr+kn,nw,lr,kn}}
@@ -253,9 +343,9 @@ const CONTR=[[/\b(i)'m\b/gi,'$1 am'],[/\b(he|she|it|that|what|there|who)'s\b/gi,
 // знаки препинания и сокращения (isn't = is not) не влияют на проверку; регистр — только если cs
 function norm(s,cs){s=String(s).replace(/[’‘`ʼ]/g,"'");if(!cs)s=s.toLowerCase();CONTR.forEach(([r,t])=>{s=s.replace(r,t)});return s.replace(/[^A-Za-z0-9А-Яа-яЁё' ]+/g,' ').replace(/\s+/g,' ').trim()}
 const tQ=t=>t.q||t.ru||'';
-const tA=t=>t.k=='ch'?t.o[t.a]:t.k=='or'?t.a:t.a[0];
+const tA=t=>t.k=='ch'?t.o[t.a]:t.k=='mc'?t.a.map(i=>t.o[i]).join('; '):t.k=='or'?t.a:t.a[0];
 function ensureT(l,k,t){const id=l.id+':'+k;if(T.id==id)return;T={id,k};
-if(t.k=='ch')T.o=shuffle(t.o.map((_,i)=>i));
+if(t.k=='ch'||t.k=='mc')T.o=shuffle(t.o.map((_,i)=>i));if(t.k=='mc')T.sel=[];
 if(t.k=='or'){const m=t.a.match(/^(.*?)([.?!]?)$/);T.w=m[1].split(' ');T.end=m[2];T.pk=[];
 let o;do{o=shuffle(T.w.map((_,i)=>i))}while(T.w.length>1&&o.every((v,i)=>T.w[v]==T.w[i]));T.o=o}}
 function answer(l,q,k,t,y,ok){
@@ -265,6 +355,7 @@ if(q.ti>=l.tasks.length&&!q.pass&&!q.sc)q.sc=[okN(q),l.tasks.length,today()];
 T.show=true;T.ok=ok;T.y=y}
 function doCheck(){const l=cur(),q=l&&P(l.id),t=l&&l.tasks[q.ti];if(!t||T.show)return;let y,ok;
 if(t.k=='or'){if(T.pk.length<T.w.length)return;y=T.pk.map(i=>T.w[i]).join(' ')+T.end;ok=y==T.w.join(' ')+T.end}
+else if(t.k=='mc'){if(!T.sel.length)return;y=T.sel.map(i=>t.o[i]).join('; ');ok=T.sel.length==t.a.length&&T.sel.every(i=>t.a.includes(i))}
 else{const el=$('ans');y=el?el.value.trim():'';if(!y){toast('Сначала впиши ответ');return}const cs=t.k=='fx',n=norm(y,cs);ok=t.a.some(a=>norm(a,cs)==n)}
 answer(l,q,q.ti,t,y,ok);save();render()}
 
@@ -332,10 +423,12 @@ const mrow=(d,txt,a)=>`<button class="st ${d?'d':''}" ${a}><b>${d?'✓':''}</b><
 function bkNote(){const t=today(),bd=S.bk?diff(S.bk,t):null;
 return (bd===null&&diff(S.start,t)>=3)||bd>=7?`<button class="note am" data-a="tab" data-t="more">💾 ${bd===null?'Резервная копия ещё не делалась.':'Копия не делалась '+bd+' дн.'} Нажми, чтобы сделать.</button>`:''}
 // один новый урок в день: горячий старт ведёт к выгоранию, поэтому второй урок — только по явному желанию
-function startBtn(s,c){if(!c)return '';
-if(doneToday(s)&&!pr(c.id).st)return `<div class="card"><b>Сегодняшний урок пройден ✓</b><p class="mu" style="margin:6px 0 12px">Следующий лучше завтра: за ночь материал укладывается${s=='en'?', а карточки как раз повторят новые слова':''}. Сегодня можно повторить карточки${s=='net'?', потренировать подсети или доделать лабу':''}.</p><button class="btn g" data-a="open" data-l="${c.id}" style="margin:0">Всё равно начать урок ${lnum(c)}</button></div>`;
-return `<button class="btn" data-a="open" data-l="${c.id}">▶ ${pr(c.id).st?'Продолжить':'Начать'} урок ${lnum(c)}</button>`}
+function startBtn(s,c){if(!c)return '';const what=c.sd?'главу '+c.num:'урок '+lnum(c);
+if(doneToday(s)&&!pr(c.id).st)return `<div class="card"><b>${c.sd?'Сегодня глава пройдена ✓':'Сегодняшний урок пройден ✓'}</b><p class="mu" style="margin:6px 0 12px">Следующий шаг лучше завтра: за ночь материал укладывается${s=='en'?', а карточки как раз повторят новые слова':''}. Сегодня можно повторить карточки${s=='net'?' или потренировать подсети':''}.</p><button class="btn g" data-a="open" data-l="${c.id}" style="margin:0">Всё равно начать ${what}</button></div>`;
+return `<button class="btn" data-a="open" data-l="${c.id}">▶ ${pr(c.id).st?'Продолжить':'Начать'} ${what}</button>`}
 function lessonRow(l){const q=pr(l.id),sc=q.sc;
+if(l.sd){const sub=(l.later?'отложена, вернёмся позже · ':'')+(l.book?(l.book.draft?'книга: пробный раздел':'книга'):'конспект')+' · тест '+l.tasks.length+(sc?' · '+pct(sc[0],sc[1])+'%':q.st&&!q.done?' · начата':'');
+return `<button class="li lr" data-a="open" data-l="${l.id}"><div class="ico ${q.done?'dn':''}">${q.done?'✓':esc(l.num)}</div><div class="ht"><b>${lnum(l)} · ${esc(l.t)}</b><small>${sub}</small></div><span class="mu">›</span></button>`}
 let sub=esc(l.g)+(sc?' · '+pct(sc[0],sc[1])+'%':q.st&&!q.done?' · начат':'');
 if(l.lab&&(q.lab||[]).length)sub+=` · лаба ${q.lab.length}/${l.lab.steps.length}`;
 return `<button class="li lr" data-a="open" data-l="${l.id}"><div class="ico ${q.done?'dn':''}">${q.done?'✓':l.review?'↻':l.n}</div><div class="ht"><b>${lnum(l)} · ${esc(l.t)}</b><small>${sub}</small></div><span class="mu">›</span></button>`}
@@ -361,23 +454,20 @@ return h+'<div class="mu" style="padding:4px 4px 0">💡 Застрял: 5 ми�
 // ---------- экран «Сети» ----------
 function vNet(){
 if(tz)return vTrainer();
-const t=today(),c=curL('net'),due=dueList('net').length,CN=cstats('net'),A=S.act[t]||{},M=ND.modules||[];
-const w=c?c.w:(NL.length?NL[NL.length-1].w:1),ml=NL.filter(l=>l.w==w),Mo=M.find(x=>x.w==w)||{t:''},lv=c?lvOf(c.topic):null;
-let h=head(dateLine(),'Сети');
-h+=`<div class="hero nt">${wring(pct(ml.filter(l=>pr(l.id).done).length,ml.length))}<div class="info"><b>Модуль ${w} · ${esc(Mo.t)}</b><p>${c?'Урок '+c.n+' из '+ml.length+' · '+esc(c.t):'Все уроки модуля пройдены'}</p>${c&&c.topic?`<span class="chip">${esc(lvT(c.topic))}: ${lv==null?'не оценено':lv+'/10'}</span>`:''}</div></div>`;
-if(!c&&NL.length)h+=`<button class="note in" data-a="tab" data-t="stats">🏁 Модуль ${w} пройден. Составь отчёт во вкладке «Прогресс» — Claude проверит понимание, обновит оценки и добавит следующий модуль.</button>`;
+const t=today(),c=curL('net'),due=dueList('net').length,CN=cstats('net'),A=S.act[t]||{},lv=c?lvOf(c.topic):null;
+let h=head(dateLine(),'Сети · СДСМ');
+h+=`<div class="hero nt">${wring(pct(SD.filter(l=>pr(l.id).done).length,SD.length))}<div class="info"><b>${c?'Глава '+c.num+' · '+esc(c.t):'Все доступные главы пройдены'}</b><p>${c?esc(partT(c.part))+(c.book?' · есть книжный текст':' · пока конспект'):'Новые главы появятся после проверки с Claude'}</p>${c&&c.topic?`<span class="chip">${esc(lvT(c.topic))}: ${lv==null?'не оценено':lv+'/10'}</span>`:''}</div></div>`;
 h+=bkNote()+startBtn('net',c);
-const xl=c&&c.theory?c:[...NL].reverse().find(l=>l.theory&&pr(l.id).st)||NL.find(l=>l.theory);
+const xl=c||[...SD].reverse().find(l=>pr(l.id).st)||SD[0];
 h+='<h2>Минимум на сегодня · 15 минут</h2><div class="card">'+
-mrow(CN.all&&!due,due?`Карточки по сетям: ${due}`:CN.all?'Карточки по сетям повторены':'Карточки появятся после теории урока','data-a="deck" data-d="net"')+
+mrow(CN.all&&!due,due?`Карточки по сетям: ${due}`:CN.all?'Карточки по сетям повторены':'Карточки появятся, когда откроешь главу','data-a="deck" data-d="net"')+
 mrow((A.s||0)>=5,`Тренажёр подсетей: ${Math.min(A.s||0,5)} из 5 задач`,'data-a="tz"')+
-(xl?mrow(A.th,`Прочитать теорию урока ${lnum(xl)}`,`data-a="open" data-l="${xl.id}" data-s="theory"`):'')+
-'<div class="hint">Норма (около 45 минут) — урок целиком: теория, лаба, вопросы. Лаба — на компьютере, остальное можно с телефона.</div></div>';
+(xl?mrow(A.th,`Почитать главу ${xl.num}: один раздел`,`data-a="open" data-l="${xl.id}" data-s="book"`):'')+
+'<div class="hint">Норма (около 45 минут) — раздел-два книги и тест. Лабу главы делай на компьютере в СДСМ.</div></div>';
 h+=`<h2>Тренажёр</h2><div class="card"><button class="li lr" data-a="tz"><div class="ico">/24</div><div class="ht"><b>Подсети IPv4</b><small>Решено ${S.sub.n}, верно ${pct(S.sub.ok,S.sub.n)}% · бесконечные задачи на сеть, broadcast, маски</small></div><span class="mu">›</span></button></div>`;
-M.forEach(m=>{const ls=NL.filter(l=>l.w==m.w);h+=`<h2>Модуль ${m.w} · ${esc(m.t)}</h2>`;
-h+=ls.length?'<div class="card">'+ls.map(lessonRow).join('')+'</div>':`<div class="card mu">${esc(m.g)}. Уроки появятся после перепроверки предыдущего модуля.</div>`});
-if(ND.ext)h+=`<div class="card mu">${esc(ND.ext)}</div>`;
-return h+'<div class="mu" style="padding:4px 4px 0">💡 Застрял в лабе: 5 минут разбираешься, потом «❓ Непонятно» — записал и пошёл дальше. Claude разберёт по отчёту.</div>'}
+CO.parts.forEach(P0=>{const L=CO.list.filter(x=>x.part==P0.id);if(!L.length)return;h+=`<h2>${esc(P0.title)}</h2><div class="card">`+L.map(x=>{const l=SD.find(z=>z.cid==x.id);return l?lessonRow(l):`<div class="li off"><div class="ico">${esc(x.num)}</div><div class="ht"><b>Гл. ${esc(x.num)} · ${esc(x.title)}</b><small>появится на телефоне позже</small></div></div>`}).join('')+'</div>'});
+if(NL.length)h+='<h2>Дополнительно · диагностика L2</h2><div class="card mu" style="margin-bottom:8px">Уроки, которые были здесь до перехода на главы СДСМ. Дополняют главы 2 и 4, проходить по желанию.</div><div class="card">'+NL.map(lessonRow).join('')+'</div>';
+return h+'<div class="mu" style="padding:4px 4px 0">💡 Застрял: 5 минут разбираешься, потом «❓ Непонятно» — записал и пошёл дальше. Claude разберёт по отчёту.</div>'}
 
 // ---------- тренажёр подсетей ----------
 const i2s=n=>[n>>>24,(n>>>16)&255,(n>>>8)&255,n&255].join('.');
@@ -454,10 +544,39 @@ h+=`<h2>Шаги · <span id="labc">${dn.length} из ${L.steps.length}</span></
 if(L.brk)h+='<h2>Сломай и почини · подумай</h2>'+L.brk.map(b=>`<div class="card rule"><div>${b.t}</div>${b.h?`<details style="margin-top:10px"><summary>Подсказка</summary><p style="margin-top:6px">${b.h}</p></details>`:''}<details style="margin-top:10px"><summary>Разбор</summary><p style="margin-top:6px">${b.f}</p></details></div>`).join('');
 return h+'<div class="hint" style="margin:0 4px 12px">Отмечай шаги галочкой — прогресс лабы попадёт в отчёт. Лаба может растянуться на несколько дней, это нормально.</div>'+nextBtn(l,'lab')}
 
+// ---------- главы СДСМ: книга, поломки, «объясни» ----------
+function sBook(l){const B=l.book,c=l.c;let h='';
+if(B&&B.draft)h+='<div class="note am">Пока написан только первый раздел — пробный. Напиши Claude, понятно ли он написан: по твоему ответу будет дописана вся глава.</div>';
+if(l.later)h+='<div class="note in">Эта глава отложена: на твоей работе это не настраивают, вернёмся к ней позже.</div>';
+if(B){h+=`<div class="card rule book">${cl(B.lead)}</div>`;
+h+=`<div class="card"><b>Содержание</b><ol class="toc">${B.parts.map((p,i)=>`<li><button class="plain lk" data-a="goto" data-i="${i}">${p.h}</button></li>`).join('')}</ol></div>`;
+B.parts.forEach((p,i)=>{h+=`<h3 class="bh" id="bp${i}">${i+1}. ${p.h}</h3><div class="card rule book">${cl(p.html)}</div>`});
+if(B.end)h+=`<div class="card rule book">${cl(B.end)}</div>`;
+h+=`<details class="card dp rule"><summary>Конспект главы из СДСМ</summary>${c.theory.map(t=>'<h3>'+t.h+'</h3>'+cl(t.html)).join('')}</details>`}
+else h+=`<div class="note am">Книжный текст этой главы ещё пишется. Пока — конспект из СДСМ.</div><div class="card rule">${c.intro||''}</div>`+c.theory.map(t=>`<h3 class="bh">${t.h}</h3><div class="card rule">${cl(t.html)}</div>`).join('');
+if((c.cmds||[]).length)h+='<h2>Команды главы</h2><div class="card">'+c.cmds.map(x=>x.g?`<div class="cg">${x.g}</div>`:`<div class="cmd"><pre class="cli">${esc(x.c)}</pre><div>${x.d}</div>${x.hw?`<div class="mu">Huawei: <code>${esc(x.hw)}</code></div>`:''}${x.jn?`<div class="mu">Juniper: <code>${esc(x.jn)}</code></div>`:''}</div>`).join('')+'</div>';
+if((c.refs||[]).length)h+='<h2>Источники</h2><div class="card mu">'+c.refs.map(r=>'• '+(r.u?`<a href="${esc(r.u)}" target="_blank" rel="noopener">${esc(r.t)}</a>`:esc(r.t))+(r.n?' — '+esc(r.n):'')).join('<br>')+'</div>';
+return h+'<div class="hint" style="margin:0 4px 12px">Карточки главы уже добавлены в колоду «Сети».</div>'+nextBtn(l,'book')}
+
+function sBrk(l){
+let h='<div class="card mu">Это поломки из лабы главы. Представь, что видишь такой симптом на работе: подумай, где искать и что проверишь, и только потом открывай подсказку и разбор. Саму лабу делай на компьютере в СДСМ.</div>';
+h+=l.brk.map((b,i)=>`<div class="card rule"><b>${i+1}. ${b.t}</b>${b.h?`<details style="margin-top:10px"><summary>Подсказка</summary><div style="margin-top:6px">${cl(b.h)}</div></details>`:''}<details style="margin-top:10px"><summary>Разбор</summary><div style="margin-top:6px">${cl(b.f)}</div>${b.inj?`<div class="mu" style="margin-top:8px">Что сломали в лабе:</div><pre class="cli">${esc(b.inj)}</pre>`:''}</details></div>`).join('');
+return h+nextBtn(l,'brk')}
+
+function sUnd(l,q){const U=l.und,ans=q.und||{},left=Math.max(0,l.tasks.length-q.ti),filled=U.filter((u,i)=>(ans[i]||'').trim().length>=20).length;
+let h='<div class="card mu">Ответь своими словами, как объяснял бы коллеге. Потом открой эталон и честно сверь по ключевым пунктам. Claude прочитает твои ответы в отчёте и по ним оценит понимание.</div>';
+h+=U.map((u,i)=>`<div class="card"><b>${i+1}. ${u.q}</b><textarea class="in" data-und="${i}" rows="7" style="margin-top:10px" autocorrect="off" placeholder="Своими словами, по-русски…">${esc(ans[i]||'')}</textarea><details style="margin-top:10px"><summary>Эталон и ключевые пункты</summary><div class="rule" style="margin-top:8px">${cl(u.a)}</div>${(u.k||[]).length?'<div class="mu" style="margin-top:6px">В хорошем ответе есть:</div><ul class="kk">'+u.k.map(x=>'<li>'+x+'</li>').join('')+'</ul>':''}</details></div>`).join('');
+h+=`<div class="hint" style="margin:0 4px 12px">Сохраняется само. Ответов: <span id="undc">${filled}</span> из ${U.length}.</div>`;
+if(q.done)h+='<button class="btn" data-a="step" data-s="done">Готово</button>';
+else if(left)h+=`<button class="btn g" data-a="step" data-s="tasks">Осталось вопросов теста: ${left} — перейти к ним</button>`;
+else h+='<button class="btn" data-a="finish">Закончить главу ✓</button>';
+return h}
+
 function taskBody(t){
 const inp=(ph,v)=>`<input class="in" id="ans" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="${ph}" value="${esc(v||'')}"><button class="btn" data-a="check" style="margin:12px 0 0">Проверить</button>`;
-const pre=t.c?`<pre>${esc(t.c)}</pre>`:'';
-if(t.k=='ch')return pre+`<div class="q">${esc(t.q)}</div>`+T.o.map(i=>{const c=T.show?(i==t.a?'ok':i==T.yi?'no':''):'';return `<button class="opt ${c}" data-a="pick" data-i="${i}" ${T.show?'disabled':''}>${esc(t.o[i])}</button>`}).join('');
+const pre=t.c?`<pre class="cli">${cl(esc(t.c))}</pre>`:'';
+if(t.k=='ch')return pre+`<div class="q">${txt(t,t.q)}</div>`+T.o.map(i=>{const c=T.show?(i==t.a?'ok':i==T.yi?'no':''):'';return `<button class="opt ${c}" data-a="pick" data-i="${i}" ${T.show?'disabled':''}>${txt(t,t.o[i])}</button>`}).join('');
+if(t.k=='mc')return pre+`<div class="q">${txt(t,t.q)}</div><div class="mu" style="margin:-6px 0 10px">Здесь несколько верных ответов — отметь все.</div>`+T.o.map(i=>{const sel=T.sel.includes(i);const c=T.show?(t.a.includes(i)?'ok':sel?'no':''):sel?'sel':'';return `<button class="opt ${c}" data-a="tog" data-i="${i}" ${T.show?'disabled':''}>${T.show?'':sel?'☑ ':'☐ '}${txt(t,t.o[i])}</button>`}).join('')+(T.show?'':`<button class="btn" data-a="check" style="margin:4px 0 0" ${T.sel.length?'':'disabled'}>Проверить</button>`);
 if(t.k=='in')return pre+`<div class="mu">Впиши пропущенное</div><div class="q">${esc(t.q).replace('___',`<span class="gap">${T.show?esc(T.y):'&nbsp;'}</span>`)}</div>`+(T.show?'':inp(isNet(cur())?'Ответ':'Слово'));
 if(t.k=='tr')return `<div class="mu">Переведи на английский</div><div class="q">${esc(t.ru)}</div>`+(T.show?'':inp('По-английски'));
 if(t.k=='fx')return `<div class="mu">Найди и исправь ошибку. Большие буквы тоже считаются.</div><div class="q">${esc(t.q)}</div>`+(T.show?'':inp('Исправленное предложение',t.q));
@@ -467,6 +586,7 @@ return `<div class="mu">Собери предложение</div><div class="q">
 (T.show?'':`<div class="sb"><button class="btn g" data-a="rst">Сбросить</button><button class="btn" data-a="check" ${T.pk.length<T.w.length?'disabled':''}>Проверить</button></div>`)}
 
 function feedback(t,l){const right=tA(t),typed=['tr','fx','dc'].includes(t.k);let h=`<div class="fb ${T.ok?'ok':'no'}">`;
+if(t.h){h+=T.ok?'✓ Верно':`✗ Правильно: ${right}`;if(t.e)h+=`<div class="fe">${t.e}</div>`;return h+'</div>'}
 if(T.self)h+=`✓ Засчитано<div class="fe">Вариант из урока: ${esc(right)}</div>`;
 else if(T.ok){h+='✓ Верно';if(t.k=='dc')h+=`<div class="fe">${esc(right)}</div>`;else if(t.k=='tr'&&norm(T.y)!=norm(right))h+=`<div class="fe">Ещё вариант: ${esc(right)}</div>`;
 const cn=!isNet(l)&&(t.k=='tr'||t.k=='dc')?capNote(T.y):'';if(cn)h+=`<div class="fe">Засчитано, но: ${cn}</div>`}
@@ -478,8 +598,8 @@ return h}
 
 function sTasks(l,q){const n=l.tasks.length;
 if(!T.show&&q.ti>=n){const ok=okN(q);
-return `<div class="card"><div class="gh">${ring(pct(ok,n),64,7,'var(--ac)','var(--soft)',15)}<div class="t">${SN(l,'tasks')} пройдены<div class="mu">Верно ${ok} из ${n}${q.pass&&q.sc?` · в первый раз ${q.sc[0]} из ${q.sc[1]}`:''}</div></div></div></div>`+
-(q.done?'':`<button class="btn" data-a="step" data-s="own">Дальше: ${SN(l,'own').toLowerCase()} →</button>`)+`<button class="btn g" data-a="redo">Пройти ${SN(l,'tasks').toLowerCase()} ещё раз</button>`}
+return `<div class="card"><div class="gh">${ring(pct(ok,n),64,7,'var(--ac)','var(--soft)',15)}<div class="t">${l.sd?'Тест пройден':SN(l,'tasks')+' пройдены'}<div class="mu">Верно ${ok} из ${n}${q.pass&&q.sc?` · в первый раз ${q.sc[0]} из ${q.sc[1]}`:''}</div></div></div></div>`+
+(q.done?'':l.sd?nextBtn(l,'tasks'):`<button class="btn" data-a="step" data-s="own">Дальше: ${SN(l,'own').toLowerCase()} →</button>`)+`<button class="btn g" data-a="redo">Пройти ${SN(l,'tasks').toLowerCase()} ещё раз</button>`}
 const k=T.show?T.k:q.ti,t=l.tasks[k];ensureT(l,k,t);
 let h=`<div class="mu" style="margin:0 4px 8px">${isNet(l)?'Вопрос':'Задание'} ${k+1} из ${n}</div><div class="bar"><i style="width:${pct(q.ti,n)}%"></i></div><div class="card">${taskBody(t)}</div>`;
 if(T.show)h+=feedback(t,l)+`<button class="btn" data-a="next">${k+1<n?'Дальше →':'Готово →'}</button>`;
@@ -498,22 +618,24 @@ return h}
 
 function sDone(l,q){const n=l.tasks.length,sc=q.sc||[okN(q),n],s=sOf(l),c=curL(s),net=isNet(l);
 const nw=(l.words||[]).length+(l.terms||[]).length+(l.cards||[]).length;
-let h=`<div class="hero${net?' nt':''}">${wring(pct(sc[0],sc[1]))}<div class="info"><b>Урок пройден</b><p>${SN(l,'tasks')}: ${sc[0]} из ${sc[1]}.${l.lab?` Лаба: ${(q.lab||[]).length} из ${l.lab.steps.length} шагов.`:''}${nw?' Карточек добавлено: '+nw+'.':''}</p></div></div>`;
-if(subj(s).filter(x=>x.w==l.w).every(x=>pr(x.id).done))h+=`<button class="note in" data-a="tab" data-t="stats">🏁 ${net?'Модуль':'Неделя'} ${l.w} пройден${net?'':'а'}. Открой «Прогресс», составь отчёт и пройди проверку с Claude в чате.</button>`;
+let h=`<div class="hero${net?' nt':''}">${wring(pct(sc[0],sc[1]))}<div class="info"><b>${l.sd?'Глава пройдена':'Урок пройден'}</b><p>${SN(l,'tasks')}: ${sc[0]} из ${sc[1]}.${l.lab?` Лаба: ${(q.lab||[]).length} из ${l.lab.steps.length} шагов.`:''}${nw?' Карточек добавлено: '+nw+'.':''}</p></div></div>`;
+if(l.sd)h+=`<button class="note in" data-a="tab" data-t="stats">🏁 Глава ${l.num} пройдена на телефоне. Лабу главы сделай на компьютере в СДСМ, потом пришли Claude отчёт отсюда и из СДСМ.</button>`;
+else if(subj(s).filter(x=>x.w==l.w).every(x=>pr(x.id).done))h+=`<button class="note in" data-a="tab" data-t="stats">🏁 ${net?'Модуль':'Неделя'} ${l.w} пройден${net?'':'а'}. Открой «Прогресс», составь отчёт и пройди проверку с Claude в чате.</button>`;
 if(l.lab&&(q.lab||[]).length<l.lab.steps.length)h+=`<button class="note am" data-a="step" data-s="lab">Лаба не доделана: ${(q.lab||[]).length} из ${l.lab.steps.length}. Вернись к ней, когда будешь за компьютером.</button>`;
 if((q.own||'').trim())h+=`<h2>${net?'Твоё объяснение':'Твои предложения'}</h2><div class="card pre">${esc(q.own.trim())}</div>`;
-if(c)h+=doneToday(s)?`<div class="mu" style="margin:0 4px 12px">Следующий урок ${lnum(c)} — лучше завтра.</div>`:`<button class="btn" data-a="open" data-l="${c.id}">Следующий урок ${lnum(c)} →</button>`;
-return h+`<button class="btn g" data-a="deck" data-d="${s}">Повторить карточки</button><button class="btn g" data-a="close">${net?'К модулям':'Ко всем урокам'}</button>`}
+const nx=l.sd||!net?c:null,wd=l.sd?'Следующая глава':'Следующий урок';
+if(nx)h+=doneToday(s)?`<div class="mu" style="margin:0 4px 12px">${wd} ${lnum(nx)} — лучше завтра.</div>`:`<button class="btn" data-a="open" data-l="${nx.id}">${wd} ${lnum(nx)} →</button>`;
+return h+`<button class="btn g" data-a="deck" data-d="${s}">Повторить карточки</button><button class="btn g" data-a="close">${net?'К главам':'Ко всем урокам'}</button>`}
 
 function vLesson(){
 const l=cur();if(!l){open[tab]=null;return tab=='net'?vNet():vEn()}
 const q=P(l.id),ss=stepsOf(l);if(!ss.includes(q.st)&&q.st!='done')q.st=ss[0];
-let h=`<div class="lh"><button class="back" data-a="close">‹ ${isNet(l)?'Сети':'Все уроки'}</button><button class="qb" data-a="ask">❓ Непонятно</button></div><div class="top"><small>${isNet(l)?'Модуль '+l.w+' · урок '+l.n:'Урок '+lnum(l)} · ${esc(l.g)}</small><h1 class="h1s">${esc(l.t)}</h1></div>`;
+let h=`<div class="lh"><button class="back" data-a="close">‹ ${isNet(l)?'Сети':'Все уроки'}</button><button class="qb" data-a="ask">❓ Непонятно</button></div><div class="top"><small>${l.sd?'Глава '+l.num+' · '+esc(partT(l.part)):isNet(l)?'Модуль '+l.w+' · урок '+l.n+' · '+esc(l.g):'Урок '+lnum(l)+' · '+esc(l.g)}</small><h1 class="h1s">${esc(l.t)}</h1></div>`;
 h+=`<div class="seg">${ss.map(s=>`<button class="${s==q.st?'on':''}" data-a="step" data-s="${s}">${SN(l,s)}${s=='tasks'&&q.ti>=l.tasks.length?' ✓':''}</button>`).join('')}</div>`;
-return h+{rule:sRule,text:sText,theory:sTheory,lab:sLab,tasks:sTasks,own:sOwn,done:sDone}[q.st](l,q)}
+return h+{rule:sRule,text:sText,theory:sTheory,lab:sLab,book:sBook,brk:sBrk,und:sUnd,tasks:sTasks,own:sOwn,done:sDone}[q.st](l,q)}
 
 function goStep(l,s){const q=P(l.id);q.st=s;T={};TR=new Set();hush();
-if(s=='text')addWords(l);if(s=='theory'){addWords(l);act().th=1}}
+if(s=='text')addWords(l);if(s=='theory'||s=='book'){addWords(l);act().th=1}}
 
 // ---------- карточки ----------
 function vCards(){
@@ -527,14 +649,14 @@ if(d)h+='<button class="btn" data-a="startc">Начать повторение</
 h+=deck=='en'?'<div class="card mu">«Помню» — слово вернётся через несколько дней, и каждый раз всё позже. «Трудно» — вернётся скоро. «Не помню» — ещё раз сейчас и снова завтра. Когда слово начинает узнаваться, карточка переворачивается: видишь русское, вспоминаешь английское.</div>':
 '<div class="card mu">Прочитай вопрос и ответь вслух или в уме своими словами. Потом открой ответ и честно сравни. «Помню» — только если ответил по сути верно.</div>';
 const H=hardW(deck);
-if(H.length)h+=`<h2>Трудные</h2><div class="card">${H.map(k=>deck=='en'?row(k,S.cards[k].ru+' · ошибок: '+S.cards[k].x):`<div class="sn"><div class="en" style="font-size:15px">${esc(S.cards[k].q)}<span class="tr">ошибок: ${S.cards[k].x}</span></div></div>`).join('')}</div>`;
+if(H.length)h+=`<h2>Трудные</h2><div class="card">${H.map(k=>deck=='en'?row(k,S.cards[k].ru+' · ошибок: '+S.cards[k].x):`<div class="sn"><div class="en" style="font-size:15px">${S.cards[k].h?S.cards[k].q:esc(S.cards[k].q)}<span class="tr">ошибок: ${S.cards[k].x}</span></div></div>`).join('')}</div>`;
 return h}
 
 function vSession(){
 if(cs.i>=cs.q.length)return `<div class="hero${cs.d=='net'?' nt':''}"><div class="info"><b>Готово!</b><p>Повторено карточек: ${cs.done}. Завтра будут новые повторения.</p></div></div><button class="btn" data-a="cend">Закончить</button>`;
 const key=cs.q[cs.i],c=S.cards[key];
 let h=`<div class="lh"><button class="back" data-a="cend">‹ Карточки</button><span class="mu">${cs.i+1} из ${cs.q.length}</span></div><div class="bar"><i style="width:${pct(cs.i,cs.q.length)}%"></i></div>`;
-if(c.d)h+=`<div class="card fc"><div class="mu">Вспомни ответ</div><div class="w s">${esc(c.q)}</div>${cs.flip?`<div class="a s">${esc(c.a)}</div>`:''}</div>`;
+if(c.d){const f=x=>c.h?x:esc(x);h+=`<div class="card fc"><div class="mu">Вспомни ответ</div><div class="w s">${f(c.q)}</div>${cs.flip?`<div class="a s">${f(c.a)}</div>`:''}</div>`}
 else{const rev=c.b>=2;
 h+=`<div class="card fc"><div class="mu">${rev?'Вспомни по-английски':'Вспомни перевод'}</div><div class="w">${esc(rev?c.ru:key)}</div>${rev?'':sayB(key)}`;
 if(cs.flip)h+=`<div class="a">${esc(rev?key:c.ru)}</div>${rev?sayB(key):''}`;
@@ -558,21 +680,23 @@ h+='<button class="btn" data-a="rep">Составить отчёт для Claude
 h+=`<h2>Английский</h2><div class="hero wrap">${wring(pct(ok,tot))}<div class="info"><b>Точность заданий</b><p>По первой попытке в пройденных уроках.</p></div>`+
 `<div class="stats"><div><small>Уроков</small><b>${EN.filter(l=>pr(l.id).done).length}</b></div><div><small>Слов знаю</small><b>${C.kn}</b></div><div><small>Слов всего</small><b>${C.all}</b></div></div></div>`;
 h+='<div class="card"><b>Когда переходить дальше</b>'+[[C.kn>=200,`Около 200 слов «знаю» — сейчас ${C.kn}`],[0,'Проверка с Claude на 80% и выше две недели подряд'],[0,'8–10 предложений о себе без переводчика'],[0,'Незнакомый текст A2 понятен примерно на 70%']].map(x=>`<div class="st ${x[0]?'d':''}"><b>${x[0]?'✓':''}</b><span>${x[1]}</span></div>`).join('')+'<div class="hint">Последние три пункта проверяет Claude в чате.</div></div>';
-h+=`<h2>Сети</h2><div class="card"><div class="kp"><div><small>Уроков</small><b>${NL.filter(l=>pr(l.id).done).length}</b></div><div><small>Вопросы</small><b>${ntot?pct(nok,ntot)+'%':'—'}</b></div><div><small>Подсети</small><b>${S.sub.n?pct(S.sub.ok,S.sub.n)+'%':'—'}</b></div></div></div>`;
+h+=`<h2>Сети</h2><div class="card"><div class="kp"><div><small>Глав</small><b>${SD.filter(l=>pr(l.id).done).length}</b></div><div><small>Тесты</small><b>${ntot?pct(nok,ntot)+'%':'—'}</b></div><div><small>Подсети</small><b>${S.sub.n?pct(S.sub.ok,S.sub.n)+'%':'—'}</b></div></div></div>`;
 h+=`<div class="card"><b>Уровни по темам</b><div class="mu" style="margin:2px 0 8px">Оценка Claude от ${ND.levelsDate?fmtD(ND.levelsDate):'—'}. Растёт только после перепроверки — за показанное понимание.</div>`+LV.map(x=>`<div class="lvr"><span>${esc(x.t)}</span><div class="lvb"><i style="width:${(x.v||0)*10}%"></i></div><b>${x.v==null?'—':x.v+'/10'}</b></div>`).join('')+'</div>';
 const Q=S.q.map((x,i)=>[x,i]).reverse();
 h+='<h2>Непонятно</h2>'+(Q.length?'<div class="card">'+Q.map(([x,i])=>`<div class="li"><div class="ico ${x.ok?'dn':''}">${x.ok?'✓':'?'}</div><div class="ht"><b>${esc(x.t)}</b><small>${esc(x.c)} · ${fmtS(x.d)}${x.ok?' · разобрано':''}</small></div><button class="ib" data-a="qok" data-i="${i}" aria-label="Разобрано">✓</button><button class="ib" data-a="qdel" data-i="${i}" aria-label="Удалить">✕</button></div>`).join('')+'</div>':'<div class="card mu">Пока пусто. В каждом уроке есть кнопка «❓ Непонятно».</div>');
 return h}
 
-function repPart(s){const C=cstats(s),net=s=='net';let r='Уроки:\n',any=0;
-subj(s).forEach(l=>{const q=pr(l.id);if(!q.st&&!q.done)return;any=1;const sc=q.sc;
-r+=`- ${lnum(l)} ${l.t}: ${q.done?'пройден '+fmtS(q.done):'в процессе'}${sc?`, ${net?'вопросы':'задания'} ${sc[0]}/${sc[1]} (${pct(sc[0],sc[1])}%)`:''}${l.lab?`, лаба ${(q.lab||[]).length}/${l.lab.steps.length}`:''}\n`});
+function repPart(s){const C=cstats(s),net=s=='net';let r=net?'Главы СДСМ на телефоне:\n':'Уроки:\n',any=0;
+subjAll(s).forEach(l=>{const q=pr(l.id);if(!q.st&&!q.done)return;any=1;const sc=q.sc;
+r+=`- ${lnum(l)} ${l.t}: ${q.done?'пройден'+(l.sd?'а ':' ')+fmtS(q.done):'в процессе'}${sc?`, ${l.sd?'тест':net?'вопросы':'задания'} ${sc[0]}/${sc[1]} (${pct(sc[0],sc[1])}%)`:''}${l.lab?`, лаба ${(q.lab||[]).length}/${l.lab.steps.length}`:''}${l.und?`, «Объясни» ${Object.values(q.und||{}).filter(x=>x.trim()).length}/${l.und.length}`:''}\n`});
 if(!any)r+='- пока не начинал\n';
 r+=`Карточки: всего ${C.all}, знаю ${C.kn}, учу ${C.lr}, новые ${C.nw}. На сегодня осталось: ${dueList(s).length}.\n`;
-const H=hardW(s);if(H.length)r+='Трудные: '+H.map(k=>`${net?S.cards[k].q:k} (${S.cards[k].x})`).join('; ')+'\n';
+const H=hardW(s);if(H.length)r+='Трудные: '+H.map(k=>`${net?strip(S.cards[k].q):k} (${S.cards[k].x})`).join('; ')+'\n';
 const E=S.err.filter(e=>{const l=les(e.l);return l&&sOf(l)==s&&diff(e.d,today())<=10}).slice(-25);
-if(E.length){r+='Ошибки:\n';E.forEach(e=>{r+=`- [${lnum(les(e.l))}] ${e.q} → мой ответ: «${e.y}», в уроке: «${e.a}»${e.s?' (засчитал сам, проверь)':''}\n`})}
-const O=subj(s).filter(l=>{const q=pr(l.id);return (q.own||'').trim()&&q.ownD&&diff(q.ownD,today())<=10});
+if(E.length){r+='Ошибки:\n';E.forEach(e=>{r+=`- [${lnum(les(e.l))}] ${strip(e.q)} → мой ответ: «${strip(e.y)}», верно: «${strip(e.a)}»${e.s?' (засчитал сам, проверь)':''}\n`})}
+const UN=subjAll(s).filter(l=>l.und&&pr(l.id).ownD&&diff(pr(l.id).ownD,today())<=10&&Object.values(pr(l.id).und||{}).some(x=>x.trim()));
+UN.forEach(l=>{const q=pr(l.id);r+=`«Объясни» ${lnum(l)} (оцени понимание):\n`;l.und.forEach((u,i)=>{const a=((q.und||{})[i]||'').trim();if(a)r+=`${i+1}) ${strip(u.q)}\n${a}\n`})});
+const O=subjAll(s).filter(l=>{const q=pr(l.id);return (q.own||'').trim()&&q.ownD&&diff(q.ownD,today())<=10});
 if(O.length){r+=net?'Мои объяснения (оцени понимание):\n':'Мои предложения (исправь ошибки):\n';O.forEach(l=>{const q=pr(l.id);r+=`[${lnum(l)}${q.done?'':', черновик'}]\n${q.own.trim()}\n`})}
 return r}
 function report(){
@@ -651,7 +775,10 @@ case 'dch':T.hint=true;render();return;
 case 'self':{const t=l.tasks[T.k];q.r[T.k]=2;T.ok=T.self=true;const er=S.err[S.err.length-1];if(er&&er.l==l.id&&er.q==tQ(t))er.s=1;if(!q.pass&&q.sc)q.sc[0]=okN(q);break}
 case 'next':{T={};render();top0();const x=$('ans');if(x)x.focus();playDc();return}
 case 'redo':q.ti=0;q.r=[];q.pass=(q.pass||0)+1;T={};break;
-case 'finish':if(!(q.own||'').trim()&&!confirm(isNet(l)?'Закончить урок без объяснения? По нему Claude видит, что тема понятна.':'Закончить урок без своих предложений? Это самая полезная часть.'))return;
+case 'tog':{if(T.show)return;const i=+D.i,j=T.sel.indexOf(i);if(j<0)T.sel.push(i);else T.sel.splice(j,1);render();return}
+case 'goto':{const el=$('bp'+D.i);if(el)el.scrollIntoView({behavior:'smooth'});return}
+case 'finish':if(l.sd){const n=Object.values(q.und||{}).filter(x=>x.trim().length>=20).length;if(n<l.und.length&&!confirm(`Ответов «Объясни»: ${n} из ${l.und.length}. Закончить главу так? По этим ответам Claude видит, что тема понятна.`))return}
+else if(!(q.own||'').trim()&&!confirm(isNet(l)?'Закончить урок без объяснения? По нему Claude видит, что тема понятна.':'Закончить урок без своих предложений? Это самая полезная часть.'))return;
 q.done=today();q.st='done';T={};save();render();top0();return;
 case 'ask':{const t=q.st=='tasks'&&l.tasks[T.show?T.k:q.ti];
 const ctx=`${lnum(l)}, ${SN(l,q.st)||'урок'}`+(t?` №${(T.show?T.k:q.ti)+1}: ${tQ(t)}`:'');
@@ -686,7 +813,9 @@ case 'ssave':if(!(sheetSave&&sheetSave()))return;closeSheet();break;
 default:return}
 save();render()});
 
-document.addEventListener('input',e=>{if(e.target.id=='own'){const l=cur();if(!l)return;const q=P(l.id);q.own=e.target.value;q.ownD=today();
+document.addEventListener('input',e=>{if(e.target.dataset&&e.target.dataset.und!=null){const l=cur();if(!l)return;const q=P(l.id);q.und=q.und||{};q.und[e.target.dataset.und]=e.target.value;q.ownD=today();
+if(e.target.value.trim().length>=20)act().no=1;save();const c=$('undc');if(c)c.textContent=l.und.filter((u,i)=>(q.und[i]||'').trim().length>=20).length;return}
+if(e.target.id=='own'){const l=cur();if(!l)return;const q=P(l.id);q.own=e.target.value;q.ownD=today();
 if(q.own.trim().length>=15)act()[isNet(l)?'no':'o']=1;save();const hn=$('hints');if(hn)hn.innerHTML=hintsHtml(q.own)}});
 document.addEventListener('keydown',e=>{if(e.key!='Enter')return;const id=e.target.id||'';
 if(id=='ans'){e.preventDefault();doCheck()}
