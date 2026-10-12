@@ -10,6 +10,7 @@
 //   drop: ключ => {},            // чужое удаление
 //   commit: () => {},            // после пачки put/drop: сохранить и перерисовать
 //   pristine: () => bool,        // на устройстве ещё нет своего прогресса
+//   trivial: ключ => bool,       // строки-настройки (дата начала и т.п.): не прогресс, при первом входе побеждает это устройство
 //   busy: () => bool,            // сейчас данные трогать нельзя (идёт ввод), повторим позже
 //   status: (st, msg) => {}      // '', 'out', 'sync', 'ok', 'net', 'err'
 // });
@@ -46,6 +47,7 @@ function CloudSync(o) {
   const waiting = () => M ? Object.values(M.r).filter(m => m[2] & 2).length : 0;
   const q = s => '"' + String(s).replace(/["\\]/g, '\\$&') + '"';
   const SEL = 'app_rows?select=id,data,deleted,updated_at,synced_at&app=eq.' + encodeURIComponent(o.app);
+  const trivial = k => !!(o.trivial && o.trivial(k));
 
   // что поменялось с прошлой проверки: новые и изменённые строки ждут отправки, исчезнувшие помечаются удалёнными
   function scan() {
@@ -61,7 +63,7 @@ function CloudSync(o) {
     if (M && M.uid == uid) return;
     M = { uid, cur: null, r: {} };
     if (o.pristine()) M.fresh = 1;
-    else { M.first = 1; const R = o.rows(); for (const k in R) M.r[k] = [syncHash(R[k]), SEED, 2]; }
+    else { M.first = 1; const R = o.rows(), t = Date.now(); for (const k in R) M.r[k] = [syncHash(R[k]), trivial(k) ? t : SEED, 2]; }
     saveM();
   }
 
@@ -123,12 +125,16 @@ function CloudSync(o) {
     if (running) { again = true; return; }
     const u = user();
     if (u) bind(u.id);
+    // чистое устройство так и не дождалось данных из облака, а свой прогресс уже появился: дальше как обычное слияние
+    if (M && M.fresh && !o.pristine()) { delete M.fresh; M.first = 1; saveM(); }
     scan();
     if (!u) return set(on() ? 'out' : '');
     if (!navigator.onLine) return set('net');
     running = true; set('sync');
     try {
       const rows = await pull();
+      // чистое устройство и пустое облако: отправлять нечего, ждём данные с другого устройства
+      if (M.fresh && !rows.length) { at = Date.now(); set('ok'); return; }
       if (o.busy()) {
         // идёт ввод или тест: чужие правки внесём позже (курсор не двигаем), свои отправим сейчас.
         // Первый вход ждёт целиком: сначала нужно спросить, чьи данные главнее.
@@ -136,10 +142,10 @@ function CloudSync(o) {
         if (M.first || M.fresh) return;
       } else {
         scan();
-        if (M.first && rows.some(r => !r.deleted)) {
-          if (!confirm('В облаке уже есть прогресс с другого устройства.\n\nОК — где записи совпали, оставить облачные.\nОтмена — где совпали, оставить данные этого устройства.\n\nВсё, что есть только здесь, добавится в облако в любом случае.')) {
-            const t = Date.now(); for (const k in M.r) if (M.r[k][2] & 2) M.r[k][1] = t;
-          }
+        // спрашиваем, только если в облаке есть настоящий прогресс, а не одни настройки
+        if (M.first && rows.some(r => !r.deleted && !trivial(r.id))) {
+          const t = confirm('В облаке уже есть прогресс с другого устройства.\n\nОК — где записи совпали, оставить облачные.\nОтмена — где совпали, оставить данные этого устройства.\n\nВсё, что есть только здесь, добавится в облако в любом случае.') ? SEED : Date.now();
+          for (const k in M.r) if (M.r[k][2] & 2 && !trivial(k)) M.r[k][1] = t;
         }
         delete M.first;
         if (apply(rows)) scan();

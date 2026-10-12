@@ -347,12 +347,14 @@ for(const dv in S.actX)for(const d in S.actX[dv])R['a:'+d+':'+dv]=S.actX[dv][d];
 if(S.sub.n)R['s:'+DEV]=S.sub;for(const dv in S.subX)R['s:'+dv]=S.subX[dv];
 return R}
 const listPut=(a,v)=>{const i=a.findIndex(z=>z.id==v.id);if(i>=0)a[i]=v;else{a.push(v);a.sort((p,q)=>p.id<q.id?-1:1)}};
-function rowPut(k,v){const t=k.slice(0,k.indexOf(':')),x=k.slice(t.length+1);
+// ключ строки → тип и остаток ('cfg' — без двоеточия)
+const rowKey=k=>{const i=k.indexOf(':');return i<0?[k,'']:[k.slice(0,i),k.slice(i+1)]};
+function rowPut(k,v){const [t,x]=rowKey(k);
 if(t=='cfg')S.start=v.start||S.start;else if(t=='L')S.L[x]=v;else if(t=='c')S.cards[x]=v;
 else if(t=='q')listPut(S.q,v);else if(t=='e')listPut(S.err,v);
 else if(t=='a'){const d=x.slice(0,10),dv=x.slice(11);if(dv==DEV)S.act[d]=v;else(S.actX[dv]=S.actX[dv]||{})[d]=v}
 else if(t=='s'){if(x==DEV)S.sub=v;else S.subX[x]=v}}
-function rowDrop(k){const t=k.slice(0,k.indexOf(':')),x=k.slice(t.length+1);
+function rowDrop(k){const [t,x]=rowKey(k);
 if(t=='L')delete S.L[x];else if(t=='c')delete S.cards[x];
 else if(t=='q')S.q=S.q.filter(z=>z.id!=x);else if(t=='e')S.err=S.err.filter(z=>z.id!=x);
 else if(t=='a'){const d=x.slice(0,10),dv=x.slice(11);if(dv==DEV)delete S.act[d];else if(S.actX[dv])delete S.actX[dv][d]}
@@ -362,6 +364,7 @@ const SY=typeof CloudSync=='function'?CloudSync({
 app:'english',meta:'eng_sync',rows:rowsOf,put:rowPut,drop:rowDrop,
 commit:()=>{store();render()},
 pristine:()=>!Object.keys(S.L).some(k=>!k.startsWith('sd_'))&&!Object.keys(S.cards).some(k=>!k.startsWith('n:sd_')),
+trivial:k=>k=='cfg',
 busy:()=>$('sh').classList.contains('open')||!!cur()||!!cs||!!tz||typing(),
 status:()=>syncUI()}):null;
 // [коротко для заголовка, полностью для раздела в «Ещё»]
