@@ -135,7 +135,10 @@ function rowsOf(s) {
   return R;
 }
 // ключ строки → [тип, глава, остаток]
-function rowKey(k) { const a = k.indexOf(':'), b = k.indexOf(':', a + 1); return [k.slice(0, a), b < 0 ? k.slice(a + 1) : k.slice(a + 1, b), b < 0 ? '' : k.slice(b + 1)]; }
+function rowKey(k) {
+  const a = k.indexOf(':'); if (a < 0) return [k, '', ''];   // 'set' — без двоеточия
+  const b = k.indexOf(':', a + 1); return [k.slice(0, a), b < 0 ? k.slice(a + 1) : k.slice(a + 1, b), b < 0 ? '' : k.slice(b + 1)];
+}
 function rowPut(k, v) {
   const [t, x, y] = rowKey(k);
   if (t === 'set') { S.settings.imgs = Object.assign({ ...DEF_IMGS }, v.imgs || {}); S.settings.newPerDay = v.newPerDay || 20; }
@@ -169,6 +172,7 @@ const SY = WEB ? CloudSync({
   rows: () => rowsOf(S), put: rowPut, drop: rowDrop,
   commit: () => { save(true); const m = $('#main'), y = m.scrollTop; route(); m.scrollTop = y; },
   pristine: () => progressScore(S) <= 0,
+  trivial: k => k === 'set',
   busy: inputBusy,
   status: () => syncUI()
 }) : null;
