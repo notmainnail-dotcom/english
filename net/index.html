@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f1419">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<!-- на сайте курс — часть приложения английского: тот же значок и установка -->
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<title>СДСМ — курс сетевого инженера</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+  <aside id="side">
+    <div class="brand" onclick="go('#/')">
+      <div class="logo">
+        <svg viewBox="0 0 40 40" width="34" height="34"><circle cx="20" cy="20" r="18" fill="var(--acc)"/><path d="M10 20h20M20 10v20M13 13l14 14M27 13L13 27" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/><circle cx="20" cy="20" r="5" fill="#fff"/></svg>
+      </div>
+      <div><b>СДСМ</b><small>путь инженера провайдера</small></div>
+    </div>
+    <div class="sidesync" data-sync></div>
+    <nav id="mainnav"></nav>
+    <div id="chapnav"></div>
+  </aside>
+  <main id="main">
+    <header id="topbar"><button id="menubtn" aria-label="Меню">☰</button><b onclick="go('#/')">СДСМ</b><span class="sp"></span><span data-sync></span></header>
+    <div id="view"></div>
+  </main>
+</div>
+<div id="scrim"></div>
+<div id="toast"></div>
+<script src="../cloud.js"></script>
+<script src="../sync.js"></script>
+<script src="data/course.js"></script>
+<script src="data/ch01.js"></script>
+<script src="data/ch02.js"></script>
+<script src="data/ch03.js"></script>
+<script src="data/ch04.js"></script>
+<script src="data/ch05.js"></script>
+<script src="data/ch06.js"></script>
+<script src="data/ch07.js"></script>
+<script src="data/ch08.js"></script>
+<script src="data/ch08b.js"></script>
+<script src="data/ch09.js"></script>
+<script src="data/ch10.js"></script>
+<script src="data/ch11.js"></script>
+<script src="data/ch11b.js"></script>
+<script src="data/ch12.js"></script>
+<script src="data/ch12b.js"></script>
+<script src="data/ch12c.js"></script>
+<script src="data/ch13.js"></script>
+<script src="data/ch14.js"></script>
+<script src="data/ch15.js"></script>
+<script src="data/x1.js"></script>
+<script src="data/x2.js"></script>
+<script src="data/x3.js"></script>
+<script src="book/ch02.js"></script>
+<script src="book/ch03.js"></script>
+<script src="book/ch04.js"></script>
+<script src="book/ch05.js"></script>
+<script src="guide.js"></script>
+<script src="eve.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

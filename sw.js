@@ -1,8 +1,11 @@
 // Офлайн-режим: сначала сеть (чтобы обновления и новые уроки приходили сразу), без сети — сохранённая копия.
 // Кэш со своим префиксом: трекер живёт на том же домене github.io, чужие кэши не трогаем.
-const C = 'eng-v3';
-const FILES = ['./', './index.html', './lessons.js', './nets.js', './manifest.webmanifest', './icon-180.png', './icon-192.png', './icon-512.png',
-  './sdsm/course.js', './sdsm/ch01.js', './sdsm/ch02.js', './sdsm/ch03.js', './sdsm/ch04.js', './sdsm/ch05.js', './book/ch01.js', './book/ch02.js'];
+// Курс СДСМ (папка net/) — часть этого приложения, поэтому его файлы тоже здесь.
+const C = 'eng-v4';
+const CH = ['ch01', 'ch02', 'ch03', 'ch04', 'ch05', 'ch06', 'ch07', 'ch08', 'ch08b', 'ch09', 'ch10', 'ch11', 'ch11b', 'ch12', 'ch12b', 'ch12c', 'ch13', 'ch14', 'ch15', 'x1', 'x2', 'x3'];
+const FILES = ['./', './index.html', './lessons.js', './nets.js', './cloud.js', './sync.js', './manifest.webmanifest', './icon-180.png', './icon-192.png', './icon-512.png',
+  './net/', './net/index.html', './net/style.css', './net/app.js', './net/eve.js', './net/guide.js', './net/data/course.js']
+  .concat(CH.map(c => './net/data/' + c + '.js'), ['ch02', 'ch03', 'ch04', 'ch05'].map(c => './net/book/' + c + '.js'));
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(C).then(c => c.addAll(FILES)));
@@ -16,6 +19,7 @@ self.addEventListener('activate', e => {
 
 self.addEventListener('fetch', e => {
   const q = e.request;
+  // только свои файлы: запросы к Supabase (данные, токены) не кэшируем
   if (q.method !== 'GET' || !q.url.startsWith(self.registration.scope)) return;
   // no-cache: браузер сверяется с сервером, а не берёт старые файлы уроков из своего кэша
   e.respondWith(
