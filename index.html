@@ -505,6 +505,8 @@ mrow(C.all&&!due,due?`Повторить карточки: ${due}`:C.all?'Кар
 (xl?mrow(A.h,`Послушать текст урока ${lnum(xl)}`,`data-a="open" data-l="${xl.id}" data-s="text"`):'')+
 (ol?mrow(A.o,'Написать 2 своих предложения',`data-a="open" data-l="${ol.id}" data-s="own"`):'')+
 '<div class="hint">Есть силы — пройди урок целиком. Это норма, около 45 минут.</div></div>';
+// игра «Печать»: не урок, просто отдых — простые диалоги о жизни и слепая печать
+h+='<h2>Игра · для отдыха</h2><div class="card"><a class="li lr" href="type.html" style="text-decoration:none;color:inherit"><div class="ico">⌨</div><div class="ht"><b>Печать: диалоги о жизни</b><small>Без таймера и штрафов. Простые диалоги и частые слова с переводом. Удобнее с клавиатурой компьютера.</small></div><span class="mu">›</span></a></div>';
 WK.forEach(W=>{const ls=EN.filter(l=>l.w==W.w);h+=`<h2>Неделя ${W.w} · ${esc(W.t)}</h2>`;
 h+=ls.length?'<div class="card">'+ls.map(lessonRow).join('')+'</div>':`<div class="card mu">${esc(W.g)}. Уроки появятся после проверки с Claude.</div>`});
 return h+'<div class="mu" style="padding:4px 4px 0">💡 Застрял: 5 минут разбираешься, потом жмёшь «❓ Непонятно» и идёшь дальше. Телефон с лентой — в другой комнате.</div>'}
