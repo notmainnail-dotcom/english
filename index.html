@@ -199,6 +199,7 @@ details.dp[open] summary{margin-bottom:12px}
 .lvb{flex:1;height:8px;border-radius:9px;background:var(--soft);overflow:hidden}
 .lvb i{display:block;height:100%;border-radius:9px;background:var(--ac)}
 .lvr b{width:42px;text-align:right;font-size:13px;flex:none}
+.lvr.big{padding:4px 0 12px}.lvr.big span{font-weight:800}.lvr.big .lvb{height:12px}.lvr.big b{font-size:15px}
 .hn div{font-size:13px;color:var(--amt);background:rgba(245,158,11,.13);border-radius:10px;padding:7px 10px;margin:8px 0 0}
 .sn{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-top:1px solid var(--bd)}
 .sn:first-child{border-top:0;padding-top:0}
@@ -263,7 +264,7 @@ nav button.on{color:var(--ac);background:var(--at)}
 <script src="cloud.js"></script>
 <script src="sync.js"></script>
 <script>
-const K='eng_v1',APP_V='3.0';
+const K='eng_v1',APP_V='3.1';
 const KNOW=3,BOX=[0,1,2,4,7,14,30]; // «знаю» = коробка 3+; интервалы повторения в днях по коробкам
 const EN=window.LESSONS||[],WK=window.WEEKS||[],ND=window.NET||{modules:[],lessons:[],levels:[]};
 const NL=ND.lessons||[];NL.forEach(l=>{l.s='net'});
@@ -422,7 +423,7 @@ answer(l,q,q.ti,t,y,ok);save();render()}
 // ---------- подсказки при письме: его типичные ошибки ----------
 const VERBS='work|start|finish|check|watch|like|want|go|have|get|live|drink|make|fix|play|read|write|need|know|say|use|help|study|open|call|end|love|eat|sleep|run|walk';
 // слова, которые он писал с ошибкой (по отчётам)
-const SPELL={becouse:'because',bocouse:'because',becuse:'because',becaus:'because',nigth:'night',usualy:'usually',ussualy:'usually',usally:'usually',coffe:'coffee',quet:'quiet',collegs:'colleagues',collegues:'colleagues',wundefrul:'wonderful',wonderfull:'wonderful',nessesery:'necessary',neccesary:'necessary',necesary:'necessary',swith:'switch',swithes:'switches',adress:'address',neigbor:'neighbor',neigbors:'neighbors',metwork:'network',engeneer:'engineer',beatiful:'beautiful',beautifull:'beautiful',dosent:'doesn’t',freind:'friend',wich:'which'};
+const SPELL={becouse:'because',bocouse:'because',becuse:'because',becaus:'because',nigth:'night',ussually:'usually',cofee:'coffee',coffe:'coffee',mondey:'Monday',buildin:'building',officce:'office',ritchen:'kitchen',usualy:'usually',ussualy:'usually',usally:'usually',coffe:'coffee',quet:'quiet',collegs:'colleagues',collegues:'colleagues',wundefrul:'wonderful',wonderfull:'wonderful',nessesery:'necessary',neccesary:'necessary',necesary:'necessary',swith:'switch',swithes:'switches',adress:'address',neigbor:'neighbor',neigbors:'neighbors',metwork:'network',engeneer:'engineer',beatiful:'beautiful',beautifull:'beautiful',dosent:'doesn’t',freind:'friend',wich:'which'};
 const spellOf=s=>[...new Set((s.toLowerCase().match(/[a-z]+/g)||[]).filter(w=>SPELL[w]))];
 const HINTS=[
 [s=>/(^|[\s(“"])i(?=[\s'’,.!?]|$)/.test(s),'Пиши «I» с большой буквы — всегда, даже в середине предложения.'],
@@ -434,6 +435,11 @@ const HINTS=[
 [s=>/\bhow\s+(find|fix|solve|do|make|check|get|use|learn|write|say)\b/i.test(s),'Как сделать — how to + глагол: how to find.'],
 [s=>/\b(i am|i'm|i’m)\s+(very\s+|so\s+)?boring\b/i.test(s),'«I am boring» — «я скучный». «Мне скучно» — I am bored.'],
 [s=>/\bwanna\b/i.test(s),'В письме лучше want to.'],
+[s=>/\b(two|three|four|five|six|many|some)\s+(desk|monitor|wall|room|chair|switch|port|book|building|tree|day|window|friend|bike)\b/i.test(s),'После two, three, many — множественное число: two desks, many trees.'],
+[s=>/\bi'?ll\s+can\b|\bwill\s+can\b/i.test(s),'will и can вместе не ставят: «смогу» — I can или I will be able to.'],
+[s=>/\bi'am\b/i.test(s),'Или I am, или I\'m — но не I\'am.'],
+[s=>/\benglish\b/.test(s),'Названия языков пишутся с большой буквы: English, Russian.'],
+[s=>/\bshould\s+\w+s\b/i.test(s)&&!/\bshould\s+(always|also|this|its|is|was|has|does|goes)\b/i.test(s),'После should глагол без -s: you should write.'],
 [s=>/\bat\s+(my\s+)?days?\s+off\b/i.test(s),'Дни — с on: on my days off.'],
 [s=>/\bon\s+\d{1,2}(?!\s*(st|nd|rd|th|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec))\b/i.test(s),'Время по часам — at: at 7. Срок — for: for 3 years.'],
 [s=>/\bon\s+(the\s+)?chat\b/i.test(s),'В чате — in the chat.'],
@@ -709,6 +715,12 @@ let h=head('С '+fmtD(S.start)+' · дней с занятиями за неде
 h+='<button class="btn" data-a="rep">Составить отчёт для Claude</button><textarea class="in mono" id="io" rows="5" placeholder="Здесь появится отчёт по английскому и сетям. Он сразу копируется: вставь его в чат с Claude."></textarea>';
 h+=`<h2>Английский</h2><div class="hero wrap">${wring(pct(ok,tot))}<div class="info"><b>Точность заданий</b><p>По первой попытке в пройденных уроках.</p></div>`+
 `<div class="stats"><div><small>Уроков</small><b>${EN.filter(l=>pr(l.id).done).length}</b></div><div><small>Слов знаю</small><b>${C.kn}</b></div><div><small>Слов всего</small><b>${C.all}</b></div></div></div>`;
+// оценка уровня от Claude (window.EN_LEVEL в lessons.js) — меняется только после проверки по отчёту
+const EL=window.EN_LEVEL;
+if(EL)h+=`<div class="card"><b>Путь к ${esc(EL.target)} · оценка Claude</b><div class="mu" style="margin:2px 0 10px">от ${fmtD(EL.date)}. Меняется после каждой проверки — по тому, что видно в заданиях и твоих текстах, а не по числу пройденных уроков.</div>`+
+`<div class="lvr big"><span>Всего до ${esc(EL.target)}</span><div class="lvb"><i style="width:${EL.total}%"></i></div><b>${EL.total}%</b></div>`+
+EL.skills.map(x=>`<div class="lvr"><span>${esc(x.t)}</span><div class="lvb"><i style="width:${x.v||0}%"></i></div><b>${x.v==null?'—':x.v+'%'}</b></div>${x.n?`<div class="hint" style="margin:-2px 0 6px">${esc(x.n)}</div>`:''}`).join('')+
+(EL.note?`<div class="note in" style="margin:10px 0 0">${esc(EL.note)}</div>`:'')+'</div>';
 h+='<div class="card"><b>Когда переходить дальше</b>'+[[C.kn>=200,`Около 200 слов «знаю» — сейчас ${C.kn}`],[0,'Проверка с Claude на 80% и выше две недели подряд'],[0,'8–10 предложений о себе без переводчика'],[0,'Незнакомый текст A2 понятен примерно на 70%']].map(x=>`<div class="st ${x[0]?'d':''}"><b>${x[0]?'✓':''}</b><span>${x[1]}</span></div>`).join('')+'<div class="hint">Последние три пункта проверяет Claude в чате.</div></div>';
 const SB=subOf(),G=sdsm();
 h+=`<h2>Сети</h2><div class="card"><div class="kp"><div><small>Курс сегодня</small><b>${G.min} мин</b></div><div><small>Уроки L2</small><b>${ntot?pct(nok,ntot)+'%':'—'}</b></div><div><small>Подсети</small><b>${SB.n?pct(SB.ok,SB.n)+'%':'—'}</b></div></div><div class="hint">Главы, тесты и лабы курса — в самом курсе, там же «Отчёт наставнику».</div></div>`;

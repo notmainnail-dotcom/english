@@ -2,14 +2,28 @@
 // id урока не менять: по нему хранится прогресс.
 // Типы заданий: ch — выбор, in — вставить слово, or — собрать предложение, tr — перевод,
 // fx — исправить ошибку (проверка с учётом больших букв), dc — диктант: послушать и написать.
-window.LESSONS_DATE = '2026-10-07';
+window.LESSONS_DATE = '2026-10-15';
+
+// Оценка уровня от Claude — показывается во вкладке «Прогресс». Меняет только Claude после проверки по отчёту:
+// по показанному в заданиях и текстах, не по числу пройденных уроков. v — процент пути до A2, null — ещё не проверялось.
+window.EN_LEVEL = {
+date: '2026-10-15', target: 'A2', total: 44,
+skills: [
+{t:'Чтение', v:60, n:'Тексты A1 понимаешь почти целиком. Ошибки в вопросах к тексту — от невнимательности, а не от непонимания.'},
+{t:'Словарь', v:40, n:'151 слово «знаю» в карточках плюс бытовые слова из «Печати». Для A2 нужно около 1000.'},
+{t:'Грамматика', v:40, n:'Есть: настоящее время, there is / are, need to / should. Нет: прошедшее и будущее время.'},
+{t:'Письмо', v:35, n:'Пишешь длинно и интересно по мысли, но точность 72%: -s после чисел, in / on, i с маленькой.'},
+{t:'На слух', v:null, n:'Пока не проверялось.'},
+{t:'Речь', v:null, n:'Пока не проверялось.'}],
+note: 'Быстрее всего процент поднимут прошедшее время (неделя 5) и точность письма от 80%. Один урок за вечер и перечитать свой текст перед «Закончить».'};
 // more — дополнительное чтение по желанию (без заданий), для уровня «максимум».
 
 window.WEEKS = [
 {w:1, t:'Я и моя работа', g:'a / an / the, my / his / her, am / is / are'},
 {w:2, t:'Мой день, график 2 через 2', g:'Present Simple: don’t / doesn’t, вопросы'},
 {w:3, t:'Что вокруг меня', g:'there is / there are, предлоги места и времени, need to / have to / should'},
-{w:4, t:'Моя история', g:'was / were, can'}];
+{w:4, t:'Новый офис — тема 3 ещё раз, по-новому', g:'множественное число, in / on / at, there is / are, should / need to / have to'},
+{w:5, t:'Моя история', g:'was / were, прошедшее время, can'}];
 
 window.LESSONS = [
 
@@ -741,7 +755,7 @@ tasks:[
 {k:'in', q:'I sleep ___ seven hours. (в течение)', a:['for']},
 {k:'fx', q:'I usualy get up on 7.', a:['I usually get up at 7.','I usually get up at seven.'], e:'usually — две l; время по часам — at.'},
 {k:'fx', q:'I don’t work at days off.', a:['I don’t work on days off.','I don’t work on my days off.'], e:'Дни — on.'},
-{k:'dc', a:['I study English in the evening.'], ru:'Я учу английский вечером.'},
+{k:'dc', a:['I study English in the evening.','I learn English in the evening.','In the evening I study English.','In the evening I learn English.'], ru:'Я учу английский вечером.'},
 {k:'or', ru:'Я гуляю с собакой утром.', a:'I walk my dog in the morning.'},
 {k:'tr', ru:'Я тренируюсь три раза в неделю.', a:['I train three times a week.','I work out three times a week.','I go to the gym three times a week.']},
 {k:'tr', ru:'В понедельник я работаю.', a:['I work on Monday.','On Monday I work.','I work on Mondays.','On Monday, I work.']}],
@@ -845,10 +859,289 @@ tasks:[
 {k:'fx', q:'She knows always what to do.', a:['She always knows what to do.'], e:'always — перед обычным глаголом.'},
 {k:'fx', q:'If you dont know how solve a problem, you call to Kate.', a:['If you don’t know how to solve a problem, you call Kate.','If you do not know how to solve a problem, you call Kate.','If you don’t know how to solve a problem, call Kate.'], e:'don’t — с апострофом; how to solve; звонить кому-то — call Kate, без to.'},
 {k:'dc', a:['Please don’t put coffee on the racks.'], ru:'Пожалуйста, не ставьте кофе на стойки.'},
-{k:'tr', ru:'В офисе четыре комнаты.', a:['There are four rooms in the office.','The office has four rooms.']},
-{k:'tr', ru:'Принтер на кухне, рядом с кофемашиной.', a:['The printer is in the kitchen, next to the coffee machine.']},
+{k:'tr', ru:'В офисе четыре комнаты.', a:['There are four rooms in the office.','The office has four rooms.','In the office there are four rooms.','In the office, there are four rooms.']},
+{k:'tr', ru:'Принтер на кухне, рядом с кофемашиной.', a:['The printer is in the kitchen, next to the coffee machine.','The printer is in the kitchen, next to a coffee machine.']},
 {k:'tr', ru:'Тебе не нужно приходить в воскресенье.', a:['You don’t need to come on Sunday.','You don’t have to come on Sunday.']},
 {k:'tr', ru:'Мне скучно, когда нет работы.', a:['I am bored when there is no work.','I’m bored when there is no work.','I am bored when I have no work.']}],
-own:'Главное задание недели. Опиши в 8–10 предложениях свою квартиру или рабочее место (there is / there are, in / on / next to…) и свою неделю (at / on / in, need to, have to). Этот текст попадёт в отчёт для Claude.'}
+own:'Главное задание недели. Опиши в 8–10 предложениях свою квартиру или рабочее место (there is / there are, in / on / next to…) и свою неделю (at / on / in, need to, have to). Этот текст попадёт в отчёт для Claude.'},
+
+// ---------- Неделя 4: тема 3 ещё раз, по-новому (новый офис, Сэм на выезде) ----------
+// Упор на его ошибки недели 3: -s после чисел, in / on / at, should + глагол без -s, once / twice / three times.
+{id:'w4l1', w:4, n:1, t:'Eight desks, two racks', g:'множественное число и there is / are',
+rule:`<p>Когда предметов <b>больше одного</b>, к слову добавляем <b>-s</b>: a desk → two desk<b>s</b>, a monitor → three monitor<b>s</b>. Правило ты знаешь, но в своих текстах часто теряешь это -s: «two desk», «two wall». Здесь тренируем именно это.</p>
+<p>После чисел, many, a lot of, some, these — всегда множественное: two rooms, many trees, a lot of cables.</p>
+<p>Как добавлять: обычно <b>+s</b> (port → ports); после s, sh, ch, x — <b>+es</b> (box → boxes, switch → switches); согласная + y — <b>-ies</b> (city → cities), но key → keys.</p>
+<p>Несколько слов меняются целиком, их просто запомнить: man → <b>men</b>, woman → <b>women</b>, person → <b>people</b>, child → <b>children</b>.</p>
+<p>Некоторые слова поштучно не считаются и <b>-s не получают</b>: water, coffee, milk, money, music, information. С ними — there <b>is</b>: There is some coffee.</p>
+<p>И связь с there is / are: <b>There is</b> + один предмет или то, что не считается; <b>There are</b> + несколько.</p>`,
+ex:[
+['There are three switches in the rack.','В стойке три коммутатора.'],
+['There are eight desks and sixteen monitors in the big room.','В большой комнате восемь столов и шестнадцать мониторов.'],
+['There is some coffee in the kitchen.','На кухне есть кофе.'],
+['Two women and three men work in our team.','В нашей команде работают две женщины и трое мужчин.']],
+text:[
+['It’s our first week in the new office.','Это наша первая неделя в новом офисе.'],
+['The big room is bright, and there are eight desks next to the windows.','Большая комната светлая, у окон стоят восемь столов.'],
+['There are two monitors on every desk, so there are sixteen monitors in the room.','На каждом столе по два монитора, так что в комнате шестнадцать мониторов.'],
+['There are only five people in our team, so three desks are free.','В нашей команде всего пять человек, поэтому три стола свободны.'],
+['In the server room, there are two racks and a lot of cables.','В серверной две стойки и много кабелей.'],
+['There are four switches and two routers in the first rack.','В первой стойке четыре коммутатора и два роутера.'],
+['The second rack is almost empty. There are only two servers in it.','Вторая стойка почти пустая. В ней только два сервера.'],
+['In the kitchen, there is a coffee machine, a fridge and some cups.','На кухне кофемашина, холодильник и несколько чашек.'],
+['There is always coffee, but there is no milk on Mondays.','Кофе есть всегда, а молока по понедельникам нет.'],
+['Mike brings boxes of old cables from the old office.','Майк привозит из старого офиса коробки со старыми кабелями.'],
+['There are six boxes, and every box is heavy.','Коробок шесть, и каждая тяжёлая.'],
+['On Friday, there are two dogs in the office: Rex and Kate’s dog, Lucky.','В пятницу в офисе две собаки: Рекс и собака Кейт, Лаки.'],
+['The dogs sleep under the free desks, and nobody works too hard.','Собаки спят под свободными столами, и никто особо не перерабатывает.']],
+words:[
+['bright','светлый'],['almost','почти'],['empty','пустой'],['server','сервер'],['cup','чашка'],['people','люди'],
+['men','мужчины'],['women','женщины'],['sixteen','шестнадцать'],['a lot of','много'],['work too hard','перерабатывать']],
+tasks:[
+{k:'ch', q:'How many monitors are there in the big room?', o:['eight','twelve','sixteen'], a:2},
+{k:'ch', q:'What is there in the second rack?', o:['four switches','two servers','a lot of cables'], a:1},
+{k:'ch', q:'Why are three desks free?', o:['There are only five people in the team.','They are broken.','The dogs sleep there.'], a:0},
+{k:'ch', q:'There are three ___ in the rack.', o:['switch','switchs','switches'], a:2, e:'После ch добавляем -es.'},
+{k:'ch', q:'Two ___ work in our team.', o:['woman','women','womans'], a:1, e:'woman → women.'},
+{k:'ch', q:'There ___ some coffee in the kitchen.', o:['is','are'], a:0, e:'coffee поштучно не считается — there is.'},
+{k:'ch', q:'There are a lot of ___ in the server room.', o:['cable','cables'], a:1, e:'После a lot of — множественное.'},
+{k:'in', q:'We have eight ___ in the big room. (стол)', a:['desks']},
+{k:'in', q:'There are four ___ in the box. (cup)', a:['cups']},
+{k:'or', ru:'В первой стойке два роутера.', a:'There are two routers in the first rack.'},
+{k:'or', ru:'На кухне есть немного молока.', a:'There is some milk in the kitchen.'},
+{k:'fx', q:'There are two desk on my room.', a:['There are two desks in my room.'], e:'два стола — desks; в комнате — in.'},
+{k:'fx', q:'My bed is between two wall.', a:['My bed is between two walls.'], e:'две стены — walls.'},
+{k:'dc', a:['There are only two servers in it.'], ru:'В ней только два сервера.'},
+{k:'tr', ru:'В нашей команде пять человек.', a:['There are five people in our team.','Our team has five people.']},
+{k:'tr', ru:'На каждом столе два монитора.', a:['There are two monitors on every desk.','Every desk has two monitors.','There are two monitors on each desk.','Each desk has two monitors.']}],
+own:'Опиши своё рабочее место или комнату: 6–8 предложений с числами. Следи за -s: two monitors, three chairs, a lot of cables.'},
+
+{id:'w4l2', w:4, n:2, t:'In the box, on the shelf, at the door', g:'in / on / at и другие предлоги места',
+rule:`<p>Три главных предлога места легко различить по картинке:</p>
+<p><b>in</b> — внутри, в объёме: in the box, in the room, in the rack, in the corner of the room, in the city.</p>
+<p><b>on</b> — на поверхности, касается её: on the desk, on the shelf, on the wall, on the floor, on the screen.</p>
+<p><b>at</b> — в точке, у места, где что-то происходит: at the door, at the bus stop, at home, at work.</p>
+<p>Ловушки из твоих текстов: <s>on my room</s> → <b>in</b> my room (комната — объём); <s>in the shelf</s> → <b>on</b> the shelf (полка — поверхность); <s>on the corner</s> комнаты → <b>in</b> the corner. А угол улицы снаружи — on the corner: the cafe on the corner.</p>
+<p>И остальные: under — под, above — над, next to — рядом с, between — между, behind — за, in front of — перед, opposite — напротив.</p>`,
+ex:[
+['The labels are on the shelf.','Бирки на полке.'],
+['The new switch is in the box under the table.','Новый коммутатор в коробке под столом.'],
+['There is a small table in the corner of the room.','В углу комнаты маленький стол.'],
+['Kate is at the door.','Кейт у двери.']],
+text:[
+['On Saturday, Sam is alone in the new office, and he calls me.','В субботу Сэм один в новом офисе и звонит мне.'],
+['Sam: Dan, I need a new switch for house 12. Where are the new switches?','Сэм: Дэн, мне нужен новый коммутатор для дома 12. Где новые коммутаторы?'],
+['Dan: They are in a big box under the table in the server room.','Дэн: В большой коробке под столом в серверной.'],
+['Sam: OK, I see it. And where are the cables?','Сэм: Вижу. А где кабели?'],
+['Dan: The short cables are on the shelf above the table.','Дэн: Короткие кабели на полке над столом.'],
+['Dan: The long cables are in the blue box in the corner.','Дэн: Длинные — в синей коробке в углу.'],
+['Sam: And the labels? I can’t find them.','Сэм: А бирки? Не могу их найти.'],
+['Dan: Look on Kate’s desk, next to her laptop.','Дэн: Посмотри на столе у Кейт, рядом с её ноутбуком.'],
+['Sam: Found them! One more question: where is the key for the car?','Сэм: Нашёл! Ещё вопрос: где ключ от машины?'],
+['Dan: It’s on the wall at the door. There is a small hook for keys.','Дэн: На стене у двери. Там маленький крючок для ключей.'],
+['Sam: Great. The car is at the back of the building, right?','Сэм: Отлично. Машина за зданием, да?'],
+['Dan: Yes, opposite the green door. Good luck in house 12!','Дэн: Да, напротив зелёной двери. Удачи в доме 12!'],
+['I put my phone on the table and smile. Sam is ready for his first job alone.','Я кладу телефон на стол и улыбаюсь. Сэм готов к первой самостоятельной работе.']],
+words:[
+['alone','один, самостоятельно'],['key','ключ'],['hook','крючок'],['at the back of','позади, за'],['opposite','напротив'],
+['good luck','удачи'],['ready','готовый'],['one more','ещё один']],
+tasks:[
+{k:'ch', q:'Where are the new switches?', o:['on the shelf','in a big box under the table','on Kate’s desk'], a:1},
+{k:'ch', q:'Where are the long cables?', o:['in the blue box in the corner','on the shelf above the table','in the car'], a:0},
+{k:'ch', q:'Where is the car key?', o:['on Kate’s desk','on the wall at the door','in the box'], a:1},
+{k:'ch', q:'The cables are ___ the shelf.', o:['in','on','at'], a:1, e:'Полка — поверхность: on.'},
+{k:'ch', q:'There are two chairs ___ my room.', o:['on','in','at'], a:1, e:'Комната — объём: in.'},
+{k:'ch', q:'Kate is waiting ___ the door.', o:['in','on','at'], a:2, e:'У двери, в точке — at.'},
+{k:'ch', q:'The table is ___ the corner of the room.', o:['in','on','at'], a:0, e:'Угол комнаты изнутри — in the corner.'},
+{k:'in', q:'The car is ___ the green door. (напротив)', a:['opposite']},
+{k:'in', q:'My phone is ___ the shelf. (на)', a:['on']},
+{k:'or', ru:'Ключ на стене у двери.', a:'The key is on the wall at the door.'},
+{k:'or', ru:'Коробка под столом.', a:'The box is under the table.'},
+{k:'fx', q:'My phone is in the shelf above chair.', a:['My phone is on the shelf above the chair.'], e:'На полке — on; above the chair — с артиклем.'},
+{k:'fx', q:'There is a chair on the corner in my room.', a:['There is a chair in the corner of my room.'], e:'Угол комнаты — in the corner of my room.'},
+{k:'dc', a:['The labels are next to her laptop.'], ru:'Бирки рядом с её ноутбуком.'},
+{k:'tr', ru:'Короткие кабели на полке.', a:['The short cables are on the shelf.','Short cables are on the shelf.']},
+{k:'tr', ru:'Машина за зданием.', a:['The car is at the back of the building.','The car is behind the building.']}],
+own:'Опиши, где что лежит на твоём рабочем месте или дома: 6–8 предложений. Обязательно используй in, on и at хотя бы по разу. Перед «Закончить» перечитай: in my room, on the shelf, in the corner.'},
+
+{id:'w4l3', w:4, n:3, t:'Is there a lift here?', g:'Is there / Are there any, no; как пройти',
+rule:`<p>Вопрос «здесь есть…?»: <b>Is there a</b> lift? (один) · <b>Are there any</b> free ports? (несколько)</p>
+<p>Ответы: Yes, there is. / No, there isn’t. · Yes, there are. / No, there aren’t.</p>
+<p>Отрицание: There <b>isn’t a</b> lift. · There <b>aren’t any</b> sockets. · Или через no: There <b>is no</b> lift. There <b>are no</b> free ports.</p>
+<p>Помни про -s: Are there any socket<b>s</b>? После any в вопросе обычно множественное.</p>
+<p>Как объяснить дорогу: go straight — идите прямо; go up / go down the stairs — поднимитесь / спуститесь по лестнице; turn left / right — поверните налево / направо; it’s on the left / right — слева / справа.</p>`,
+ex:[
+['Is there a lift in this building? — No, there isn’t.','В этом доме есть лифт? — Нет.'],
+['Are there any free ports on the switch? — Yes, there are.','На коммутаторе есть свободные порты? — Да.'],
+['There are no sockets in the basement.','В подвале нет розеток.'],
+['Go up the stairs and turn right. It’s on the left.','Поднимитесь по лестнице и поверните направо. Это слева.']],
+text:[
+['Sam arrives at house 12 and finds the caretaker, Mr Brown.','Сэм приезжает в дом 12 и находит управляющего, мистера Брауна.'],
+['Sam: Good morning! Is there a key for the cabinet?','Сэм: Доброе утро! Есть ключ от шкафа?'],
+['Mr Brown: Yes, there is. Here you are.','Мистер Браун: Да. Вот, пожалуйста.'],
+['Sam: Is the cabinet in the basement or on the top floor?','Сэм: Шкаф в подвале или на последнем этаже?'],
+['Mr Brown: On the top floor. Go up the stairs and turn right.','Мистер Браун: На последнем этаже. Поднимитесь по лестнице и поверните направо.'],
+['Mr Brown: The cabinet is on the left, next to the window.','Мистер Браун: Шкаф слева, у окна.'],
+['Sam: Is there a lift? The box is heavy.','Сэм: Есть лифт? Коробка тяжёлая.'],
+['Mr Brown: No, there isn’t. Sorry!','Мистер Браун: Нет. Извините!'],
+['Sam: Are there any power sockets near the cabinet?','Сэм: Рядом со шкафом есть розетки?'],
+['Mr Brown: Yes, there are two, under the window.','Мистер Браун: Да, две, под окном.'],
+['On the top floor, Sam opens the cabinet. There are no free ports on the old switch.','На последнем этаже Сэм открывает шкаф. На старом коммутаторе нет свободных портов.'],
+['He installs the new switch and connects the new user.','Он ставит новый коммутатор и подключает нового абонента.'],
+['Then he calls Dan: “There aren’t any problems. Everything works!”','Потом звонит Дэну: «Никаких проблем. Всё работает!»']],
+words:[
+['arrive','приезжать'],['caretaker','управляющий домом'],['basement','подвал'],['top floor','последний этаж'],
+['stairs','лестница'],['turn right','повернуть направо'],['cabinet','шкаф (телекоммуникационный)'],['lift','лифт'],
+['power socket','розетка'],['install','устанавливать'],['connect','подключать']],
+tasks:[
+{k:'ch', q:'Where is the cabinet?', o:['in the basement','on the top floor','in the office'], a:1},
+{k:'ch', q:'Is there a lift in house 12?', o:['Yes, there is.','No, there isn’t.'], a:1},
+{k:'ch', q:'Where are the power sockets?', o:['under the window','in the basement','next to the stairs'], a:0},
+{k:'ch', q:'___ there any free ports?', o:['Is','Are'], a:1},
+{k:'ch', q:'Is there a lift? — No, there ___.', o:['isn’t','aren’t','doesn’t'], a:0},
+{k:'ch', q:'There ___ no free ports on the old switch.', o:['is','are'], a:1, e:'ports — их много: there are no.'},
+{k:'ch', q:'Are there any ___ near the cabinet?', o:['socket','sockets'], a:1, e:'После any в вопросе — множественное.'},
+{k:'in', q:'Go up the stairs and turn ___. (направо)', a:['right']},
+{k:'in', q:'Is there ___ key for the cabinet?', a:['a']},
+{k:'or', ru:'Здесь есть лифт?', a:'Is there a lift here?'},
+{k:'or', ru:'В подвале нет розеток.', a:'There aren’t any sockets in the basement.'},
+{k:'fx', q:'Are there any buildin in your area?', a:['Are there any buildings in your area?'], e:'building — с g на конце, после any — buildings.'},
+{k:'fx', q:'Is there two monitor in your room?', a:['Are there two monitors in your room?'], e:'Два монитора — are there и monitors.'},
+{k:'dc', a:['Go up the stairs and turn right.'], ru:'Поднимитесь по лестнице и поверните направо.'},
+{k:'tr', ru:'В этом доме есть подвал?', a:['Is there a basement in this house?','Is there a basement in this building?','Does this house have a basement?']},
+{k:'tr', ru:'На коммутаторе нет свободных портов.', a:['There aren’t any free ports on the switch.','There are no free ports on the switch.']}],
+own:'Напиши 3 вопроса о своём доме или работе с Is there / Are there any и ответь на них. Потом объясни дорогу от входа в твой дом до твоей квартиры: go up the stairs, turn left…'},
+
+{id:'w4l4', w:4, n:4, t:'Twice a week, at 2 a.m.', g:'at / on / in, once / twice / three times a week',
+rule:`<p>Повторим время — и добавим «как часто».</p>
+<p><b>at</b> — часы и «точки»: at 7, at 2 a.m., at noon, at night<br><b>on</b> — дни и даты: on Monday, on Sunday morning, on my days off, on 14 November<br><b>in</b> — части дня, месяцы, годы: in the morning, in the evening, in November, in 2026</p>
+<p>Без предлога: every day, this week, next Friday, tomorrow.</p>
+<p><b>Как часто:</b> once a week — раз в неделю · twice a week — два раза · three times a week — три раза · every day — каждый день. А не <s>three days on a week</s>.</p>
+<p><b>from … to …</b> — с … до …: from 8 a.m. to 8 p.m., from Monday to Friday.</p>
+<p>И ещё одно: дни недели и месяцы в английском всегда с большой буквы — Monday, Tuesday, November.</p>`,
+ex:[
+['I go to the gym three times a week.','Я хожу в зал три раза в неделю.'],
+['Kate checks the backups once a week, on Wednesday.','Кейт проверяет резервные копии раз в неделю, в среду.'],
+['My shifts are from 8 a.m. to 8 p.m.','Мои смены с 8 утра до 8 вечера.'],
+['The meeting is on Thursday at 10.','Собрание в четверг в 10.']],
+text:[
+['Every month, Kate makes a plan for the team.','Каждый месяц Кейт составляет план для команды.'],
+['In November, I work two days on, two days off, as always.','В ноябре я работаю два через два, как всегда.'],
+['My day shifts are from 8 a.m. to 8 p.m.','Мои дневные смены — с 8 утра до 8 вечера.'],
+['Mike works at night four times a week.','Майк работает ночью четыре раза в неделю.'],
+['Sam works only on weekdays, from Monday to Friday.','Сэм работает только по будням, с понедельника по пятницу.'],
+['Kate checks the backups once a week, on Wednesday.','Кейт проверяет резервные копии раз в неделю, в среду.'],
+['Twice a month, we have a team meeting on Thursday at 10 a.m.','Два раза в месяц у нас собрание команды в четверг в 10 утра.'],
+['This month is special: on 14 November, there is a big upgrade.','Этот месяц особенный: 14 ноября большое обновление.'],
+['We change the old core router at night, from 2 to 4 a.m.','Мы меняем старый роутер ядра ночью, с 2 до 4 утра.'],
+['At night, there are only a few users online, so it is the best time.','Ночью в сети мало абонентов, поэтому это лучшее время.'],
+['Kate says, “Everybody has to be online at 1:30 a.m. that night.”','Кейт говорит: «В ту ночь все должны быть на связи в 1:30».'],
+['I don’t like night work, but this is important.','Я не люблю работать ночью, но это важно.'],
+['After the upgrade, I can sleep all morning.','После обновления можно будет проспать всё утро.']],
+words:[
+['weekdays','будни'],['backup','резервная копия'],['once','один раз'],['twice','два раза'],['three times','три раза'],
+['a month','в месяц'],['meeting','собрание'],['upgrade','обновление'],['core router','роутер ядра'],['online','в сети, на связи'],['important','важный'],['November','ноябрь']],
+tasks:[
+{k:'ch', q:'How often does Mike work at night?', o:['twice a week','four times a week','every day'], a:1},
+{k:'ch', q:'When does Kate check the backups?', o:['once a week, on Wednesday','every day','twice a month'], a:0},
+{k:'ch', q:'Why do they change the router at night?', o:['There are only a few users online.','Kate likes night work.','The office is closed.'], a:0},
+{k:'ch', q:'The meeting is ___ 10 a.m.', o:['at','on','in'], a:0, e:'Время по часам — at.'},
+{k:'ch', q:'The upgrade is ___ 14 November.', o:['at','on','in'], a:1, e:'Дата — on.'},
+{k:'ch', q:'I sleep ___ the morning after a night shift.', o:['at','on','in'], a:2, e:'Часть дня — in the morning.'},
+{k:'ch', q:'Как сказать «два раза в неделю»?', o:['two times on a week','twice a week','two days in week'], a:1},
+{k:'in', q:'Mike works at night four ___ a week.', a:['times']},
+{k:'in', q:'My shifts are ___ 8 a.m. to 8 p.m. (с)', a:['from']},
+{k:'or', ru:'Я хожу в зал три раза в неделю.', a:'I go to the gym three times a week.'},
+{k:'or', ru:'Майк работает с понедельника по четверг.', a:'Mike works from Monday to Thursday.'},
+{k:'fx', q:'I train for three days on a week.', a:['I train three times a week.','I train three days a week.'], e:'Как часто — three times a week.'},
+{k:'fx', q:'This week I work on Mondey and tuesday.', a:['This week I work on Monday and Tuesday.','This week, I work on Monday and Tuesday.'], e:'Дни недели — с большой буквы: Monday, Tuesday.'},
+{k:'dc', a:['Kate checks the backups once a week.'], ru:'Кейт проверяет резервные копии раз в неделю.'},
+{k:'tr', ru:'Я гуляю с собакой два раза в день.', a:['I walk my dog twice a day.','I walk my dog two times a day.','I walk with my dog twice a day.','Twice a day I walk my dog.','I walk the dog twice a day.']},
+{k:'tr', ru:'В ноябре у нас большое обновление.', a:['In November we have a big upgrade.','We have a big upgrade in November.','In November, we have a big upgrade.','There is a big upgrade in November.']}],
+own:'Напиши свой план на ноябрь: 6–8 предложений. Когда у тебя смены, как часто зал, что важного в этом месяце. Используй at / on / in, from … to … и once / twice / three times.'},
+
+{id:'w4l5', w:4, n:5, t:'You have to label every cable', g:'should, need to, have to, can + глагол без -s',
+rule:`<p>После <b>should, can, must</b> и после <b>do / does / don’t / doesn’t</b> глагол стоит в простой форме — без to и без -s, даже с he / she:</p>
+<p>He <b>should write</b> — а не <s>should writes</s> · She <b>can swim</b> · Does he <b>work</b>? · He doesn’t <b>work</b>.</p>
+<p>После <b>need, have, want</b> — с <b>to</b>: You <b>need to</b> call. He <b>has to</b> work. (have → has для he / she)</p>
+<p>Отрицания: you <b>shouldn’t</b> — не стоит; you <b>don’t need to</b> / <b>don’t have to</b> — не нужно, не обязательно; you <b>can’t</b> — нельзя.</p>
+<p>Разница важная: <b>You don’t have to</b> answer = можешь не отвечать. <b>You shouldn’t</b> answer = лучше не отвечай.</p>`,
+ex:[
+['You should call the caretaker first.','Сначала стоит позвонить управляющему.'],
+['He doesn’t need to take the ladder.','Ему не нужно брать стремянку.'],
+['She has to work on Saturday.','Ей приходится работать в субботу.'],
+['You can’t leave the cabinet open.','Шкаф нельзя оставлять открытым.']],
+text:[
+['Before Sam’s next job, I give him some advice.','Перед следующим выездом Сэма я даю ему несколько советов.'],
+['“You should call the caretaker before you go. Then the basement is open.”','«Стоит позвонить управляющему, прежде чем ехать. Тогда подвал будет открыт».'],
+['“You have to label every new cable. Write the flat number on it.”','«Каждый новый кабель нужно подписать. Пиши на нём номер квартиры».'],
+['“You don’t need to take the big ladder. There is one in every basement.”','«Большую стремянку брать не нужно. Она есть в каждом подвале».'],
+['“You can’t leave the cabinet open. Lock it when you finish.”','«Шкаф нельзя оставлять открытым. Запирай его, когда закончишь».'],
+['“You shouldn’t work alone on the roof. Call me or Mike.”','«На крыше одному работать не стоит. Позвони мне или Майку».'],
+['“If a user asks about money, you don’t have to answer. Give them the support phone number.”','«Если абонент спрашивает про деньги, отвечать не обязательно. Дай ему номер поддержки».'],
+['“And you should always take a photo of the cabinet at the end.”','«И в конце всегда стоит сфотографировать шкаф».'],
+['Sam writes everything in his notebook.','Сэм записывает всё в блокнот.'],
+['Then he asks, “Does Mike follow these rules too?”','Потом спрашивает: «А Майк тоже соблюдает эти правила?»'],
+['I laugh. “These are Mike’s rules!”','Я смеюсь: «Это правила Майка!»'],
+['Sam puts the notebook in his bag.','Сэм кладёт блокнот в сумку.'],
+['He has to leave at nine, and it’s already ten to nine.','Ему нужно выезжать в девять, а уже без десяти девять.']],
+words:[
+['advice','совет'],['ladder','стремянка, лестница'],['lock','запирать'],['roof','крыша'],['notebook','блокнот'],
+['follow the rules','соблюдать правила'],['take a photo','сфотографировать'],['at the end','в конце'],['ten to nine','без десяти девять']],
+tasks:[
+{k:'ch', q:'Why should Sam call the caretaker?', o:['Then the basement is open.','He needs money.','He wants coffee.'], a:0},
+{k:'ch', q:'What does Sam have to write on every new cable?', o:['his name','the flat number','the date'], a:1},
+{k:'ch', q:'Whose rules are these?', o:['Kate’s','Mike’s','Sam’s'], a:1},
+{k:'ch', q:'He should ___ notes.', o:['write','writes','to write'], a:0, e:'После should — простая форма, без -s и без to.'},
+{k:'ch', q:'She ___ to work on Saturday.', o:['have','has','should'], a:1, e:'she → has to.'},
+{k:'ch', q:'Как сказать «можешь не отвечать»?', o:['You shouldn’t answer.','You don’t have to answer.','You can’t answer.'], a:1},
+{k:'ch', q:'Does he ___ alone?', o:['work','works'], a:0, e:'После does глагол без -s.'},
+{k:'in', q:'You ___ call the caretaker first. (стоит)', a:['should']},
+{k:'in', q:'He doesn’t ___ to take the ladder. (не нужно)', a:['need','have']},
+{k:'or', ru:'Тебе нужно подписать каждый кабель.', a:'You have to label every cable.'},
+{k:'or', ru:'Шкаф нельзя оставлять открытым.', a:'You can’t leave the cabinet open.'},
+{k:'fx', q:'you should writes notes.', a:['You should write notes.'], e:'После should — write без -s; предложение с большой буквы.'},
+{k:'fx', q:'You doesn’t need to learn them today.', a:['You don’t need to learn them today.','You do not need to learn them today.'], e:'you → don’t.'},
+{k:'dc', a:['You have to label every new cable.'], ru:'Каждый новый кабель нужно подписать.'},
+{k:'tr', ru:'Тебе не нужно брать стремянку.', a:['You don’t need to take the ladder.','You don’t have to take the ladder.']},
+{k:'tr', ru:'На крыше одному работать не стоит.', a:['You shouldn’t work alone on the roof.','You should not work alone on the roof.']}],
+own:'Напиши 5–6 правил для своей работы или дома: should, shouldn’t, have to, don’t need to, can’t. Проверь: после should и can — без -s.'},
+
+{id:'w4r', w:4, n:6, review:true, t:'Повторение недели: письмо Сэма маме', g:'всё вместе',
+text:[
+['Hi Mom,','Привет, мама,'],
+['I’m fine. My first month at work is over, and I like my job.','У меня всё хорошо. Первый месяц на работе позади, и мне нравится моя работа.'],
+['Our new office is in the city center. There are eight desks in the big room, but there are only five people in our team.','Наш новый офис в центре города. В большой комнате восемь столов, но в команде всего пять человек.'],
+['My desk is next to the window, and there are two monitors on it.','Мой стол у окна, на нём два монитора.'],
+['On Fridays, there are two dogs in the office. They sleep under the free desks.','По пятницам в офисе две собаки. Они спят под свободными столами.'],
+['I work from Monday to Friday, from 9 to 6.','Я работаю с понедельника по пятницу, с 9 до 6.'],
+['Once a week, I go to users’ buildings and install new switches.','Раз в неделю я езжу по домам абонентов и ставлю новые коммутаторы.'],
+['There isn’t a lift in every building, so I walk up the stairs a lot!','Лифт есть не в каждом доме, так что по лестницам я хожу много!'],
+['Dan says I should call the caretaker before I go, and I always do.','Дэн говорит, что надо звонить управляющему перед выездом, и я всегда звоню.'],
+['I have to label every cable, and I take a photo of every cabinet.','Мне нужно подписывать каждый кабель, и я фотографирую каждый шкаф.'],
+['Mike works at night four times a week. He is funny, and he knows everything.','Майк работает ночью четыре раза в неделю. Он смешной и знает всё.'],
+['On 14 November, we have a big upgrade at night. I have to be online at 1:30 a.m.!','14 ноября у нас ночью большое обновление. Я должен быть на связи в 1:30!'],
+['Don’t worry about me. I eat well, and I sleep eight hours a night.','Не волнуйся за меня. Я хорошо ем и сплю восемь часов.'],
+['Talk to you on Sunday, as always.','Поговорим в воскресенье, как всегда.'],
+['Love,','С любовью,'],
+['Sam','Сэм']],
+words:[['Mom','мама'],['over','позади, закончился'],['funny','смешной, весёлый'],['worry','волноваться'],['as always','как всегда'],['Love,','с любовью (в конце письма)']],
+tasks:[
+{k:'ch', q:'Where is Sam’s desk?', o:['next to the window','in the kitchen','in the server room'], a:0},
+{k:'ch', q:'How often does Sam go to users’ buildings?', o:['every day','once a week','twice a month'], a:1},
+{k:'ch', q:'Why does Sam walk up the stairs a lot?', o:['There isn’t a lift in every building.','He likes sport.','Dan says so.'], a:0},
+{k:'ch', q:'When does Sam have to be online on 14 November?', o:['at 8 a.m.','at 1:30 a.m.','at 6 p.m.'], a:1},
+{k:'ch', q:'There are eight ___ in the big room.', o:['desk','desks'], a:1},
+{k:'ch', q:'I go to the gym ___ a week.', o:['three times','three days on','third'], a:0},
+{k:'ch', q:'My desk is ___ the window.', o:['next to','on','in'], a:0},
+{k:'ch', q:'You ___ worry about me.', o:['don’t need to','doesn’t need','not need'], a:0},
+{k:'in', q:'There ___ a lift in every building. (нет)', a:['isn’t','is not','isnt']},
+{k:'in', q:'I work ___ Monday to Friday.', a:['from']},
+{k:'fx', q:'There are two room and a small kitchen on my flat.', a:['There are two rooms and a small kitchen in my flat.'], e:'Две комнаты — rooms; в квартире — in.'},
+{k:'fx', q:'Dan says i should calls the caretaker.', a:['Dan says I should call the caretaker.'], e:'I — с большой; после should — call без -s.'},
+{k:'dc', a:['I take a photo of every cabinet.'], ru:'Я фотографирую каждый шкаф.'},
+{k:'tr', ru:'Я подписываю каждый кабель.', a:['I label every cable.']},
+{k:'tr', ru:'Мой первый месяц на работе закончился.', a:['My first month at work is over.','My first month at work is finished.']},
+{k:'tr', ru:'Не волнуйся за меня.', a:['Don’t worry about me.']}],
+own:'Главное задание недели. Напиши письмо (8–10 предложений) родным или другу о своей работе и доме: что где находится, что есть рядом, как часто ты что-то делаешь, что нужно и что стоит делать. Перед «Закончить» перечитай медленно: -s после чисел, in / on / at, I с большой. Текст попадёт в отчёт для Claude.'}
 
 ];
