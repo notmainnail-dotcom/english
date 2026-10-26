@@ -68,7 +68,7 @@ function progressScore(s) {
   let n = Object.keys(s.cards || {}).length + (s.unclear || []).length + (s.exams || []).length;
   Object.values(s.ch || {}).forEach(c => {
     if (!c) return;
-    n += Object.keys(c.read || {}).length + (c.quiz ? 1 : 0) + (c.quizRun ? 1 : 0) + Object.keys(c.und || {}).length;
+    n += Object.keys(c.read || {}).length + (c.quiz ? 1 : 0) + (c.quizRun ? 1 : 0) + Object.keys(c.und || {}).length + Object.keys(c.sim || {}).length;
     if (c.lab) n += Object.keys(c.lab.t || {}).length + Object.keys(c.lab.b || {}).length;
   });
   Object.values(s.days || {}).forEach(m => n += +m || 0);
@@ -93,13 +93,14 @@ function chapterStats(id) {
     quiz: st.quiz ? st.quiz.best : null,
     lab: [tasks.filter((t, i) => st.lab.t[i]).length, tasks.length],
     und: [und.filter((u, i) => st.und[i] && st.und[i].g).length, und.length],
-    cards: [cards.filter((c, i) => { const x = S.cards[id + ':' + i]; return x && x.box >= 3; }).length, cards.length]
+    cards: [cards.filter((c, i) => { const x = S.cards[id + ':' + i]; return x && x.box >= 3; }).length, cards.length],
+    sim: simStats(id)
   };
   const parts = [[r.th, 25], [[r.quiz != null ? Math.min(r.quiz, 100) : 0, 100], 25], [r.lab, 25], [r.und, 15], [r.cards, 10]];
   let p = 0; parts.forEach(([v, w]) => p += v[1] ? v[0] / v[1] * w : w);
   r.p = Math.round(p);
   r.done = r.th[0] === r.th[1] && r.quiz >= 80 && r.lab[0] === r.lab[1] && r.und[0] === r.und[1];
-  r.started = r.th[0] > 0 || r.quiz != null || r.lab[0] > 0 || r.und[0] > 0;
+  r.started = r.th[0] > 0 || r.quiz != null || r.lab[0] > 0 || r.und[0] > 0 || !!(r.sim && r.sim[0]);
   return r;
 }
 function statusCls(id) { const r = chapterStats(id); if (!r) return ''; return r.done ? 'd' : r.started ? 'p' : ''; }
@@ -126,6 +127,7 @@ function rowsOf(s) {
     if (c.quizRun) R['qr:' + id] = c.quizRun;
     if (c.lab) { for (const i in c.lab.t) if (c.lab.t[i]) R['lt:' + id + ':' + i] = 1; for (const i in c.lab.b) if (c.lab.b[i]) R['lb:' + id + ':' + i] = 1; }
     for (const i in c.und || {}) if (c.und[i]) R['u:' + id + ':' + i] = c.und[i];
+    for (const i in c.sim || {}) if (c.sim[i]) R['s:' + id + ':' + i] = c.sim[i];
   }
   for (const k in s.cards) R['c:' + k] = s.cards[k];
   for (const d in s.days) if (s.days[d]) R['m:' + d + ':' + DEV] = s.days[d];
@@ -148,6 +150,7 @@ function rowPut(k, v) {
   else if (t === 'lt') C(x).lab.t[y] = true;
   else if (t === 'lb') C(x).lab.b[y] = true;
   else if (t === 'u') C(x).und[y] = v;
+  else if (t === 's') (C(x).sim = C(x).sim || {})[y] = v;
   else if (t === 'c') S.cards[k.slice(2)] = v;
   else if (t === 'm') { const d = k.slice(2, 12), dv = k.slice(13); if (dv === DEV) S.days[d] = v; else (S.daysX[dv] = S.daysX[dv] || {})[d] = v; }
   else if (t === 'n' || t === 'e') { const a = t === 'n' ? S.unclear : S.exams, id = k.slice(2), i = a.findIndex(z => z.id === id); if (i >= 0) a[i] = v; else { a.push(v); a.sort((p, q) => p.id < q.id ? -1 : 1); } }
@@ -160,13 +163,14 @@ function rowDrop(k) {
   else if (t === 'lt') { if (c) delete c.lab.t[y]; }
   else if (t === 'lb') { if (c) delete c.lab.b[y]; }
   else if (t === 'u') { if (c) delete c.und[y]; }
+  else if (t === 's') { if (c && c.sim) delete c.sim[y]; }
   else if (t === 'c') delete S.cards[k.slice(2)];
   else if (t === 'm') { const d = k.slice(2, 12), dv = k.slice(13); if (dv === DEV) delete S.days[d]; else if (S.daysX[dv]) delete S.daysX[dv][d]; }
   else if (t === 'n') S.unclear = S.unclear.filter(z => z.id !== k.slice(2));
   else if (t === 'e') S.exams = S.exams.filter(z => z.id !== k.slice(2));
 }
 // сейчас что-то вводят или идёт тест/карточки: перерисовывать нельзя
-const inputBusy = () => { const a = document.activeElement; return !!(a && a.matches && a.matches('input,textarea,select')) || !!$('.qcard') || !!$('#fl'); };
+const inputBusy = () => { const a = document.activeElement; return !!(a && a.matches && a.matches('input,textarea,select')) || !!$('.qcard') || !!$('#fl') || !!$('.sim-live'); };
 const SY = WEB ? CloudSync({
   app: 'sdsm', meta: 'sdsm_sync',
   rows: () => rowsOf(S), put: rowPut, drop: rowDrop,
@@ -302,7 +306,7 @@ function cliBlock(text) { return `<pre class="cli">${esc(text)}</pre>`; }
 function renderSide() {
   const due = dueCards().length;
   const r = location.hash;
-  const nav = [['#/', '🏠', 'Главная'], ['#/review', '🃏', 'Повторение', due], ['#/exam', '🎯', 'Экзамен'], ['#/report', '📋', 'Отчёт наставнику'], ['#/guide', '🧭', 'Как учиться + EVE-NG'], ['#/search', '🔎', 'Поиск'], ['#/settings', '⚙️', 'Настройки']];
+  const nav = [['#/', '🏠', 'Главная'], ['#/review', '🃏', 'Повторение', due], ['#/exam', '🎯', 'Экзамен'], ['#/sim', '🚨', 'Дежурство'], ['#/report', '📋', 'Отчёт наставнику'], ['#/guide', '🧭', 'Как учиться + EVE-NG'], ['#/search', '🔎', 'Поиск'], ['#/settings', '⚙️', 'Настройки']];
   $('#mainnav').innerHTML = (HOSTED ? '<a href="../" class="back">‹ Английский и тренажёр подсетей</a>' : '') + nav.map(([h, i, t, b]) => `<a href="${h}" class="${(r === h || (h !== '#/' && r.startsWith(h))) || (h === '#/' && (r === '' || r === '#/')) ? 'on' : ''}"><span>${i}</span>${t}${b ? `<span class="badge">${b}</span>` : ''}</a>`).join('');
   let h = '';
   COURSE.parts.forEach(p => {
@@ -325,6 +329,7 @@ function route() {
     if (p[0] === 'c') viewChapter(v, p[1], p[2] || 'overview', p[3]);
     else if (p[0] === 'review') viewReview(v);
     else if (p[0] === 'exam') viewExam(v);
+    else if (p[0] === 'sim') viewSimAll(v);
     else if (p[0] === 'report') viewReport(v);
     else if (p[0] === 'guide') viewGuide(v);
     else if (p[0] === 'settings') viewSettings(v, p[1]);
@@ -393,8 +398,9 @@ function viewHome(v) {
 // ---------- глава ----------
 const TABS = [['overview', 'Обзор'], ['theory', 'Теория'], ['cmds', 'Команды'], ['cards', 'Карточки'], ['quiz', 'Тест'], ['und', 'Понимание'], ['lab', 'Лаба EVE-NG']];
 function tabsFor(id) {
-  if (!bookOf(id)) return TABS;
-  return [['overview', 'Обзор'], ['book', '📖 Книга'], ['theory', 'Конспект'], ['cmds', 'Команды'], ['cards', 'Карточки'], ['quiz', 'Тест'], ['und', 'Понимание'], ['lab', 'Лаба EVE-NG']];
+  const t = bookOf(id) ? [['overview', 'Обзор'], ['book', '📖 Книга'], ['theory', 'Конспект'], ['cmds', 'Команды'], ['cards', 'Карточки'], ['quiz', 'Тест'], ['und', 'Понимание'], ['lab', 'Лаба EVE-NG']] : TABS.slice();
+  if (simOf(id)) t.splice(t.length - 1, 0, ['sim', '🚨 Дежурство']);
+  return t;
 }
 function viewChapter(v, id, tab, anchor) {
   const ch = COURSE.ch[id], m = COURSE.list.find(x => x.id === id);
@@ -405,12 +411,13 @@ function viewChapter(v, id, tab, anchor) {
   const bk = bookOf(id);
   const cnt = { cards: (ch.cards || []).length, quiz: r.quiz == null ? (ch.quiz || []).length : r.quiz + '%', und: `${r.und[0]}/${r.und[1]}`, lab: `${r.lab[0]}/${r.lab[1]}` };
   if (bk) cnt.book = `${r.th[0]}/${r.th[1]}`; else cnt.theory = `${r.th[0]}/${r.th[1]}`;
+  if (r.sim) cnt.sim = `${r.sim[0]}/${r.sim[1]}`;
   let h = `<div class="chhead"><div class="kicker">Глава ${m.num} · ${COURSE.parts.find(p => p.id === m.part).title.replace(/^Часть [IV]+\. /, '')}</div><h1>${m.title}</h1>
     <div class="row" style="margin-top:6px"><div class="bar ${r.done ? 'ok' : ''}" style="width:240px"><i style="width:${r.p}%"></i></div><span class="muted" style="font-size:13px">${r.p}% ${r.done ? '· глава освоена ✓' : ''}</span></div></div>
     <div class="tabs">${tabsFor(id).map(([k, t]) => `<a href="#/c/${id}/${k}" class="${tab === k ? 'on' : ''}">${t}${cnt[k] != null ? `<span class="c">${cnt[k]}</span>` : ''}</a>`).join('')}</div><div id="tabbody"></div>`;
   v.innerHTML = h;
   const b = $('#tabbody');
-  ({ overview: tOverview, book: bk ? tBook : tTheory, theory: tTheory, cmds: tCmds, cards: tCards, quiz: tQuiz, und: tUnd, lab: tLab }[tab] || tOverview)(b, ch, id, anchor);
+  ({ overview: tOverview, book: bk ? tBook : tTheory, theory: tTheory, cmds: tCmds, cards: tCards, quiz: tQuiz, und: tUnd, sim: tSim, lab: tLab }[tab] || tOverview)(b, ch, id, anchor);
 }
 
 function tOverview(b, ch, id) {
@@ -427,6 +434,7 @@ function tOverview(b, ch, id) {
     ${step(r.quiz >= 80, '3. Тест на понимание', r.quiz == null ? 'не пройден · порог 80%' : `лучший результат ${r.quiz}% · порог 80%`, `#/c/${id}/quiz`)}
     ${step(r.und[0] === r.und[1], '4. Объясни своими словами', `ответов с самооценкой: ${r.und[0]} из ${r.und[1]}`, `#/c/${id}/und`)}
     ${step(r.lab[0] === r.lab[1] && r.lab[1] > 0, '5. Лаба в EVE-NG', `заданий выполнено: ${r.lab[0]} из ${r.lab[1]}`, `#/c/${id}/lab`)}
+    ${r.sim ? step(r.sim[0] === r.sim[1], '🚨 Дежурство (без EVE-NG)', `вызовов решено: ${r.sim[0]} из ${r.sim[1]} · можно до лабы и с телефона`, `#/c/${id}/sim`) : ''}
   </div>
   <h3>Источники</h3><div class="content"><ul>
     <li>Исходная статья цикла: <a href="${m.src}" target="_blank">${m.src}</a></li>
@@ -772,6 +780,10 @@ function buildReport() {
     r += `=== Глава ${m.num}. ${m.title} — ${s.p}%${s.done ? ' (освоена)' : ''}\n`;
     r += `Теория ${s.th[0]}/${s.th[1]}; тест: ${s.quiz == null ? 'не пройден' : `лучший ${s.quiz}%, попыток ${st.quiz.n}, последний ${st.quiz.lastScore}%`}; лаба ${s.lab[0]}/${s.lab[1]}, поломки ${Object.values(st.lab.b).filter(Boolean).length}/${((ch.lab && ch.lab.brk) || []).length}; карточки ${s.cards[0]}/${s.cards[1]}\n`;
     if (st.quiz && st.quiz.wrong && st.quiz.wrong.length) r += `Ошибки в последнем тесте:\n${st.quiz.wrong.map(k => ch.quiz[k] ? '  - ' + ch.quiz[k].q.replace(/<[^>]+>/g, '') : '').filter(Boolean).join('\n')}\n`;
+    if (s.sim && s.sim[0]) {
+      const sm = simOf(m.id), ss = simSt(m.id);
+      r += `Дежурство: решено ${s.sim[0]} из ${s.sim[1]}\n${sm.cases.filter(k => ss[k.id] && ss[k.id].ok).map(k => { const x = ss[k.id]; return `  - ${k.t}: команд ${x.n} (эталон ${(k.best || []).length}), ошибок в ответах ${x.w}${x.h ? ', подсказок ' + x.h : ''}`; }).join('\n')}\n`;
+    }
     const hard = (ch.cards || []).map((c, i) => [c, S.cards[m.id + ':' + i]]).filter(([c, x]) => x && x.lapse >= 2);
     if (hard.length) r += `Трудные карточки (забывал 2+ раза):\n${hard.map(([c, x]) => `  - ${c[0].replace(/<[^>]+>/g, '')} (забывал ${x.lapse})`).join('\n')}\n`;
     const und = (ch.und || []).map((u, i) => [u, st.und[i]]).filter(([u, x]) => x && x.t && x.t.trim());
