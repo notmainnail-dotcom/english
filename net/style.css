@@ -318,3 +318,13 @@ figure.dg.wide{max-width:760px}
 .simdone{margin-top:18px;border-color:var(--ok)}
 .simmap figure.dg{margin:10px auto}
 @media (max-width:899px){.tout{height:300px;font-size:11.5px}}
+
+/* озвучка */
+#ttsbar{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:60;display:flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:8px 10px;box-shadow:var(--sh);max-width:calc(100vw - 24px)}
+#ttsbar[hidden]{display:none}
+#ttsbar .tts-what{font-size:13px;color:var(--tx2);padding:0 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;max-width:260px}
+#ttsbar select{width:auto;padding:3px 6px;font-size:13px}
+.tts-on{background:rgba(59,130,246,.14);box-shadow:0 0 0 6px rgba(59,130,246,.14);border-radius:6px}
+.ttstop{margin-bottom:12px}
+.ttscard .tc-q{font-size:18px;font-weight:600;margin:4px 0 14px}
+.ttscard .lbl{font-size:12px;text-transform:uppercase;letter-spacing:.6px}

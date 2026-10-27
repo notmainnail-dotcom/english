@@ -170,7 +170,7 @@ function rowDrop(k) {
   else if (t === 'e') S.exams = S.exams.filter(z => z.id !== k.slice(2));
 }
 // сейчас что-то вводят или идёт тест/карточки: перерисовывать нельзя
-const inputBusy = () => { const a = document.activeElement; return !!(a && a.matches && a.matches('input,textarea,select')) || !!$('.qcard') || !!$('#fl') || !!$('.sim-live'); };
+const inputBusy = () => { const a = document.activeElement; return !!(a && a.matches && a.matches('input,textarea,select')) || !!$('.qcard') || !!$('#fl') || !!$('.sim-live') || TTS.busy(); };
 const SY = WEB ? CloudSync({
   app: 'sdsm', meta: 'sdsm_sync',
   rows: () => rowsOf(S), put: rowPut, drop: rowDrop,
@@ -325,6 +325,7 @@ function route() {
   const h = location.hash || '#/';
   const v = $('#view');
   const p = h.slice(2).split('/');
+  TTS.stop();   // страница меняется — читать больше нечего
   try {
     if (p[0] === 'c') viewChapter(v, p[1], p[2] || 'overview', p[3]);
     else if (p[0] === 'review') viewReview(v);
@@ -442,17 +443,27 @@ function tOverview(b, ch, id) {
   </ul></div>`;
 }
 
+// озвучка (tts.js): кнопка у раздела и строка в начале; дослушанный раздел отмечается прочитанным
+const ttsBtn = i => TTS.ok ? `<button class="btn sm" data-tts="${i}">🔊 Слушать</button>&nbsp;` : '';
+const ttsTop = () => TTS.ok ? `<div class="row ttstop"><button class="btn sm" data-tts="0">🔊 Слушать с начала</button><span class="muted" style="font-size:13px">читает голос браузера · щёлкни по абзацу — продолжит с него · дослушанный раздел отмечается прочитанным</span></div>` : '';
+function setReadUI(b, k, sec, v) {
+  const r = $(`[data-read="${k}"]`, b); if (r) { r.classList.toggle('ok', v); r.textContent = v ? '✓ Прочитано' : 'Отметить прочитанным'; }
+  const a = $(`.toc a[data-sec="${sec}"]`, b); if (a) a.classList.toggle('rd', v);
+  renderSide();
+}
 function tTheory(b, ch, id, anchor) {
   const st = C(id);
   const secs = ch.theory || [];
   let toc = secs.map((s, i) => `<a href="#/c/${id}/theory/${s.id}" class="${st.read[s.id] ? 'rd' : ''}" data-sec="${s.id}">${i + 1}. ${s.h}</a>`).join('');
-  let body = secs.map((s, i) => `<section class="sec content" id="sec-${s.id}"><h2><span class="n">${i + 1}.</span>${s.h}</h2>${s.html}
-    <div class="secfoot"><button class="btn sm" data-unclear="${s.id}">❓ Непонятно</button>&nbsp;<button class="btn sm ${st.read[s.id] ? 'ok' : ''}" data-read="${s.id}">${st.read[s.id] ? '✓ Прочитано' : 'Отметить прочитанным'}</button></div></section>`).join('');
+  let body = `<div class="ttswrap">${ttsTop()}</div>` + secs.map((s, i) => `<section class="sec content" id="sec-${s.id}"><h2><span class="n">${i + 1}.</span>${s.h}</h2>${s.html}
+    <div class="secfoot">${ttsBtn(i)}<button class="btn sm" data-unclear="${s.id}">❓ Непонятно</button>&nbsp;<button class="btn sm ${st.read[s.id] ? 'ok' : ''}" data-read="${s.id}">${st.read[s.id] ? '✓ Прочитано' : 'Отметить прочитанным'}</button></div></section>`).join('');
   body += `<div class="card"><div class="row"><b>Теория пройдена?</b><span class="sp"></span><a class="btn pri" href="#/c/${id}/cards">Дальше: карточки →</a></div></div>`;
   b.innerHTML = `<div class="theory"><div>${body}</div><nav class="toc">${toc}</nav></div>`;
   b.onclick = e => {
     const r = e.target.closest('[data-read]');
-    if (r) { const k = r.dataset.read; st.read[k] = !st.read[k]; save(); r.classList.toggle('ok', !!st.read[k]); r.textContent = st.read[k] ? '✓ Прочитано' : 'Отметить прочитанным'; const a = $(`.toc a[data-sec="${k}"]`); if (a) a.classList.toggle('rd', !!st.read[k]); renderSide(); return; }
+    if (r) { const k = r.dataset.read; st.read[k] = !st.read[k]; save(); setReadUI(b, k, k, !!st.read[k]); return; }
+    const tt = e.target.closest('[data-tts]');
+    if (tt) { TTS.readPage(b, +tt.dataset.tts, { onSection: i => { const k = secs[i] && secs[i].id; if (k && !st.read[k]) { st.read[k] = true; save(); setReadUI(b, k, k, true); } } }); return; }
     const u = e.target.closest('[data-unclear]');
     if (u) {
       const sec = secs.find(s => s.id === u.dataset.unclear);
@@ -469,15 +480,17 @@ function tBook(b, ch, id, anchor) {
   const st = C(id), bk = bookOf(id);
   const key = i => 'book:' + i;
   const toc = bk.parts.map((p, i) => `<a href="#/c/${id}/book/${i}" class="${st.read[key(i)] ? 'rd' : ''}" data-sec="${i}">${i + 1}. ${p.h}</a>`).join('');
-  let body = `<section class="sec content book">${bk.lead || ''}</section>`;
+  let body = `<section class="sec content book">${ttsTop()}${bk.lead || ''}</section>`;
   body += bk.parts.map((p, i) => `<section class="sec content book" id="sec-${i}"><h2><span class="n">${i + 1}.</span>${p.h}</h2>${p.html}
-    <div class="secfoot"><button class="btn sm" data-unclear="${i}">❓ Непонятно</button>&nbsp;<button class="btn sm ${st.read[key(i)] ? 'ok' : ''}" data-read="${key(i)}" data-i="${i}">${st.read[key(i)] ? '✓ Прочитано' : 'Отметить прочитанным'}</button></div></section>`).join('');
+    <div class="secfoot">${ttsBtn(i)}<button class="btn sm" data-unclear="${i}">❓ Непонятно</button>&nbsp;<button class="btn sm ${st.read[key(i)] ? 'ok' : ''}" data-read="${key(i)}" data-i="${i}">${st.read[key(i)] ? '✓ Прочитано' : 'Отметить прочитанным'}</button></div></section>`).join('');
   if (bk.end) body += `<section class="sec content book">${bk.end}</section>`;
   body += `<div class="card"><div class="row"><b>Книга прочитана?</b><span class="sp"></span><a class="btn" href="#/c/${id}/theory">Конспект (по желанию)</a><a class="btn pri" href="#/c/${id}/cards">Дальше: карточки →</a></div></div>`;
   b.innerHTML = `<div class="theory"><div>${body}</div><nav class="toc">${toc}</nav></div>`;
   b.onclick = e => {
     const r = e.target.closest('[data-read]');
-    if (r) { const k = r.dataset.read; st.read[k] = !st.read[k]; save(); r.classList.toggle('ok', !!st.read[k]); r.textContent = st.read[k] ? '✓ Прочитано' : 'Отметить прочитанным'; const a = $(`.toc a[data-sec="${r.dataset.i}"]`); if (a) a.classList.toggle('rd', !!st.read[k]); renderSide(); return; }
+    if (r) { const k = r.dataset.read; st.read[k] = !st.read[k]; save(); setReadUI(b, k, r.dataset.i, !!st.read[k]); return; }
+    const tt = e.target.closest('[data-tts]');
+    if (tt) { TTS.readPage(b, +tt.dataset.tts, { onSection: i => { const k = key(i); if (!st.read[k]) { st.read[k] = true; save(); setReadUI(b, k, i, true); } } }); return; }
     const u = e.target.closest('[data-unclear]');
     if (u) {
       const sec = bk.parts[+u.dataset.unclear];
@@ -556,12 +569,13 @@ function tCards(b, ch, id) {
   const due = all.filter(k => S.cards[k] && S.cards[k].due <= t), fresh = all.filter(k => !S.cards[k]);
   const learned = all.filter(k => S.cards[k] && S.cards[k].box >= 3).length;
   b.innerHTML = `<div class="card"><div class="row"><div class="sp"><b>Колода главы: ${all.length} карточек</b><br><span class="muted">новых ${fresh.length} · к повторению ${due.length} · выучено ${learned}</span></div>
-    <button class="btn pri" id="c1" ${due.length + fresh.length ? '' : 'disabled'}>Учить новые и повторить (${due.length + fresh.length})</button><button class="btn" id="c2">Прогнать всю колоду</button></div></div>
+    <button class="btn pri" id="c1" ${due.length + fresh.length ? '' : 'disabled'}>Учить новые и повторить (${due.length + fresh.length})</button><button class="btn" id="c2">Прогнать всю колоду</button>${TTS.ok ? '<button class="btn" id="c3">🎧 Слушать колоду</button>' : ''}</div></div>
     <div class="callout info"><b>Как работать с карточками</b>Сначала честно вспомни ответ, только потом переворачивай. «Снова», если не вспомнил главное. Пробел — перевернуть, 1–4 — оценка. Новые карточки этой главы попадут и в общее «Повторение».</div>
     <h3>Все карточки главы</h3><div class="content">${(ch.cards || []).map((c, i) => { const s = S.cards[cardKey(id, i)]; return `<details class="more"><summary>${c[0]} ${s ? `<span class="pill ${s.box >= 3 ? 'ok' : ''}">ур. ${s.box}</span>` : ''}</summary><div style="margin-top:8px">${c[1]}</div></details>`; }).join('')}</div>`;
   const run = keys => flashUI(b, keys, 'Карточки главы', `<a class="btn pri" href="#/c/${id}/quiz">Дальше: тест →</a> <a class="btn" href="#/c/${id}/cards">К колоде</a>`);
   $('#c1').onclick = () => run(shuffle(due).concat(fresh));
   $('#c2').onclick = () => run(shuffle(all));
+  if ($('#c3')) $('#c3').onclick = () => TTS.readCards(b, all, 'Колода главы', `<a class="btn pri" href="#/c/${id}/cards" onclick="setTimeout(route, 0)">Учить с оценкой</a>`);
 }
 
 // --- тест
@@ -743,8 +757,9 @@ function viewReview(v) {
   v.innerHTML = `<h1>Повторение</h1><p class="sub">Карточки всех начатых глав, у которых подошёл срок, и до ${S.settings.newPerDay} новых в день. Новые карточки главы появляются, когда ты прочитал в ней хотя бы один раздел.</p><div id="rv"></div>`;
   const b = $('#rv');
   if (!keys.length) { b.innerHTML = `<div class="card" style="text-align:center"><div style="font-size:40px">✨</div><p>На сегодня всё повторено. Следующие карточки вернутся по расписанию.</p></div>`; return; }
-  b.innerHTML = `<div class="card"><div class="row"><b class="sp">К повторению: ${keys.length}</b><button class="btn pri" id="go">Начать</button></div></div>`;
+  b.innerHTML = `<div class="card"><div class="row"><b class="sp">К повторению: ${keys.length}</b>${TTS.ok ? '<button class="btn" id="ls">🎧 Сначала послушать</button>' : ''}<button class="btn pri" id="go">Начать</button></div></div>`;
   $('#go').onclick = () => flashUI(b, shuffle(keys), 'Повторение', '<a class="btn pri" href="#/">На главную</a>');
+  if ($('#ls')) $('#ls').onclick = () => TTS.readCards(b, shuffle(keys), 'Повторение', '<a class="btn pri" href="#/review" onclick="setTimeout(route, 0)">Повторить с оценкой</a>');
 }
 
 // ---------- экзамен ----------
@@ -832,6 +847,11 @@ function viewSettings(v, part) {
   <div class="card"><b>Перенос из программы СДСМ</b><p class="muted" style="font-size:13.5px">Один раз, чтобы прогресс с компьютера попал сюда. В программе СДСМ: Настройки → «📋 Копировать как текст». Здесь вставь текст и нажми «Объединить». Объединение ничего не удаляет: что уже есть здесь, останется.</p>
     <textarea id="mergt" placeholder="Вставь сюда текст из программы" style="min-height:70px"></textarea><div class="row" style="margin-top:8px"><button class="btn pri" id="merge">Объединить</button></div></div>` : ''}
   <div class="card"><b>Тема</b><div class="row" style="margin-top:8px"><button class="btn ${S.settings.theme === 'dark' ? 'pri' : ''}" data-th="dark">🌙 Тёмная</button><button class="btn ${S.settings.theme === 'light' ? 'pri' : ''}" data-th="light">☀️ Светлая</button></div></div>
+  ${TTS.ok ? `<div class="card"><b>Озвучка</b><p class="muted" style="font-size:13.5px">Голос браузера читает книгу, конспект и карточки. Лучшие русские голоса — в Edge: «Svetlana Online (Natural)» и «Dmitry Online (Natural)», им нужен интернет. Настройка хранится только на этом устройстве.</p>
+    <div class="row"><label>Голос <select id="ttsv" style="width:auto;max-width:100%"></select></label></div>
+    <div class="row" style="margin-top:8px"><label>Скорость <select id="ttsr" style="width:auto">${[0.8, 0.9, 1, 1.1, 1.2, 1.3, 1.5, 1.7, 2].map(r => `<option value="${r}" ${r === TTS.cfg.rate ? 'selected' : ''}>${String(r).replace('.', ',')}×</option>`).join('')}</select></label>
+      <label>Пауза на ответ <select id="ttst" style="width:auto">${[2, 4, 6, 8, 10].map(n => `<option value="${n}" ${n === TTS.cfg.think ? 'selected' : ''}>${n} с</option>`).join('')}</select></label><button class="btn" id="ttsp">▶ Проверить голос</button></div>
+    <p class="muted" id="ttsn" style="font-size:13px;margin-bottom:0"></p></div>` : ''}
   <div class="card"><b>Образы EVE-NG</b><p class="muted" style="font-size:13.5px">Имена папок в <code>/opt/unetlab/addons/qemu/</code> на твоём EVE-NG. Подставляются в скачиваемые .unl. По умолчанию — образы из папки EVE-FULL.</p>
     <label>vIOS (маршрутизатор)<input type="text" id="i-vios" value="${esc(im.vios)}"></label><br><br>
     <label>vIOS-L2 (коммутатор)<input type="text" id="i-viosl2" value="${esc(im.viosl2)}"></label><br><br>
@@ -851,6 +871,20 @@ function viewSettings(v, part) {
   };
   if (part === 'sync' && $('#syncwrap')) $('#syncwrap').scrollIntoView();
   $$('[data-th]', v).forEach(b => b.onclick = () => { S.settings.theme = b.dataset.th; applyTheme(); save(); route(); });
+  if ($('#ttsv')) {
+    // голоса подгружаются не сразу: список заполняется и при событии voiceschanged
+    const fill = () => {
+      const all = TTS.voices(), ru = TTS.ruVoices(), cur = TTS.voice();
+      const list = ru.concat(all.filter(x => !ru.includes(x)));
+      $('#ttsv').innerHTML = list.length ? list.map(x => `<option value="${esc(x.name)}" ${cur && x.name === cur.name ? 'selected' : ''}>${esc(x.name)}${/^ru/i.test(x.lang) ? '' : ' (' + esc(x.lang) + ')'}</option>`).join('') : '<option value="">голоса загружаются…</option>';
+      $('#ttsn').textContent = ru.length ? `Русских голосов: ${ru.length}${ru.some(x => /natural/i.test(x.name)) ? '' : '. Нейронных (Natural) нет — они есть в Edge.'}` : 'Русского голоса в этом браузере нет. Открой курс в Edge.';
+    };
+    fill(); speechSynthesis.addEventListener('voiceschanged', fill, { once: true });
+    $('#ttsv').onchange = e => { TTS.cfg.voice = e.target.value; TTS.saveCfg(); TTS.test(TTS.voice()); };
+    $('#ttsr').onchange = e => { TTS.cfg.rate = +e.target.value; TTS.saveCfg(); };
+    $('#ttst').onchange = e => { TTS.cfg.think = +e.target.value; TTS.saveCfg(); };
+    $('#ttsp').onclick = () => TTS.test(TTS.voice());
+  }
   $('#saveimg').onclick = () => { ['vios', 'viosl2', 'csr', 'veos'].forEach(k => S.settings.imgs[k] = $('#i-' + k).value.trim()); save(); toast('Сохранено'); };
   $('#defimg').onclick = () => { S.settings.imgs = { ...DEF_IMGS }; save(); route(); };
   $('#npd').onchange = e => { S.settings.newPerDay = +e.target.value; save(); };
