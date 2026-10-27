@@ -45,10 +45,17 @@ const TTS = (() => {
     section: 'секшн', priority: 'прайорити', interval: 'интервал', multiplier: 'мультиплаер', range: 'рейндж', adj: 'эдж', undebug: 'андебаг', all: 'олл',
     clear: 'клир', process: 'процесс', extended: 'экстендед', summary: 'саммари', redistribute: 'редистрибьют', connected: 'коннектед', static: 'статик',
     'passive-interface': 'пассив-интерфейс', 'hello-interval': 'хэллоу-интервал', 'dead-interval': 'дэд-интервал', 'mtu-ignore': 'эм-тэ-у-игнор', nssa: 'эн-эс-эс-а',
-    'link-state': 'линк-стейт', 'distance-vector': 'дистанс-вектор', 'router-id': 'роутер-ай-ди', statistics: 'статистикс', logging: 'логгинг', interfaces: 'интерфейсы', 'default': 'дефолт', 'on-startup': 'он-стартап'
+    'link-state': 'линк-стейт', 'distance-vector': 'дистанс-вектор', 'router-id': 'роутер-ай-ди',
+    // MPLS (глава 10)
+    LER: 'эл-е-эр', LIB: 'либ', LFIB: 'эл-фиб', FEC: 'фек', PHP: 'пэ-аш-пэ', CEF: 'цэф', SID: 'сид', SRGB: 'эс-эр-джи-би', MRU: 'эм-эр-ю', TC: 'тэ-цэ', EXP: 'экс-пи',
+    push: 'пуш', swap: 'своп', pop: 'поп', Pop: 'поп', label: 'лейбл', Label: 'лейбл', Labels: 'лейблы', No: 'ноу', Untagged: 'антэгд', Oper: 'опер',
+    'next-hop': 'некст-хоп', 'BGP-free': 'бэ-гэ-пэ фри', core: 'кор', 'black hole': 'блэк хол', implicit: 'имплисит', explicit: 'эксплисит', null: 'нал',
+    'liberal retention': 'либерал ретеншн', 'penultimate hop popping': 'пенальтимейт хоп поппинг', 'label stack': 'лейбл стэк', 'Segment Routing': 'сегмент роутинг',
+    mpls: 'эм-пэ-эл-эс', ldp: 'эл-дэ-пэ', cef: 'цэф', bindings: 'байндингс', 'forwarding-table': 'форвардинг-тейбл', ipv4: 'ай-пи вэ четыре', sync: 'синк',
+    'propagate-ttl': 'пропагейт ти-ти-эл', forwarded: 'форвардед', 'df-bit': 'ди-эф бит', size: 'сайз', jumbo: 'джамбо', autoconfig: 'автоконфиг', force: 'форс', statistics: 'статистикс', logging: 'логгинг', interfaces: 'интерфейсы', 'default': 'дефолт', 'on-startup': 'он-стартап'
   };
   const LET = { A: 'а', B: 'бэ', C: 'цэ', D: 'дэ', E: 'е', F: 'эф', G: 'гэ', H: 'аш', I: 'и', J: 'джей', K: 'ка', L: 'эл', M: 'эм', N: 'эн', O: 'о', P: 'пэ', Q: 'кью', R: 'эр', S: 'эс', T: 'тэ', U: 'у', V: 'вэ', W: 'дабл-ю', X: 'икс', Y: 'игрек', Z: 'зэд' };
-  const ABBR_RE = new RegExp('(^|[^A-Za-z0-9-])(' + Object.keys(ABBR).sort((a, b) => b.length - a.length).map(k => k.replace(/[-]/g, '\\-')).join('|') + ')(?!-?[A-Za-z0-9])', 'g');
+  const ABBR_RE = new RegExp('(^|[^A-Za-z0-9])(' + Object.keys(ABBR).sort((a, b) => b.length - a.length).map(k => k.replace(/[-]/g, '\\-')).join('|') + ')(?![A-Za-z0-9]|-[a-z])', 'g');
   function speakable(t) {
     return t
       .replace(/[\u{1F300}-\u{1FAFF}☀-➿️]/gu, '')
@@ -57,7 +64,7 @@ const TTS = (() => {
       .replace(/\bGi(\d+)\/(\d+)\b/g, 'гигабит $1 слэш $2').replace(/\bLo(\d+)\b/g, 'лупбэк $1')
       .replace(/(\d)\s?Мбит\/с/g, '$1 мегабит в секунду').replace(/(\d)\s?Гбит\/с/g, '$1 гигабит в секунду')
       .replace(/(\d)\s?мс(?=[\s.,;:)]|$)/g, '$1 миллисекунд').replace(/(\d)\s?с(?=[\s.,;:)]|$)/g, '$1 секунд')
-      .replace(/\b(\d+)G\b/g, '$1 гигабит').replace(/\bL([1-3])(VPN)?\b/g, (m, n, v) => 'эл-' + ['один', 'два', 'три'][n - 1] + (v ? ' вэ-пэ-эн' : '')).replace(/\bR(\d)\b/g, 'эр $1')
+      .replace(/\b(\d+)G\b/g, '$1 гигабит').replace(/\bL([1-3])(VPN)?\b/g, (m, n, v) => 'эл-' + ['один', 'два', 'три'][n - 1] + (v ? ' вэ-пэ-эн' : '')).replace(/\bR(\d)\b/g, 'эр $1').replace(/\b(PE|CE|P)(\d)\b/g, (m, w, n) => ({ PE: 'пэ-е', CE: 'цэ-е', P: 'пэ' })[w] + ' ' + n)
       .replace(ABBR_RE, (m, a, w) => a + ABBR[w])
       .replace(/\b[A-Z]{2,5}\b/g, w => w.split('').map(c => LET[c]).join('-'))
       .replace(/→|⇒/g, ' — ').replace(/×/g, ' на ').replace(/≈/g, ' примерно ').replace(/</g, ' меньше ').replace(/>/g, ' больше ')
