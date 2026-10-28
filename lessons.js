@@ -2,20 +2,20 @@
 // id урока не менять: по нему хранится прогресс.
 // Типы заданий: ch — выбор, in — вставить слово, or — собрать предложение, tr — перевод,
 // fx — исправить ошибку (проверка с учётом больших букв), dc — диктант: послушать и написать.
-window.LESSONS_DATE = '2026-10-15';
+window.LESSONS_DATE = '2026-10-28';
 
 // Оценка уровня от Claude — показывается во вкладке «Прогресс». Меняет только Claude после проверки по отчёту:
 // по показанному в заданиях и текстах, не по числу пройденных уроков. v — процент пути до A2, null — ещё не проверялось.
 window.EN_LEVEL = {
-date: '2026-10-15', target: 'A2', total: 44,
+date: '2026-10-28', target: 'A2', total: 48,
 skills: [
-{t:'Чтение', v:60, n:'Тексты A1 понимаешь почти целиком. Ошибки в вопросах к тексту — от невнимательности, а не от непонимания.'},
-{t:'Словарь', v:40, n:'151 слово «знаю» в карточках плюс бытовые слова из «Печати». Для A2 нужно около 1000.'},
-{t:'Грамматика', v:40, n:'Есть: настоящее время, there is / are, need to / should. Нет: прошедшее и будущее время.'},
-{t:'Письмо', v:35, n:'Пишешь длинно и интересно по мысли, но точность 72%: -s после чисел, in / on, i с маленькой.'},
+{t:'Чтение', v:60, n:'Тексты недели 4 понимаешь целиком. Ошибки в вопросах — от спешки: «два раза в день» перевёл как «в неделю».'},
+{t:'Словарь', v:45, n:'237 слов «знаю» (две недели назад 151). Для A2 нужно около 1000. Путаешь похожие по смыслу: improve / gain, put / earn.'},
+{t:'Грамматика', v:45, n:'Множественное число и предлоги места в своих текстах стали точнее. Путаешь «нельзя» (can’t) и «не обязательно» (don’t have to). Прошедшего времени пока нет.'},
+{t:'Письмо', v:40, n:'В 4.6 — 13 предложений о себе. Мешают в основном опечатки (lavel, cabel, thier, intresting) и call to вместо call.'},
 {t:'На слух', v:null, n:'Пока не проверялось.'},
 {t:'Речь', v:null, n:'Пока не проверялось.'}],
-note: 'Быстрее всего процент поднимут прошедшее время (неделя 5) и точность письма от 80%. Один урок за вечер и перечитать свой текст перед «Закончить».'};
+note: 'Порог 200 слов уже взят. Дальше главное — точность от 80%: она почти вся теряется на написании. Перед «Проверить» прочитай свой ответ по буквам.'};
 // more — дополнительное чтение по желанию (без заданий), для уровня «максимум».
 
 window.WEEKS = [
@@ -23,7 +23,7 @@ window.WEEKS = [
 {w:2, t:'Мой день, график 2 через 2', g:'Present Simple: don’t / doesn’t, вопросы'},
 {w:3, t:'Что вокруг меня', g:'there is / there are, предлоги места и времени, need to / have to / should'},
 {w:4, t:'Новый офис — тема 3 ещё раз, по-новому', g:'множественное число, in / on / at, there is / are, should / need to / have to'},
-{w:5, t:'Моя история', g:'was / were, прошедшее время, can'}];
+{w:5, t:'Моя история', g:'прошедшее время: was / were, -ed, went / had / made, didn’t / did, could'}];
 
 window.LESSONS = [
 
@@ -1103,7 +1103,7 @@ tasks:[
 {k:'fx', q:'You doesn’t need to learn them today.', a:['You don’t need to learn them today.','You do not need to learn them today.'], e:'you → don’t.'},
 {k:'dc', a:['You have to label every new cable.'], ru:'Каждый новый кабель нужно подписать.'},
 {k:'tr', ru:'Тебе не нужно брать стремянку.', a:['You don’t need to take the ladder.','You don’t have to take the ladder.']},
-{k:'tr', ru:'На крыше одному работать не стоит.', a:['You shouldn’t work alone on the roof.','You should not work alone on the roof.']}],
+{k:'tr', ru:'На крыше одному работать не стоит.', a:['You shouldn’t work alone on the roof.','You should not work alone on the roof.','You shouldn’t work on the roof alone.','You should not work on the roof alone.']}],
 own:'Напиши 5–6 правил для своей работы или дома: should, shouldn’t, have to, don’t need to, can’t. Проверь: после should и can — без -s.'},
 
 {id:'w4r', w:4, n:6, review:true, t:'Повторение недели: письмо Сэма маме', g:'всё вместе',
@@ -1139,9 +1139,287 @@ tasks:[
 {k:'fx', q:'There are two room and a small kitchen on my flat.', a:['There are two rooms and a small kitchen in my flat.'], e:'Две комнаты — rooms; в квартире — in.'},
 {k:'fx', q:'Dan says i should calls the caretaker.', a:['Dan says I should call the caretaker.'], e:'I — с большой; после should — call без -s.'},
 {k:'dc', a:['I take a photo of every cabinet.'], ru:'Я фотографирую каждый шкаф.'},
-{k:'tr', ru:'Я подписываю каждый кабель.', a:['I label every cable.']},
+{k:'tr', ru:'Я подписываю каждый кабель.', a:['I label every cable.','I put a label on every cable.']},
 {k:'tr', ru:'Мой первый месяц на работе закончился.', a:['My first month at work is over.','My first month at work is finished.']},
 {k:'tr', ru:'Не волнуйся за меня.', a:['Don’t worry about me.']}],
-own:'Главное задание недели. Напиши письмо (8–10 предложений) родным или другу о своей работе и доме: что где находится, что есть рядом, как часто ты что-то делаешь, что нужно и что стоит делать. Перед «Закончить» перечитай медленно: -s после чисел, in / on / at, I с большой. Текст попадёт в отчёт для Claude.'}
+own:'Главное задание недели. Напиши письмо (8–10 предложений) родным или другу о своей работе и доме: что где находится, что есть рядом, как часто ты что-то делаешь, что нужно и что стоит делать. Перед «Закончить» перечитай медленно: -s после чисел, in / on / at, I с большой. Текст попадёт в отчёт для Claude.'},
+
+// ---------- Неделя 5: прошедшее время (Дэн вспоминает, ночь обновления, ошибка Сэма) ----------
+// В «исправь» — его ошибки недели 4: опечатки, call to, can’t / don’t have to, Yes, it is на Are there…?
+{id:'w5l1', w:5, n:1, t:'I was a builder', g:'was / were, there was / there were',
+rule:`<p>До сих пор мы говорили только о «сейчас». С этой недели — о прошлом. Начинаем с самого частого глагола — «быть».</p>
+<p>Сейчас: I <b>am</b>, he / she / it <b>is</b>, we / you / they <b>are</b>.<br>В прошлом форм всего две: I / he / she / it <b>was</b> · we / you / they <b>were</b>.</p>
+<p>Отрицание: <b>wasn’t</b> / <b>weren’t</b>. Вопрос — меняем местами: <b>Were</b> you at work? — Yes, I <b>was</b>. / No, I <b>wasn’t</b>.</p>
+<p>И там же: there is → <b>there was</b> (один), there are → <b>there were</b> (несколько). There were two dogs in the office.</p>
+<p>Слова-подсказки, что речь о прошлом: <b>yesterday</b> (вчера), <b>last</b> night / week / year (прошлой ночью, на прошлой неделе, в прошлом году), five years <b>ago</b> (пять лет назад), then (тогда).</p>
+<p>Важно: was / were — это только «был». Нельзя сказать <s>I was work</s>. «Я работал» — это другая форма, I worked, она будет завтра.</p>`,
+ex:[
+['Five years ago, I was a builder.','Пять лет назад я был строителем.'],
+['The work was hard, but the people were nice.','Работа была тяжёлой, но люди были хорошие.'],
+['There were no computers on the building site.','На стройке не было компьютеров.'],
+['Were you at work yesterday? — No, I wasn’t.','Ты вчера был на работе? — Нет.']],
+text:[
+['Five years ago, I wasn’t a network engineer. I was a builder.','Пять лет назад я не был сетевым инженером. Я был строителем.'],
+['The work was hard, and the days were long.','Работа была тяжёлой, а дни длинными.'],
+['My hands were always cold in winter.','Зимой руки у меня всегда были холодные.'],
+['The money wasn’t bad, but I was tired all the time.','Деньги были неплохие, но я всё время был уставший.'],
+['My first day as an engineer was in March.','Мой первый день инженером был в марте.'],
+['I was very nervous. There were so many new words!','Я очень нервничал. Было столько новых слов!'],
+['Kate was my team leader then, too.','Кейт и тогда была моим тимлидом.'],
+['She was calm and kind, and her questions were simple.','Она была спокойной и доброй, а её вопросы — простыми.'],
+['Mike was on the night shift, so he wasn’t in the office.','Майк был в ночной смене, поэтому в офисе его не было.'],
+['There was only one other engineer in the room, an old man called Bob.','В комнате был только ещё один инженер — пожилой мужчина по имени Боб.'],
+['Bob was very quiet, but his notes were great.','Боб был очень тихим, зато его записи были отличными.'],
+['At the end of the day, I was tired, but I was happy.','В конце дня я устал, но был счастлив.'],
+['It was my first good day in a long time.','Это был мой первый хороший день за долгое время.']],
+words:[
+['was / were','был / были'],['builder','строитель'],['ago','назад'],['yesterday','вчера'],['last week','на прошлой неделе'],
+['hard','тяжёлый, трудный'],['tired','уставший'],['nervous','нервный, взволнованный'],['calm','спокойный'],['kind','добрый'],
+['then','тогда'],['in a long time','за долгое время']],
+tasks:[
+{k:'ch', q:'What was Dan five years ago?', o:['a network engineer','a builder','a teacher'], a:1},
+{k:'ch', q:'Why wasn’t Mike in the office?', o:['He was on the night shift.','He was ill.','He was on holiday.'], a:0},
+{k:'ch', q:'What was great about Bob?', o:['his car','his notes','his coffee'], a:1},
+{k:'ch', q:'I ___ a builder five years ago.', o:['was','were','am'], a:0},
+{k:'ch', q:'The days ___ long.', o:['was','were'], a:1, e:'days — их много: were.'},
+{k:'ch', q:'There ___ many new words.', o:['was','were'], a:1, e:'words — много: there were.'},
+{k:'ch', q:'Were you tired? — Yes, I ___.', o:['was','were','did'], a:0},
+{k:'in', q:'Mike ___ in the office. (не был)', a:['wasn’t','was not','wasnt']},
+{k:'in', q:'My hands ___ cold in winter. (были)', a:['were']},
+{k:'or', ru:'Работа была тяжёлой.', a:'The work was hard.'},
+{k:'or', ru:'Ты вчера был дома?', a:'Were you at home yesterday?'},
+{k:'fx', q:'Yesterday I were at home all day.', a:['Yesterday I was at home all day.'], e:'I — was. Were — для we / you / they.'},
+{k:'fx', q:'Five years ago i was a builder and my work were hard.', a:['Five years ago I was a builder and my work was hard.','Five years ago I was a builder, and my work was hard.'], e:'I — с большой; work — одна, значит was.'},
+{k:'dc', a:['There were so many new words!'], ru:'Было столько новых слов!'},
+{k:'tr', ru:'Вчера я был уставший.', a:['I was tired yesterday.','Yesterday I was tired.']},
+{k:'tr', ru:'В комнате было два инженера.', a:['There were two engineers in the room.','In the room there were two engineers.']}],
+own:'Напиши 5–6 предложений о прошлом через was / were: кем ты был пять лет назад, где ты был вчера, какой была твоя первая работа. Например: Five years ago, I was a builder. Yesterday I was at home.'},
+
+{id:'w5l2', w:5, n:2, t:'The night of the upgrade', g:'прошедшее время: глагол + -ed',
+rule:`<p>Чтобы сказать, что кто-то <b>что-то сделал</b>, к обычному глаголу добавляем <b>-ed</b>: work → work<b>ed</b>, check → check<b>ed</b>, call → call<b>ed</b>.</p>
+<p>Хорошая новость: форма одна для всех. I worked, she worked, they worked — никакого -s для he / she, как в настоящем.</p>
+<p>Правописание:<br>на -e — только <b>-d</b>: live → lived, move → moved<br>короткое слово на согласную — она <b>удваивается</b>: stop → sto<b>pp</b>ed, plan → pla<b>nn</b>ed<br>согласная + y → <b>-ied</b>: study → stud<b>ied</b>, но play → played (перед y гласная)</p>
+<p>Произношение: после <b>t</b> и <b>d</b> окончание звучит отдельным слогом [ɪd]: start-ed, need-ed, wait-ed. В остальных словах нового слога нет: worked [wɜːkt], called [kɔːld].</p>`,
+ex:[
+['Last night, we changed the old router.','Прошлой ночью мы заменили старый роутер.'],
+['Kate started the call at 1:30.','Кейт начала созвон в 1:30.'],
+['Mike checked the links, and I watched the alarms.','Майк проверял линки, а я следил за авариями.'],
+['Sam studied the plan before the night.','Сэм изучил план до этой ночи.']],
+text:[
+['Last night was the night of the big upgrade.','Прошлой ночью было большое обновление.'],
+['Kate started the call at 1:30 a.m., and everybody was online.','Кейт начала созвон в 1:30 ночи, и все были на связи.'],
+['At 2 a.m., Mike stopped the old core router.','В 2 часа Майк остановил старый роутер ядра.'],
+['For a few minutes, all the alarms on my screen were red.','Несколько минут все аварии у меня на экране горели красным.'],
+['Mike and Sam moved the cables to the new router.','Майк и Сэм переключили кабели на новый роутер.'],
+['Sam labeled every cable. He wanted to do it right.','Сэм подписал каждый кабель. Он хотел сделать всё правильно.'],
+['Then Mike started the new router.','Потом Майк запустил новый роутер.'],
+['I checked the links one by one, and they all worked.','Я проверил линки один за другим, и все заработали.'],
+['At 3:15, the alarms stopped, and my screen turned green.','В 3:15 аварии прекратились, и экран стал зелёным.'],
+['We waited for ten minutes, but nothing happened.','Мы подождали десять минут, но ничего не случилось.'],
+['Kate thanked everybody and closed the call.','Кейт поблагодарила всех и закрыла созвон.'],
+['Sam stayed in the server room with Mike until 4.','Сэм остался в серверной с Майком до четырёх.'],
+['At 4:30, I walked Rex in the empty street and smiled.','В 4:30 я выгулял Рекса по пустой улице и улыбался.']],
+words:[
+['last night','прошлой ночью, вчера вечером'],['move','переносить, переключать'],['one by one','один за другим'],
+['turn green','стать зелёным'],['wait for','ждать (сколько-то)'],['happen','случаться'],['nothing','ничего'],
+['thank','благодарить'],['stay','оставаться'],['until','до (какого-то времени)'],['empty','пустой'],['smile','улыбаться']],
+tasks:[
+{k:'ch', q:'Kate started the call at…', o:['1:30 a.m.','2 a.m.','3:15'], a:0},
+{k:'ch', q:'Who labeled every cable?', o:['Mike','Sam','Kate'], a:1},
+{k:'ch', q:'What happened at 3:15?', o:['The alarms stopped.','Mike stopped the router.','Kate closed the call.'], a:0},
+{k:'ch', q:'She ___ the call at 1:30.', o:['start','starts','started'], a:2},
+{k:'ch', q:'He ___ English last year.', o:['studyed','studied','studies'], a:1, e:'Согласная + y → -ied.'},
+{k:'ch', q:'Mike ___ the old router.', o:['stoped','stopped'], a:1, e:'stop — короткое слово, p удваивается.'},
+{k:'ch', q:'В каком слове -ed звучит отдельным слогом?', o:['worked','called','started'], a:2, e:'После t и d: start-ed.'},
+{k:'in', q:'We ___ for ten minutes. (wait)', a:['waited']},
+{k:'in', q:'I ___ in a small town as a child. (live)', a:['lived']},
+{k:'or', ru:'Майк проверил линки.', a:'Mike checked the links.'},
+{k:'or', ru:'Кейт поблагодарила всех.', a:'Kate thanked everybody.'},
+{k:'fx', q:'Yesterday I work from 8 a.m. to 8 p.m.', a:['Yesterday I worked from 8 a.m. to 8 p.m.'], e:'Вчера — значит прошлое: worked.'},
+{k:'fx', q:'Last week Sam call to Kate and ask about the plan.', a:['Last week Sam called Kate and asked about the plan.'], e:'Прошлое — called, asked. И звонят без to: call Kate.'},
+{k:'dc', a:['The alarms stopped, and my screen turned green.'], ru:'Аварии прекратились, и экран стал зелёным.'},
+{k:'tr', ru:'Прошлой ночью мы заменили старый роутер.', a:['Last night we changed the old router.','We changed the old router last night.','Last night we replaced the old router.','We replaced the old router last night.']},
+{k:'tr', ru:'Я проверил каждый кабель.', a:['I checked every cable.','I checked each cable.']}],
+own:'Опиши свою последнюю смену или вчерашний день: 6–8 предложений с глаголами на -ed: worked, started, checked, called, watched, walked, cooked, played. Только обычные глаголы — неправильные будут в следующем уроке.'},
+
+{id:'w5l3', w:5, n:3, t:'Sam went to the wrong house', g:'неправильные глаголы: went, took, saw, had…',
+rule:`<p>Самые частые глаголы в прошедшем времени -ed <b>не получают</b> — они меняются целиком. Их просто учат, как новые слова. Вот главные:</p>
+<p>go → <b>went</b> · come → <b>came</b> · have → <b>had</b> · get → <b>got</b> · do → <b>did</b> · make → <b>made</b><br>take → <b>took</b> · see → <b>saw</b> · say → <b>said</b> · know → <b>knew</b> · find → <b>found</b><br>buy → <b>bought</b> · eat → <b>ate</b> · sleep → <b>slept</b> · leave → <b>left</b> · write → <b>wrote</b> · put → <b>put</b></p>
+<p>Форма тоже одна для всех: I went, she went, they went.</p>
+<p>Совет: учи парой — go / went. Пары этого урока уже ушли в карточки. Не надо зубрить все сразу: эти 17 закрывают большую часть обычной речи.</p>
+<p>Ловушка: «ошибиться» — <b>make</b> a mistake → I <b>made</b> a mistake (не did).</p>`,
+ex:[
+['Sam went to house 21, not house 12.','Сэм поехал в дом 21, а не в дом 12.'],
+['He took the wrong key.','Он взял не тот ключ.'],
+['I had a sandwich and slept for an hour.','Я съел бутерброд и поспал час.'],
+['Kate said, “It’s OK. Everybody makes mistakes.”','Кейт сказала: «Ничего. Все ошибаются».']],
+text:[
+['On Monday, Sam got a new task: house 12, a new user on the third floor.','В понедельник Сэм получил новую задачу: дом 12, новый абонент на третьем этаже.'],
+['He took the car key from the hook and left at nine.','Он снял ключ от машины с крючка и уехал в девять.'],
+['But he made a small mistake: he went to house 21, not house 12.','Но он совершил маленькую ошибку: поехал в дом 21, а не в дом 12.'],
+['He found the caretaker, and they went down to the basement.','Он нашёл управляющего, и они спустились в подвал.'],
+['Sam saw an old switch and a lot of cables, but no labels.','Сэм увидел старый коммутатор и много кабелей, но ни одной бирки.'],
+['He called me and said, “Dan, I can’t find this switch on our map!”','Он позвонил мне и сказал: «Дэн, я не могу найти этот коммутатор на нашей карте!»'],
+['I looked at the task and laughed. “Sam, it’s house 12, not 21!”','Я посмотрел на задачу и засмеялся: «Сэм, это дом 12, а не 21!»'],
+['Sam went back to the car and drove to the right house.','Сэм вернулся к машине и поехал в нужный дом.'],
+['This time he did everything right.','В этот раз он всё сделал правильно.'],
+['He put the new switch in the cabinet and wrote the flat number on every cable.','Он поставил новый коммутатор в шкаф и написал номер квартиры на каждом кабеле.'],
+['At one o’clock, he had lunch in the car.','В час он пообедал в машине.'],
+['In the office, Sam said to Kate, “Sorry, I lost an hour today.”','В офисе Сэм сказал Кейт: «Извини, я сегодня потерял час».'],
+['Kate said, “It’s OK. Everybody makes mistakes. And you found an old switch for our map!”','Кейт ответила: «Ничего. Все ошибаются. Зато ты нашёл старый коммутатор для нашей карты!»']],
+words:[
+['went','пошёл, поехал (go)'],['took','взял (take)'],['left','ушёл, уехал (leave)'],['made','сделал (make)'],
+['found','нашёл (find)'],['saw','увидел (see)'],['said','сказал (say)'],['got','получил (get)'],['had','имел; поел (have)'],
+['did','сделал (do)'],['wrote','написал (write)'],['drove','поехал на машине (drive)'],['lost','потерял (lose)'],
+['mistake','ошибка'],['laugh','смеяться'],['the right house','нужный дом']],
+tasks:[
+{k:'ch', q:'First, Sam went to…', o:['house 12','house 21','the office'], a:1},
+{k:'ch', q:'In the basement, Sam saw…', o:['a new switch with labels','an old switch with no labels','a dog'], a:1},
+{k:'ch', q:'Sam had lunch…', o:['in the office','in the car','in a cafe'], a:1},
+{k:'ch', q:'go — ___', o:['goed','went','gone'], a:1, e:'go → went. gone — другая форма, она пока не нужна.'},
+{k:'ch', q:'Yesterday I ___ a new phone.', o:['buyed','bought','buy'], a:1},
+{k:'ch', q:'She ___ a letter to her mom.', o:['wrote','writed','writes'], a:0},
+{k:'ch', q:'We ___ a mistake.', o:['did','made'], a:1, e:'Ошибку «делают» через make: make a mistake → made.'},
+{k:'in', q:'He ___ the car key from the hook. (take)', a:['took']},
+{k:'in', q:'I ___ for eight hours last night. (sleep)', a:['slept']},
+{k:'or', ru:'Он нашёл управляющего.', a:'He found the caretaker.'},
+{k:'or', ru:'Сэм поехал не в тот дом.', a:'Sam went to the wrong house.'},
+{k:'fx', q:'Yesterday I goed to the gym and see my friend.', a:['Yesterday I went to the gym and saw my friend.'], e:'go → went, see → saw: оба действия в прошлом.'},
+{k:'fx', q:'He put the lavel on every cabel.', a:['He put the label on every cable.','He put a label on every cable.'], e:'label и cable: в обоих словах -le на конце.'},
+{k:'dc', a:['This time he did everything right.'], ru:'В этот раз он всё сделал правильно.'},
+{k:'tr', ru:'Я пообедал в машине.', a:['I had lunch in the car.','I ate lunch in the car.','I had my lunch in the car.']},
+{k:'tr', ru:'Он ушёл с работы в шесть.', a:['He left work at six.','He left work at 6.','He left the office at six.','He left the office at 6.']}],
+own:'Расскажи про свою ошибку или смешной случай — на работе, на стройке или дома: 6–8 предложений. Используй went, took, saw, found, said, made, had. Например: Last year I made a big mistake at work…'},
+
+{id:'w5l4', w:5, n:4, t:'Did you check the power?', g:'didn’t, Did…?, When did…?',
+rule:`<p><b>Отрицание</b> в прошлом: <b>didn’t</b> + глагол в простой форме.<br>I didn’t work. · She didn’t go. · They didn’t call.</p>
+<p>Почему не <s>didn’t went</s>? Прошлое уже показывает did, и второй глагол «отдыхает». Это то же правило, что ты знаешь: She doesn’t <b>work</b> — без -s, потому что -s уже ушло в does.</p>
+<p><b>Вопрос</b>: Did + кто + глагол? <b>Did</b> you <b>check</b> the power? — Yes, I did. / No, I didn’t.<br>С вопросительным словом: Where did you go? What did he say? When did it start?</p>
+<p>Исключение — was / were. С ними did не нужен: Was it down? Were they online? I wasn’t there. «Где ты был?» — Where <b>were</b> you?</p>`,
+ex:[
+['I didn’t see the alarm.','Я не видел аварию.'],
+['Did you check the power? — Yes, I did.','Ты проверил питание? — Да.'],
+['When did the problem start?','Когда началась проблема?'],
+['The users weren’t online, so they didn’t call.','Абонентов не было в сети, поэтому они не звонили.']],
+text:[
+['On Tuesday morning, Kate found a problem in the log: house 7 was down at night.','Во вторник утром Кейт нашла в журнале проблему: ночью дом 7 был без связи.'],
+['Mike was on the night shift, so she called him.','Майк был в ночной смене, поэтому она ему позвонила.'],
+['Kate: Mike, what happened in house 7?','Кейт: Майк, что случилось в доме 7?'],
+['Mike: The switch went down at 3:10. I saw the alarm at once.','Майк: Коммутатор упал в 3:10. Я сразу увидел аварию.'],
+['Kate: Did you call the caretaker?','Кейт: Ты звонил управляющему?'],
+['Mike: No, I didn’t. It was three in the morning!','Майк: Нет. Было три часа ночи!'],
+['Kate: OK. Did the users call support?','Кейт: Ладно. Абоненты звонили в поддержку?'],
+['Mike: Only one man called. The others were asleep.','Майк: Позвонил только один мужчина. Остальные спали.'],
+['Kate: When did the switch come back?','Кейт: Когда коммутатор поднялся?'],
+['Mike: At 3:40. There was no power in the building for thirty minutes.','Майк: В 3:40. В доме полчаса не было электричества.'],
+['Kate: So it wasn’t our problem. But why didn’t you write it in the log?','Кейт: Значит, проблема была не наша. Но почему ты не записал это в журнал?'],
+['Mike: I wrote it in the chat, but I didn’t write it in the log. Sorry!','Майк: Я написал в чат, а в журнал не записал. Извини!'],
+['Kate said, “No problem. But next time, please write it in the log.”','Кейт сказала: «Ничего страшного. Но в следующий раз, пожалуйста, запиши в журнал».']],
+words:[
+['log','журнал (записи о событиях)'],['go down','упасть, отключиться (о связи)'],['at once','сразу'],['asleep','спящий'],
+['the others','остальные'],['come back','вернуться, подняться'],['power','электричество, питание'],['next time','в следующий раз'],
+['didn’t','не (в прошлом)']],
+tasks:[
+{k:'ch', q:'What time did the switch go down?', o:['3:10','3:40','8:00'], a:0},
+{k:'ch', q:'Why was house 7 down?', o:['There was no power in the building.','Mike stopped the switch.','The cable was broken.'], a:0},
+{k:'ch', q:'Did Mike call the caretaker?', o:['Yes, he did.','No, he didn’t.'], a:1},
+{k:'ch', q:'I didn’t ___ the alarm.', o:['saw','see','seen'], a:1, e:'После didn’t — простая форма.'},
+{k:'ch', q:'___ you check the power?', o:['Was','Did','Were'], a:1},
+{k:'ch', q:'Where ___ you yesterday?', o:['did','were'], a:1, e:'«Где ты был» — это глагол «быть»: Where were you? did не нужен.'},
+{k:'ch', q:'Did the users call? — Yes, they ___.', o:['did','were','called'], a:0},
+{k:'in', q:'He ___ write it in the log. (не)', a:['didn’t','did not','didnt']},
+{k:'in', q:'What ___ Mike say?', a:['did']},
+{k:'or', ru:'Ты проверил питание?', a:'Did you check the power?'},
+{k:'or', ru:'Когда началась проблема?', a:'When did the problem start?'},
+{k:'fx', q:'I didn’t went to work yesterday.', a:['I didn’t go to work yesterday.','I did not go to work yesterday.'], e:'После didn’t — go, а не went.'},
+{k:'fx', q:'Did you checked the cabel?', a:['Did you check the cable?'], e:'После did — check без -ed; cable пишется через -le.'},
+{k:'dc', a:['Only one man called. The others were asleep.'], ru:'Позвонил только один мужчина. Остальные спали.'},
+{k:'tr', ru:'Я не видел аварию.', a:['I didn’t see the alarm.','I did not see the alarm.']},
+{k:'tr', ru:'Где ты был вчера?', a:['Where were you yesterday?']}],
+own:'Напиши мини-разбор аварии или любого случая с работы: 3 вопроса с Did…? / When did…? / Why didn’t…? и ответы на них. Например: Did you call the user? — Yes, I did. When did the problem start? — At 7 a.m.'},
+
+{id:'w5l5', w:5, n:5, t:'I couldn’t, now I can', g:'could / couldn’t; can’t или don’t have to',
+rule:`<p><b>can</b> — могу, умею (сейчас). <b>could</b> — мог, умел (в прошлом). <b>couldn’t</b> — не мог, не умел.<br>После них глагол в простой форме: I could swim. She couldn’t come.</p>
+<p>Вопрос: <b>Could</b> you read English then? — No, I <b>couldn’t</b>.</p>
+<p>И ещё раз о том, где ты ошибся на прошлой неделе. Это два разных смысла:<br><b>can’t</b> — нельзя / не могу: You <b>can’t</b> give your password to anyone. — Пароль никому давать нельзя.<br><b>don’t have to</b> — не обязательно, можно не делать: You <b>don’t have to</b> come early. — Рано приходить не обязательно.<br>В прошлом: I <b>didn’t have to</b> work on Sunday. — В воскресенье мне не пришлось работать.</p>
+<p>Формы <s>haven’t to</s> нет. «Не обязан» — только don’t have to.</p>`,
+ex:[
+['Five years ago, I couldn’t read a config.','Пять лет назад я не умел читать конфиг.'],
+['Now I can find a problem in five minutes.','Теперь я могу найти проблему за пять минут.'],
+['You can’t give your password to anyone.','Пароль никому давать нельзя.'],
+['I didn’t have to work on Sunday.','В воскресенье мне не пришлось работать.']],
+text:[
+['After the day in house 21, Sam asked me, “Dan, how did you learn all this?”','После истории с домом 21 Сэм спросил меня: «Дэн, как ты всему этому научился?»'],
+['I said, “Slowly, Sam. Very slowly.”','Я сказал: «Медленно, Сэм. Очень медленно».'],
+['When I was a builder, I could build a wall, but I couldn’t read a config.','Когда я был строителем, я умел класть стену, но не умел читать конфиг.'],
+['I couldn’t understand English documentation, and I didn’t know anything about VLANs.','Я не понимал документацию на английском и ничего не знал о VLAN.'],
+['I didn’t have time for long lessons, so I studied for twenty minutes a day, after work.','Времени на длинные уроки не было, поэтому я учился по двадцать минут в день, после работы.'],
+['Some days I didn’t understand anything, and I was angry.','Иногда я ничего не понимал и злился.'],
+['But I didn’t stop. I wrote my questions in a notebook and went on.','Но я не бросал. Записывал вопросы в блокнот и шёл дальше.'],
+['After a year, I could read a simple config. After two years, I got this job.','Через год я мог прочитать простой конфиг. Через два — получил эту работу.'],
+['Now I can find a broken port in five minutes, and I can read English documentation.','Теперь я нахожу сломанный порт за пять минут и читаю документацию на английском.'],
+['But I still can’t speak English very well.','Но говорить по-английски хорошо я всё ещё не умею.'],
+['Sam asked, “Do I have to study every day?”','Сэм спросил: «Мне надо учиться каждый день?»'],
+['“You don’t have to study for hours,” I said. “Twenty minutes is enough. But don’t stop.”','«Часами учиться не обязательно, — сказал я. — Двадцати минут хватит. Только не бросай».'],
+['Sam smiled and wrote “20 minutes” in his notebook.','Сэм улыбнулся и записал в блокнот: «20 минут».']],
+words:[
+['could','мог, умел'],['couldn’t','не мог, не умел'],['build','строить'],['config','конфиг, настройки устройства'],
+['documentation','документация'],['understand','понимать'],['anything','что-нибудь; (с not) ничего'],['angry','злой, сердитый'],
+['go on','продолжать, идти дальше'],['still','всё ещё'],['enough','достаточно'],['slowly','медленно']],
+tasks:[
+{k:'ch', q:'What could Dan do five years ago?', o:['read a config','build a wall','read English documentation'], a:1},
+{k:'ch', q:'How long did Dan study every day?', o:['twenty minutes','two hours','all evening'], a:0},
+{k:'ch', q:'What did Dan do with his questions?', o:['He wrote them in a notebook.','He asked Kate.','He forgot them.'], a:0},
+{k:'ch', q:'Five years ago, I ___ swim. Now I can.', o:['can’t','couldn’t','don’t'], a:1},
+{k:'ch', q:'Could you read English then? — No, I ___.', o:['couldn’t','didn’t','wasn’t'], a:0},
+{k:'ch', q:'Как сказать «Пароль никому давать нельзя»?', o:['You don’t have to give your password to anyone.','You can’t give your password to anyone.'], a:1, e:'Нельзя — can’t. Don’t have to — «не обязательно».'},
+{k:'ch', q:'Как сказать «Рано приходить не обязательно»?', o:['You can’t come early.','You don’t have to come early.'], a:1},
+{k:'in', q:'After a year, I ___ read a simple config. (мог)', a:['could']},
+{k:'in', q:'I didn’t ___ to work on Sunday. (не пришлось)', a:['have']},
+{k:'or', ru:'Теперь я могу найти проблему.', a:'Now I can find the problem.'},
+{k:'or', ru:'Я не понимал документацию.', a:'I couldn’t understand the documentation.'},
+{k:'fx', q:'When I was a builder, I can’t read a config.', a:['When I was a builder, I couldn’t read a config.','When I was a builder, I could not read a config.'], e:'Речь о прошлом: couldn’t.'},
+{k:'fx', q:'Yesterday i could not call to the user.', a:['Yesterday I could not call the user.','Yesterday I couldn’t call the user.'], e:'I — с большой; звонят без to: call the user.'},
+{k:'dc', a:['Twenty minutes is enough. But don’t stop.'], ru:'Двадцати минут хватит. Только не бросай.'},
+{k:'tr', ru:'Свой пароль никому давать нельзя.', a:['You can’t give your password to anyone.','You can’t give anyone your password.','I can’t give my password to anyone.','You mustn’t give your password to anyone.','You can not give your password to anyone.','You cannot give your password to anyone.']},
+{k:'tr', ru:'В воскресенье мне не пришлось работать.', a:['I didn’t have to work on Sunday.','On Sunday I didn’t have to work.','I did not have to work on Sunday.']}],
+own:'Напиши 5–6 предложений «тогда и сейчас»: что ты не мог или не умел раньше (I couldn’t…) и что можешь сейчас (Now I can…). Добавь одно правило с can’t и одно с don’t have to.'},
+
+{id:'w5r', w:5, n:6, review:true, t:'Повторение недели: ужин команды', g:'всё вместе',
+text:[
+['On Friday evening, our team had dinner in a small cafe near the office.','В пятницу вечером наша команда ужинала в маленьком кафе рядом с офисом.'],
+['There were five of us, and there were two dogs under the table.','Нас было пятеро, а под столом лежали две собаки.'],
+['The food was good, and nobody talked about work for an hour.','Еда была вкусной, и целый час никто не говорил о работе.'],
+['Then Sam asked, “What was your first day like?”','Потом Сэм спросил: «А каким был ваш первый день?»'],
+['Mike laughed. “On my first night shift, I didn’t know the code for the server room door.”','Майк засмеялся: «В мою первую ночную смену я не знал код от двери серверной».'],
+['“I waited outside for two hours. Then the cleaner came and opened the door.”','«Я два часа ждал снаружи. Потом пришла уборщица и открыла дверь».'],
+['Kate said, “On my first day, I stopped the wrong port, and a whole building lost the internet.”','Кейт сказала: «В первый день я отключила не тот порт, и целый дом остался без интернета».'],
+['“I was so scared! But my team leader didn’t shout. He just helped me.”','«Я так испугалась! Но мой тимлид не кричал. Он просто мне помог».'],
+['Everybody looked at me, so I told them about my first day and all the new words.','Все посмотрели на меня, и я рассказал про свой первый день и все эти новые слова.'],
+['Then Sam told his story about house 21, and we all laughed again.','Потом Сэм рассказал свою историю про дом 21, и мы снова смеялись.'],
+['“So everybody made mistakes,” Sam said.','«Значит, все ошибались», — сказал Сэм.'],
+['“Of course,” Kate said. “You don’t have to be perfect. You have to learn.”','«Конечно, — сказала Кейт. — Быть идеальным не обязательно. Обязательно — учиться».'],
+['We left the cafe at ten. It was cold, but nobody was in a hurry.','Мы ушли из кафе в десять. Было холодно, но никто не спешил.'],
+['Rex and Lucky walked in front of us, and we talked about the next big upgrade.','Рекс и Лаки шли впереди, а мы говорили о следующем большом обновлении.']],
+words:[['dinner','ужин'],['nobody','никто'],['What was it like?','каким это было?'],['outside','снаружи'],['whole','целый'],
+['scared','испуганный'],['shout','кричать'],['told','рассказал (tell)'],['of course','конечно'],['perfect','идеальный'],['in a hurry','в спешке']],
+tasks:[
+{k:'ch', q:'Where did the team have dinner?', o:['in the office','in a small cafe','at Kate’s home'], a:1},
+{k:'ch', q:'Why did Mike wait outside?', o:['He didn’t know the code.','The door was broken.','He was early.'], a:0},
+{k:'ch', q:'What did Kate’s team leader do?', o:['He shouted.','He helped her.','He called the users.'], a:1},
+{k:'ch', q:'There ___ two dogs under the table.', o:['was','were'], a:1},
+{k:'ch', q:'Yesterday I ___ dinner at home.', o:['have','had','haved'], a:1},
+{k:'ch', q:'He didn’t ___ at me.', o:['shout','shouted'], a:0},
+{k:'ch', q:'You don’t have to be perfect — это…', o:['Быть идеальным нельзя.','Быть идеальным не обязательно.'], a:1},
+{k:'in', q:'We ___ the cafe at ten. (leave)', a:['left']},
+{k:'in', q:'___ you at work on Friday? (были)', a:['were']},
+{k:'or', ru:'Нас было пятеро.', a:'There were five of us.'},
+{k:'fx', q:'Last year I can’t speak English, but now I can.', a:['Last year I couldn’t speak English, but now I can.','Last year I could not speak English, but now I can.'], e:'В прошлом году — couldn’t.'},
+{k:'fx', q:'Are there any dogs in the cafe? — Yes, it is.', a:['Are there any dogs in the cafe? — Yes, there are.'], e:'На Are there…? отвечают Yes, there are.'},
+{k:'dc', a:['We left the cafe at ten.'], ru:'Мы ушли из кафе в десять.'},
+{k:'tr', ru:'Я ничего не понял.', a:['I didn’t understand anything.','I did not understand anything.']},
+{k:'tr', ru:'Вчера я ходил в зал.', a:['Yesterday I went to the gym.','I went to the gym yesterday.']},
+{k:'tr', ru:'В понедельник я позвонил коллеге.', a:['On Monday I called my colleague.','I called my colleague on Monday.','On Monday I called a colleague.','I called a colleague on Monday.']}],
+own:'Главное задание недели. Напиши свою историю (8–10 предложений): кем ты был и что делал раньше, что было трудно, чего ты не умел и что умеешь сейчас. Используй was / were, -ed, went / had / made, didn’t, couldn’t / can. Перед «Закончить» перечитай по буквам. Текст попадёт в отчёт для Claude.'}
 
 ];

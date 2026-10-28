@@ -264,7 +264,7 @@ nav button.on{color:var(--ac);background:var(--at)}
 <script src="cloud.js"></script>
 <script src="sync.js"></script>
 <script>
-const K='eng_v1',APP_V='3.1';
+const K='eng_v1',APP_V='3.3';
 const KNOW=3,BOX=[0,1,2,4,7,14,30]; // «знаю» = коробка 3+; интервалы повторения в днях по коробкам
 const EN=window.LESSONS||[],WK=window.WEEKS||[],ND=window.NET||{modules:[],lessons:[],levels:[]};
 const NL=ND.lessons||[];NL.forEach(l=>{l.s='net'});
@@ -423,7 +423,7 @@ answer(l,q,q.ti,t,y,ok);save();render()}
 // ---------- подсказки при письме: его типичные ошибки ----------
 const VERBS='work|start|finish|check|watch|like|want|go|have|get|live|drink|make|fix|play|read|write|need|know|say|use|help|study|open|call|end|love|eat|sleep|run|walk';
 // слова, которые он писал с ошибкой (по отчётам)
-const SPELL={becouse:'because',bocouse:'because',becuse:'because',becaus:'because',nigth:'night',ussually:'usually',cofee:'coffee',coffe:'coffee',mondey:'Monday',buildin:'building',officce:'office',ritchen:'kitchen',usualy:'usually',ussualy:'usually',usally:'usually',coffe:'coffee',quet:'quiet',collegs:'colleagues',collegues:'colleagues',wundefrul:'wonderful',wonderfull:'wonderful',nessesery:'necessary',neccesary:'necessary',necesary:'necessary',swith:'switch',swithes:'switches',adress:'address',neigbor:'neighbor',neigbors:'neighbors',metwork:'network',engeneer:'engineer',beatiful:'beautiful',beautifull:'beautiful',dosent:'doesn’t',freind:'friend',wich:'which'};
+const SPELL={becouse:'because',bocouse:'because',becuse:'because',becaus:'because',nigth:'night',ussually:'usually',cofee:'coffee',coffe:'coffee',mondey:'Monday',buildin:'building',officce:'office',ritchen:'kitchen',usualy:'usually',ussualy:'usually',usally:'usually',coffe:'coffee',quet:'quiet',collegs:'colleagues',collegues:'colleagues',wundefrul:'wonderful',wonderfull:'wonderful',nessesery:'necessary',neccesary:'necessary',necesary:'necessary',swith:'switch',swithes:'switches',adress:'address',neigbor:'neighbor',neigbors:'neighbors',metwork:'network',engeneer:'engineer',beatiful:'beautiful',beautifull:'beautiful',dosent:'doesn’t',freind:'friend',wich:'which',opossite:'opposite',oposite:'opposite',basment:'basement',lavel:'label',lader:'ladder',cabel:'cable',cabels:'cables',intresting:'interesting',thier:'their',somthing:'something',weigth:'weight',moning:'morning',engener:'engineer',engeener:'engineer',privat:'private',shouldt:'shouldn’t',goed:'went',comed:'came',haved:'had',getted:'got',maked:'made',taked:'took',sayed:'said',knowed:'knew',finded:'found',buyed:'bought',eated:'ate',sleeped:'slept',leaved:'left',writed:'wrote',doed:'did',studyed:'studied',stoped:'stopped',droved:'drove',losted:'lost',telled:'told',thinked:'thought',drinked:'drank',runned:'ran',swimmed:'swam',seed:'saw'};
 const spellOf=s=>[...new Set((s.toLowerCase().match(/[a-z]+/g)||[]).filter(w=>SPELL[w]))];
 const HINTS=[
 [s=>/(^|[\s(“"])i(?=[\s'’,.!?]|$)/.test(s),'Пиши «I» с большой буквы — всегда, даже в середине предложения.'],
@@ -443,6 +443,14 @@ const HINTS=[
 [s=>/\bat\s+(my\s+)?days?\s+off\b/i.test(s),'Дни — с on: on my days off.'],
 [s=>/\bon\s+\d{1,2}(?!\s*(st|nd|rd|th|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec))\b/i.test(s),'Время по часам — at: at 7. Срок — for: for 3 years.'],
 [s=>/\bon\s+(the\s+)?chat\b/i.test(s),'В чате — in the chat.'],
+[s=>/\bcall(s|ed|ing)?\s+to\s+(my|me|you|him|her|them|us|kate|dan|mike|sam|the|a|an|another)\b/i.test(s),'Звонить кому-то — без to: I call my colleagues.'],
+[s=>/\b(haven[’']?t|hasn[’']?t)\s+to\b/i.test(s),'«Не обязан» — I don’t have to. «Нельзя» — I can’t / I mustn’t.'],
+[s=>/\b(put|improve|make up)\s+(a\s+lot\s+of\s+|more\s+|my\s+)?money\b/i.test(s),'Зарабатывать — earn money; копить — save money.'],
+[s=>/\bon\s+(january|february|march|april|may|june|july|august|september|october|november|december)\b/i.test(s),'Месяц — с in: in November. On — только с датой: on 14 November.'],
+[s=>/\bonce\s+time\b/i.test(s),'«Один раз» — просто once: once in the morning.'],
+[s=>/\b(didn[’']?t|did\s+not|did)\s+(\w+\s+)?(went|came|saw|took|made|had|got|said|knew|found|bought|ate|slept|left|wrote|drove|lost|told|could|(?!(?:need|feed|speed|bleed)\b)\w{2,}ed)\b/i.test(s),'После did / didn’t — простая форма: I didn’t go, Did you check?'],
+[s=>/\b(was|were)\s+(work|go|check|call|start|live|study|play|watch|fix|help|want|like|see|come|do|have|eat|sleep|learn|walk|cook|read|write|stay|wait)\b/i.test(s),'«Я работал» — I worked, без was. Was / were — только «был»: I was at work.'],
+[s=>/\bcould(n[’']?t)?\s+to\b/i.test(s),'После could — без to: I could read.'],
 [s=>/\b(work|live|am|is|are)\s+hear\b/i.test(s),'Здесь — here. hear — слышать.'],
 [s=>/\bits\s+(is|a|an|the|not|work|works)\b/i.test(s)||/\bits\s+(very\s+)?(good|ok|fine|old|new|small|big|bad|cool|great|black|white)\s*([.!?,]|$)/i.test(s),'«its» — это «его / её» (чей). Если хочешь сказать «это / он есть» — пиши «it’s» или «it is».'],
 [s=>/\bquit\b/i.test(s),'«quit» — бросить. «Тихий» пишется «quiet».'],
