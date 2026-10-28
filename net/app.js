@@ -579,10 +579,23 @@ function tCards(b, ch, id) {
 }
 
 // --- тест
+// «Не знаю» в тесте: вопрос уходит в S.unclear (kind 'q') и в отчёт наставнику — разбираем вместе
+function quizRef(q) {
+  if (q._ch) return { ch: q._ch, qi: q._qi };
+  for (const m of COURSE.list) { const c = COURSE.ch[m.id], k = c && c.quiz ? c.quiz.indexOf(q) : -1; if (k >= 0) return { ch: m.id, qi: k }; }
+  return null;
+}
+function markDontKnow(q) {
+  const ref = quizRef(q); if (!ref) return;
+  const ex = S.unclear.find(u => u.kind === 'q' && u.ch === ref.ch && u.qi === ref.qi);
+  if (ex) { ex.n = (ex.n || 1) + 1; ex.d = today(); }
+  else S.unclear.push({ id: newId(), ch: ref.ch, kind: 'q', qi: ref.qi, sec: 'Тест', t: q.q.replace(/<[^>]+>/g, ''), n: 1, d: today() });
+  save();
+}
 function quizUI(b, items, opts) {
-  // items: [{q, o, a, e, code, src}] ; opts: {title, start{i,right,wrong}, onStep(i,right,wrong), onDone(score, wrongIdx)}
+  // items: [{q, o, a, e, code, src}] ; opts: {title, start{i,right,wrong,dk}, onStep(i,right,wrong,dk), onDone(score, wrongIdx, dkIdx)}
   const st0 = opts.start || {};
-  let i = st0.i || 0, right = st0.right || 0, wrong = (st0.wrong || []).slice();
+  let i = st0.i || 0, right = st0.right || 0, wrong = (st0.wrong || []).slice(), dk = (st0.dk || []).slice();
   const order = items.map(q => {
     const idx = shuffle(q.o.map((_, k) => k));
     return { q, idx };
@@ -590,11 +603,12 @@ function quizUI(b, items, opts) {
   function show() {
     if (i >= order.length) {
       const sc = pct(right, order.length);
-      opts.onDone && opts.onDone(sc, wrong);
+      opts.onDone && opts.onDone(sc, wrong, dk);
       b.innerHTML = `<div class="card" style="text-align:center"><div class="score" style="color:${sc >= 80 ? 'var(--ok)' : sc >= 60 ? 'var(--warn)' : 'var(--bad)'}">${sc}%</div>
         <p>${right} из ${order.length} верно. ${sc >= 80 ? 'Порог пройден.' : 'Порог 80% не пройден: перечитай разделы по ошибкам и попробуй снова.'}</p>
         <div class="row" style="justify-content:center">${opts.again || ''}${wrong.length ? '<button class="btn" id="qwrong">Повторить только ошибки (' + wrong.length + ')</button>' : ''}${opts.next || ''}</div></div>
-        ${wrong.length ? '<h3>Разбор ошибок</h3>' + wrong.map(w => { const q = items[w]; const right = Array.isArray(q.a) ? q.a : [q.a]; return `<div class="card"><b>${q.q}</b>${q.code ? cliBlock(q.code) : ''}<p>Верно: ${right.map(k => esc(q.o[k])).join('; ')}</p><div class="expl">${q.e || ''}</div></div>`; }).join('') : ''}`;
+        ${dk.length ? `<div class="callout info" style="text-align:left"><b>«Не знаю»: ${dk.length}</b>Эти вопросы записаны в «Отчёт наставнику» — разберём их вместе.</div>` : ''}
+        ${wrong.length ? '<h3>Разбор ошибок</h3>' + wrong.map(w => { const q = items[w]; const right = Array.isArray(q.a) ? q.a : [q.a]; return `<div class="card">${dk.includes(w) ? '<span class="pill warn">🤷 не знал</span> ' : ''}<b>${q.q}</b>${q.code ? cliBlock(q.code) : ''}<p>Верно: ${right.map(k => esc(q.o[k])).join('; ')}</p><div class="expl">${q.e || ''}</div></div>`; }).join('') : ''}`;
       cliHighlight(b);
       const w = $('#qwrong'); if (w) w.onclick = () => quizUI(b, wrong.map(k => items[k]), { title: 'Работа над ошибками' });
       return;
@@ -606,17 +620,18 @@ function quizUI(b, items, opts) {
       <div class="bar" style="margin:8px 0 14px"><i style="width:${pct(i, order.length)}%"></i></div>
       <div class="qt">${q.q}</div>${q.code ? cliBlock(q.code) : ''}${multi ? '<p class="muted" style="font-size:13px">Несколько верных ответов</p>' : ''}
       <div id="opts">${idx.map((k, n) => `<div class="opt" data-k="${k}"><span class="k">${'АБВГДЕЖ'[n]}</span><span>${esc(q.o[k])}</span></div>`).join('')}</div>
-      <div id="qfoot" class="row" style="margin-top:12px"><span class="sp"></span><button class="btn pri" id="qok" ${multi ? '' : 'style="display:none"'}>Проверить</button></div></div>`;
+      <div id="qfoot" class="row" style="margin-top:12px"><button class="btn" id="qdk" title="Клавиша 0">🤷 Не знаю</button><span class="sp"></span><button class="btn pri" id="qok" ${multi ? '' : 'style="display:none"'}>Проверить</button></div></div>`;
     cliHighlight(b);
     let locked = false;
-    const check = () => {
+    const check = dontKnow => {
       if (locked) return; locked = true;
       const ans = new Set(multi ? q.a : [q.a]);
-      const ok = sel.size === ans.size && [...sel].every(k => ans.has(k));
+      const ok = !dontKnow && sel.size === ans.size && [...sel].every(k => ans.has(k));
       if (ok) right++; else wrong.push(items.indexOf(q));
-      if (opts.onStep) opts.onStep(i + 1, right, wrong);   // ответ сохраняется сразу
+      if (dontKnow) { dk.push(items.indexOf(q)); markDontKnow(q); }
+      if (opts.onStep) opts.onStep(i + 1, right, wrong, dk);   // ответ сохраняется сразу
       $$('.opt', b).forEach(o => { const k = +o.dataset.k; o.classList.add('lock'); if (ans.has(k)) o.classList.add('right'); else if (sel.has(k)) o.classList.add('wrong'); });
-      $('#qfoot').innerHTML = `<div class="expl" style="flex:1"><b>${ok ? '✅ Верно.' : '❌ Неверно.'}</b> ${q.e || ''}</div>`;
+      $('#qfoot').innerHTML = `<div class="expl" style="flex:1"><b>${ok ? '✅ Верно.' : dontKnow ? '🤷 Не знаю — записал в отчёт наставнику, разберём вместе.' : '❌ Неверно.'}</b> ${dontKnow ? 'Правильный ответ отмечен зелёным. ' : ''}${q.e || ''}</div>`;
       $('#qfoot').insertAdjacentHTML('afterend', `<div class="row" style="margin-top:10px"><span class="sp"></span><button class="btn pri" id="qnext">${i + 1 < order.length ? 'Следующий →' : 'Результат'}</button></div>`);
       $('#qnext').onclick = () => { i++; show(); };
       $('#qnext').focus();
@@ -625,12 +640,14 @@ function quizUI(b, items, opts) {
       if (locked) return;
       const k = +o.dataset.k;
       if (multi) { sel.has(k) ? sel.delete(k) : sel.add(k); o.classList.toggle('sel'); }
-      else { sel.clear(); sel.add(k); check(); }
+      else { sel.clear(); sel.add(k); check(false); }
     });
-    if (multi) $('#qok').onclick = check;
+    if (multi) $('#qok').onclick = () => check(false);
+    $('#qdk').onclick = () => check(true);
   }
   document.onkeydown = e => {
     if (!$('.qcard')) return;
+    if (e.key === '0') { const d = $('#qdk'); if (d) d.click(); return; }
     const n = '1234567'.indexOf(e.key);
     if (n >= 0) { const o = $$('.opt', b)[n]; if (o) o.click(); }
     if (e.key === 'Enter') { const nx = $('#qnext') || $('#qok'); if (nx && nx.offsetParent) { e.preventDefault(); nx.click(); } }
@@ -642,23 +659,25 @@ function tQuiz(b, ch, id) {
   const items = ch.quiz || [];
   const prev = st.quiz;
   // незаконченная попытка (сохраняется после каждого ответа)
+  const dkWait = S.unclear.filter(u => u.kind === 'q' && u.ch === id).length;
   const saved = st.quizRun && Array.isArray(st.quizRun.ids) && st.quizRun.ids.length === items.length && st.quizRun.ids.every(k => items[k]) && st.quizRun.i < items.length ? st.quizRun : null;
   b.innerHTML = `<div class="card"><div class="row"><div class="sp"><b>Тест на понимание: ${items.length} вопросов</b><br><span class="muted">Порог главы — 80%. Вопросы и варианты перемешиваются. Клавиши 1–4 и Enter. Каждый ответ сохраняется сразу.</span>
     ${prev ? `<br><span class="muted">Лучший результат: <b>${prev.best}%</b> · попыток: ${prev.n} · последний: ${prev.lastScore}%</span>` : ''}</div>
     ${saved ? `<button class="btn pri" id="qc">▶ Продолжить тест (вопрос ${saved.i + 1} из ${items.length}, верно ${saved.right})</button><button class="btn" id="qs">Начать заново</button>` : '<button class="btn pri" id="qs">Начать тест</button>'}</div></div>
-    <div class="callout info"><b>Как проходить</b>Не угадывай. Если не уверен, сначала сформулируй, почему вариант верный, и только потом выбирай. Пояснение после каждого ответа читай даже при верном ответе.</div>`;
+    <div class="callout info"><b>Как проходить</b>Не угадывай. Если не уверен, сначала сформулируй, почему вариант верный, и только потом выбирай. Если не знаешь — жми «🤷 Не знаю» (клавиша 0): вопрос попадёт в «Отчёт наставнику», и мы разберём его вместе. Пояснение после каждого ответа читай даже при верном ответе.</div>
+    ${dkWait ? `<p class="muted" style="font-size:13.5px">Вопросов «не знаю» из этой главы ждут разбора: ${dkWait}. Они в <a href="#/report">отчёте наставнику</a>.</p>` : ''}`;
   const start = fresh => {
     const ids = fresh ? shuffle(items.map((_, k) => k)) : saved.ids;
     const run = ids.map(k => items[k]);
-    st.quizRun = fresh ? { ids, i: 0, right: 0, wrong: [] } : saved; save();
+    st.quizRun = fresh ? { ids, i: 0, right: 0, wrong: [], dk: [] } : saved; save();
     quizUI(b, run, {
       title: 'Тест', again: `<a class="btn" href="#/c/${id}/quiz" onclick="setTimeout(()=>route(),0)">Пройти заново</a>`,
       next: `<a class="btn pri" href="#/c/${id}/und">Дальше: объясни своими словами →</a>`,
-      start: fresh ? null : { i: saved.i, right: saved.right, wrong: saved.wrong },
-      onStep: (i, right, wrong) => { st.quizRun = { ids, i, right, wrong: wrong.slice() }; save(); },
-      onDone: (sc, wrong) => {
+      start: fresh ? null : { i: saved.i, right: saved.right, wrong: saved.wrong, dk: saved.dk },
+      onStep: (i, right, wrong, dk) => { st.quizRun = { ids, i, right, wrong: wrong.slice(), dk: dk.slice() }; save(); },
+      onDone: (sc, wrong, dk) => {
         const q = st.quiz || { best: 0, n: 0 };
-        q.n++; q.best = Math.max(q.best, sc); q.lastScore = sc; q.last = today(); q.wrong = wrong.map(k => ch.quiz.indexOf(run[k]));
+        q.n++; q.best = Math.max(q.best, sc); q.lastScore = sc; q.last = today(); q.wrong = wrong.map(k => ch.quiz.indexOf(run[k])); q.dk = dk.map(k => ch.quiz.indexOf(run[k]));
         st.quiz = q; delete st.quizRun; save();
       }
     });
@@ -772,7 +791,7 @@ function viewExam(v) {
   $('#exgo').onclick = () => {
     const sel = $$('input[type=checkbox]:checked', v).map(x => x.value);
     if (!sel.length) return toast('Выбери хотя бы одну главу');
-    let pool = []; sel.forEach(id => COURSE.ch[id].quiz.forEach(q => pool.push(Object.assign({ src: 'гл. ' + COURSE.list.find(m => m.id === id).num }, q))));
+    let pool = []; sel.forEach(id => COURSE.ch[id].quiz.forEach((q, k) => pool.push(Object.assign({ src: 'гл. ' + COURSE.list.find(m => m.id === id).num, _ch: id, _qi: k }, q))));
     pool = shuffle(pool).slice(0, +$('#exn').value);
     const b = $('#exb'); v.innerHTML = ''; v.appendChild(b);
     quizUI(b, pool, { title: 'Экзамен', again: '<a class="btn" href="#/exam" onclick="setTimeout(()=>route(),0)">Новый экзамен</a>', onDone: sc => { S.exams.push({ id: newId(), d: today(), n: pool.length, s: sc, ch: sel.map(id => COURSE.list.find(m => m.id === id).num) }); save(); } });
@@ -794,7 +813,7 @@ function buildReport() {
     const st = C(m.id);
     r += `=== Глава ${m.num}. ${m.title} — ${s.p}%${s.done ? ' (освоена)' : ''}\n`;
     r += `Теория ${s.th[0]}/${s.th[1]}; тест: ${s.quiz == null ? 'не пройден' : `лучший ${s.quiz}%, попыток ${st.quiz.n}, последний ${st.quiz.lastScore}%`}; лаба ${s.lab[0]}/${s.lab[1]}, поломки ${Object.values(st.lab.b).filter(Boolean).length}/${((ch.lab && ch.lab.brk) || []).length}; карточки ${s.cards[0]}/${s.cards[1]}\n`;
-    if (st.quiz && st.quiz.wrong && st.quiz.wrong.length) r += `Ошибки в последнем тесте:\n${st.quiz.wrong.map(k => ch.quiz[k] ? '  - ' + ch.quiz[k].q.replace(/<[^>]+>/g, '') : '').filter(Boolean).join('\n')}\n`;
+    if (st.quiz && st.quiz.wrong && st.quiz.wrong.length) r += `Ошибки в последнем тесте:\n${st.quiz.wrong.map(k => ch.quiz[k] ? '  - ' + ch.quiz[k].q.replace(/<[^>]+>/g, '') + ((st.quiz.dk || []).includes(k) ? ' (не знал)' : '') : '').filter(Boolean).join('\n')}\n`;
     if (s.sim && s.sim[0]) {
       const sm = simOf(m.id), ss = simSt(m.id);
       r += `Дежурство: решено ${s.sim[0]} из ${s.sim[1]}\n${sm.cases.filter(k => ss[k.id] && ss[k.id].ok).map(k => { const x = ss[k.id]; return `  - ${k.t}: команд ${x.n} (эталон ${(k.best || []).length}), ошибок в ответах ${x.w}${x.h ? ', подсказок ' + x.h : ''}`; }).join('\n')}\n`;
@@ -805,16 +824,24 @@ function buildReport() {
     if (und.length) r += `Объяснения своими словами:\n${und.map(([u, x]) => `  [${{ ok: 'понял', part: 'частично', no: 'не понял' }[x.g] || 'без оценки'}] ${u.q.replace(/<[^>]+>/g, '')}\n  Ответ: ${x.t.trim().replace(/\n/g, '\n  ')}`).join('\n\n')}\n`;
     r += '\n';
   });
-  if (S.unclear.length) r += `НЕПОНЯТНО (записано при чтении):\n${S.unclear.map(u => `  - [${u.d}] гл. ${(COURSE.list.find(m => m.id === u.ch) || {}).num}, «${u.sec}»: ${u.t}`).join('\n')}\n`;
-  r += `\nПросьба к наставнику: проверь объяснения (что неточно или неверно), разбери пункты «Непонятно» и ошибки теста, дай 3 вопроса на закрепление.\n`;
+  const num = id => (COURSE.list.find(m => m.id === id) || {}).num;
+  const rd = S.unclear.filter(u => u.kind !== 'q'), dkq = S.unclear.filter(u => u.kind === 'q');
+  if (rd.length) r += `НЕПОНЯТНО (записано при чтении):\n${rd.map(u => `  - [${u.d}] гл. ${num(u.ch)}, «${u.sec}»: ${u.t}`).join('\n')}\n`;
+  if (dkq.length) r += `\nНЕ ЗНАЮ (вопросы тестов — разобрать с наставником):\n${dkq.map(u => {
+    const q = ((COURSE.ch[u.ch] || {}).quiz || [])[u.qi];
+    if (!q) return `  - [${u.d}] гл. ${num(u.ch)}: ${u.t}`;
+    const ok = (Array.isArray(q.a) ? q.a : [q.a]).map(k => q.o[k]).join('; ');
+    return `  - [${u.d}] гл. ${num(u.ch)}${u.n > 1 ? `, «не знаю» ${u.n} раза` : ''}: ${q.q.replace(/<[^>]+>/g, '')}${q.code ? '\n      ' + q.code.replace(/\n/g, '\n      ') : ''}\n    Верный ответ: ${ok}`;
+  }).join('\n')}\n`;
+  r += `\nПросьба к наставнику: проверь объяснения (что неточно или неверно), разбери пункты «Непонятно», «Не знаю» и ошибки теста, дай 3 вопроса на закрепление.\n`;
   return r;
 }
 function viewReport(v) {
   const r = buildReport();
   v.innerHTML = `<h1>Отчёт наставнику</h1><p class="sub">Скопируй и вставь в чат с Claude. По нему я проверю понимание: объяснения своими словами, ошибки, непонятные места. Отчёт обновляется сам.</p>
-    <div class="row"><button class="btn pri" id="cp">📋 Скопировать отчёт</button>${S.unclear.length ? '<button class="btn" id="clr">Очистить «Непонятно» (после разбора)</button>' : ''}</div><pre style="white-space:pre-wrap">${esc(r)}</pre>`;
+    <div class="row"><button class="btn pri" id="cp">📋 Скопировать отчёт</button>${S.unclear.length ? '<button class="btn" id="clr">Очистить «Непонятно» и «Не знаю» (после разбора)</button>' : ''}</div><pre style="white-space:pre-wrap">${esc(r)}</pre>`;
   $('#cp').onclick = () => copyText(r);
-  const c = $('#clr'); if (c) c.onclick = () => { if (confirm('Удалить список «Непонятно»? Делай это только после разбора с наставником.')) { S.unclear = []; save(); route(); } };
+  const c = $('#clr'); if (c) c.onclick = () => { if (confirm('Удалить списки «Непонятно» и «Не знаю»? Делай это только после разбора с наставником.')) { S.unclear = []; save(); route(); } };
 }
 
 // ---------- поиск ----------
