@@ -33,6 +33,7 @@ h1.h1s{font-size:26px;letter-spacing:-.4px}
 .row2>*{flex:1;min-width:0}
 a.btn{text-align:center;text-decoration:none}
 h2{font-size:13px;text-transform:uppercase;letter-spacing:.7px;color:var(--mu);margin:26px 4px 10px;font-weight:800}
+.pw{display:flex;gap:12px;padding:12px 0;border-top:1px solid var(--bd)}.pw:first-child{border-top:0;padding-top:0}.pw .ht small{display:block;margin-top:3px}.pw.cur .ht b{color:var(--ac)}
 h2.wk{margin:0}h2.wk button{display:flex;align-items:center;gap:8px;width:100%;border:0;background:none;color:inherit;font:inherit;letter-spacing:inherit;text-transform:inherit;text-align:left;padding:16px 4px 10px;cursor:pointer}h2.wk.op button{padding-top:22px}h2.wk .wt{flex:1}h2.wk .wn{font-weight:700;letter-spacing:0;text-transform:none}h2.wk .chev{font-size:17px;line-height:1;transition:transform .2s}h2.wk.op .chev{transform:rotate(90deg)}
 .mu{color:var(--mu);font-size:14px}
 .card{background:var(--card);border-radius:22px;padding:16px;margin:0 0 12px;box-shadow:var(--sh);border:1px solid var(--bd)}
@@ -265,16 +266,18 @@ nav button.on{color:var(--ac);background:var(--at)}
 <script src="cloud.js"></script>
 <script src="sync.js"></script>
 <script>
-const K='eng_v1',APP_V='3.5';
+const K='eng_v1',APP_V='4.0';
 const KNOW=3,BOX=[0,1,2,4,7,14,30]; // «знаю» = коробка 3+; интервалы повторения в днях по коробкам
 const EN=window.LESSONS||[],WK=window.WEEKS||[],ND=window.NET||{modules:[],lessons:[],levels:[]};
 const NL=ND.lessons||[];NL.forEach(l=>{l.s='net'});
 // главы СДСМ проходятся в самом курсе (папка net/, тот же сайт): здесь только список глав и «продолжить»
 const CO=window.COURSE||{parts:[],list:[]};
 const ALL=EN.concat(NL);
+// новый курс по плану A1 → A2 и прежний курс (old)
+const ENN=EN.filter(l=>!l.old),ENO=EN.filter(l=>l.old),OWK=window.OLD_WEEKS||[],PL=window.PLAN||null;
 const subj=s=>s=='net'?NL:EN;
 const subjAll=subj;
-let S,tab='en',open={en:null,net:null},T={},TR=new Set(),cs=null,deck='en',tz=null,shownDay='',sheetSave=null,VO=[],wOpen={};
+let S,tab='en',open={en:null,net:null},T={},TR=new Set(),cs=null,deck='en',tz=null,shownDay='',sheetSave=null,VO=[],wOpen={},planV=false;
 
 const p=n=>String(n).padStart(2,'0');
 const dk=d=>d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate());
@@ -297,7 +300,7 @@ function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor
 const les=id=>ALL.find(l=>l.id==id);
 const isNet=l=>!!l&&l.s=='net';
 const sOf=l=>isNet(l)?'net':'en';
-const lnum=l=>(isNet(l)?'С':'')+l.w+'.'+l.n;
+const lnum=l=>(isNet(l)?'С':'')+(l.old?'Ст.':'')+l.w+'.'+l.n;
 // шаги урока — только те, для которых в уроке есть содержимое
 function stepsOf(l){return isNet(l)?['theory','lab','tasks','own'].filter(s=>s=='tasks'?(l.tasks||[]).length:l[s]):['rule','text','tasks','own'].filter(s=>s=='tasks'||s=='own'||l[s])}
 const SN=(l,s)=>({rule:'Правило',text:'Текст',theory:'Теория',lab:'Лаба',tasks:isNet(l)?'Вопросы':'Задания',own:isNet(l)?'Объясни':'Своё',done:'Итог'})[s];
@@ -306,7 +309,7 @@ const strip=h=>String(h).replace(/<[^>]+>/g,'').replace(/&lt;/g,'<').replace(/&g
 const txt=(t,s)=>t.h?s:esc(s);
 const pr=id=>S.L[id]||{};
 const P=id=>S.L[id]||(S.L[id]={st:null,ti:0,r:[],own:'',ownD:null,show:false,heard:false,done:null,sc:null,pass:0,lab:[]});
-const curL=s=>subj(s).find(l=>!pr(l.id).done);
+const curL=s=>subj(s).find(l=>!l.old&&!pr(l.id).done);
 const doneToday=s=>subjAll(s).some(l=>pr(l.id).done==today());
 const okN=q=>(q.r||[]).filter(x=>x>0).length;
 const cur=()=>(tab=='en'||tab=='net')&&open[tab]?les(open[tab]):null;
@@ -324,7 +327,7 @@ if(typeof syncOldId=='function')[o.q,o.err].forEach(a=>a.forEach((x,i)=>{if(!x.i
 const nid=()=>typeof syncNewId=='function'?syncNewId():'t'+Date.now().toString(36);
 function load(){try{S=JSON.parse(localStorage.getItem(K))}catch(e){S=null}S=S&&S.v?migrate(S):init();
 // если Claude поправил перевод или ответ в уроках, карточка подхватит новый текст
-ALL.forEach(l=>{(l.words||[]).concat(l.terms||[]).forEach(([en,ru])=>{const c=S.cards[en];if(c&&!c.d)c.ru=ru});
+ALL.forEach(l=>{(l.words||[]).concat(l.terms||[]).forEach(([en,ru])=>{const c=S.cards[en];if(c&&!c.d&&c.l!='my')c.ru=ru});
 (l.cards||[]).forEach(([q,a],i)=>{const c=S.cards['n:'+l.id+':'+i];if(c){c.q=q;c.a=a}})})}
 function store(){try{localStorage.setItem(K,JSON.stringify(S))}catch(e){toast('Не удалось сохранить')}}
 function save(){store();if(SY)SY.soon()}
@@ -524,26 +527,49 @@ return `<button class="li lr" data-a="open" data-l="${l.id}"><div class="ico ${q
 // ---------- экран «Английский» ----------
 function vEn(){
 const t=today(),c=curL('en'),due=dueList('en').length,C=cstats('en'),A=actOf(t);
-const w=c?c.w:(EN.length?EN[EN.length-1].w:1),wl=EN.filter(l=>l.w==w),W=WK.find(x=>x.w==w)||{t:''};
+const w=c?c.w:(ENN.length?ENN[ENN.length-1].w:1),wl=ENN.filter(l=>l.w==w),W=WK.find(x=>x.w==w)||{t:''};
+const B=PL&&W.b?PL.blocks.find(x=>x.b==W.b):null;
 let h=head(dateLine(),'Английский');
 h+=`<div class="hero">${wring(pct(wl.filter(l=>pr(l.id).done).length,wl.length))}<div class="info"><b>Неделя ${w} · ${esc(W.t)}</b><p>${c?'Урок '+c.n+' из '+wl.length+' · '+esc(c.g):'Все уроки недели пройдены'}</p><span class="chip">Карточек на сегодня: ${due}</span></div></div>`;
-if(!c&&EN.length)h+=`<button class="note in" data-a="tab" data-t="stats">🏁 Уроки недели ${w} пройдены. Составь отчёт во вкладке «Прогресс» и пройди проверку с Claude. Новые уроки появятся после неё.</button>`;
+if(PL)h+=`<div class="card"><button class="li lr" data-a="plan"><div class="ico">🗺</div><div class="ht"><b>План A1 → A2 · неделя ${w} из ${WK.length}</b><small>${B?'Блок '+B.b+' «'+esc(B.t)+'». ':''}Что учим, что слушать, как понять, что A2 взят</small></div><span class="mu">›</span></button></div>`;
+if(!c&&ENN.length)h+=`<button class="note in" data-a="tab" data-t="stats">🏁 Уроки недели ${w} пройдены. Составь отчёт во вкладке «Прогресс» и пройди проверку с Claude. Новые уроки появятся после неё.</button>`;
 h+=bkNote()+startBtn('en',c);
-const xl=c&&c.text?c:[...EN].reverse().find(l=>l.text&&pr(l.id).st)||EN.find(l=>l.text),ol=c||xl;
-h+='<h2>Минимум на сегодня · 15 минут</h2><div class="card">'+
-mrow(C.all&&!due,due?`Повторить карточки: ${due}`:C.all?'Карточки на сегодня повторены':'Карточки появятся, когда откроешь текст урока','data-a="deck" data-d="en"')+
-(xl?mrow(A.h,`Послушать текст урока ${lnum(xl)}`,`data-a="open" data-l="${xl.id}" data-s="text"`):'')+
-(ol?mrow(A.o,'Написать 2 своих предложения',`data-a="open" data-l="${ol.id}" data-s="own"`):'')+
-'<div class="hint">Есть силы — пройди урок целиком. Это норма, около 45 минут.</div></div>';
+const xl=c&&c.text?c:[...ENN].reverse().find(l=>l.text&&pr(l.id).st)||ENN.find(l=>l.text),ol=c||xl;
+// день по плану: слова 10 + урок 15 + слушать 10 + сказать и написать 10
+h+='<h2>Сегодня по плану · 45 минут</h2><div class="card">'+
+mrow(C.all&&!due,'📇 Слова · 10 мин — '+(due?`повторить карточки: ${due}`:C.all?'на сегодня повторены':'появятся после текста урока'),'data-a="deck" data-d="en"')+
+(c?mrow(doneToday('en'),`📖 Урок · 15 мин — ${lnum(c)} ${esc(c.t)}`,`data-a="open" data-l="${c.id}"`):mrow(true,'📖 Урок · уроки недели пройдены',''))+
+(xl?mrow(A.h,`🎧 Слушать · 10 мин — текст урока ${lnum(xl)}: без текста, потом глядя в текст, потом повторяй за голосом`,`data-a="open" data-l="${xl.id}" data-s="text"`):'')+
+(ol?mrow(A.o,'🗣 Сказать и написать · 10 мин — 3–5 предложений по теме: вслух, потом в «Своё»',`data-a="open" data-l="${ol.id}" data-s="own"`):'')+
+`<div class="hint">${esc(PL?PL.min:'Тяжёлый день — хватит слов и 5 минут слушания.')}</div></div>`;
 // игра «Печать»: не урок, просто отдых — простые диалоги о жизни и слепая печать
 h+='<h2>Игра · для отдыха</h2><div class="card"><a class="li lr" href="type.html" style="text-decoration:none;color:inherit"><div class="ico">⌨</div><div class="ht"><b>Печать: диалоги о жизни</b><small>Без таймера и штрафов. Простые диалоги и частые слова с переводом. Удобнее с клавиатурой компьютера.</small></div><span class="mu">›</span></a></div>';
 // пройденные недели свёрнуты, чтобы до текущей не листать; нажатие на заголовок разворачивает
-WK.forEach(W=>{const ls=EN.filter(l=>l.w==W.w);
-if(!ls.length){h+=`<h2>Неделя ${W.w} · ${esc(W.t)}</h2><div class="card mu">${esc(W.g)}. Уроки появятся после проверки с Claude.</div>`;return}
+const wkHead=(key,title,dn,n,op)=>`<h2 class="wk${op?' op':''}"><button data-a="wk" data-w="${key}" aria-expanded="${op}"><span class="wt">${title}</span><span class="wn">${n&&dn==n?'✓ ':''}${n?dn+'/'+n:''}</span><span class="chev">›</span></button></h2>`;
+WK.forEach(W=>{const ls=ENN.filter(l=>l.w==W.w);
+if(!ls.length){if(W.w<=w+1)h+=`<h2>Неделя ${W.w} · ${esc(W.t)}</h2><div class="card mu">${esc(W.g)}. Уроки появятся после проверки с Claude.</div>`;return}
 const dn=ls.filter(l=>pr(l.id).done).length,op=W.w in wOpen?wOpen[W.w]:dn<ls.length;
-h+=`<h2 class="wk${op?' op':''}"><button data-a="wk" data-w="${W.w}" aria-expanded="${op}"><span class="wt">Неделя ${W.w} · ${esc(W.t)}</span><span class="wn">${dn==ls.length?'✓ ':''}${dn}/${ls.length}</span><span class="chev">›</span></button></h2>`;
+h+=wkHead(W.w,`Неделя ${W.w} · ${esc(W.t)}`,dn,ls.length,op);
 if(op)h+='<div class="card">'+ls.map(lessonRow).join('')+'</div>'});
+h+=`<div class="mu" style="margin:6px 4px 0">Остальные недели плана — в «🗺 План».</div>`;
+// прежний курс: свёрнут, открывается целиком
+if(ENO.length){const op=!!wOpen.old;h+=wkHead('old','Прежний курс · октябрь–ноябрь',ENO.filter(l=>pr(l.id).done).length,ENO.length,op);
+if(op)OWK.forEach(W=>{const ls=ENO.filter(l=>l.w==W.w);if(ls.length)h+=`<div class="mu" style="margin:10px 4px 6px;font-weight:700">Неделя ${W.w} · ${esc(W.t)}</div><div class="card">${ls.map(lessonRow).join('')}</div>`})}
 return h+'<div class="mu" style="padding:4px 4px 0">💡 Застрял: 5 минут разбираешься, потом жмёшь «❓ Непонятно» и идёшь дальше. Телефон с лентой — в другой комнате.</div>'}
+
+// ---------- экран «План» ----------
+function vPlan(){
+const c=curL('en'),cw=c?c.w:(ENN.length?ENN[ENN.length-1].w:1);
+let h=`<div class="lh"><button class="back" data-a="planx">‹ Английский</button></div>`+head(esc(PL.t),'План');
+h+=`<div class="card mu">${esc(PL.about)}</div>`;
+h+='<h2>Каждый день · 45 минут</h2><div class="card">'+PL.day.map(d=>`<div class="sn"><div class="en" style="font-size:15px">${d[0]} <b>${esc(d[1])}</b> · ${esc(d[2])}<span class="tr">${esc(d[3])}</span></div></div>`).join('')+`<div class="hint">${esc(PL.min)}</div></div>`;
+h+=`<h2>Каждая неделя</h2><div class="card mu">${esc(PL.week)}</div>`;
+PL.blocks.forEach(B=>{h+=`<h2>Блок ${B.b} · ${esc(B.t)}</h2><div class="card">`+WK.filter(W=>W.b==B.b).map(W=>{
+const ls=ENN.filter(l=>l.w==W.w),dn=ls.length&&ls.every(l=>pr(l.id).done),cur=W.w==cw;
+return `<div class="pw${cur?' cur':''}"><div class="ico ${dn?'dn':''}">${dn?'✓':W.w}</div><div class="ht"><b>${esc(W.t)}${cur?' · сейчас':''}</b><small>${esc(W.g)}</small><small>Научишься: ${esc(W.can)}</small><small>🎧 ${esc(W.lis)}</small></div></div>`}).join('')+'</div>'});
+h+='<h2>Как понять, что A2 взят</h2><div class="card">'+PL.final.map((x,i)=>`<div class="sn"><div class="en" style="font-size:15px">${i+1}. ${esc(x)}</div></div>`).join('')+'</div>';
+h+=`<div class="card mu">Слова, которые ты уже знаешь, остаются в карточках. Новые слова уроков добавляются к ним, а повторы не дублируются.</div>`;
+return h}
 
 // ---------- экран «Сети» ----------
 function vNet(){
@@ -761,7 +787,7 @@ h+='<h2>Непонятно</h2>'+(Q.length?'<div class="card">'+Q.map(([x,i])=>`
 return h}
 
 function repPart(s){const C=cstats(s),net=s=='net';let r=net?'Главы СДСМ на телефоне:\n':'Уроки:\n',any=0;
-subjAll(s).forEach(l=>{const q=pr(l.id);if(!q.st&&!q.done)return;any=1;const sc=q.sc;
+subjAll(s).forEach(l=>{const q=pr(l.id);if(l.old||(!q.st&&!q.done))return;any=1;const sc=q.sc;
 r+=`- ${lnum(l)} ${l.t}: ${q.done?'пройден '+fmtS(q.done):'в процессе'}${sc?`, ${net?'вопросы':'задания'} ${sc[0]}/${sc[1]} (${pct(sc[0],sc[1])}%)`:''}${l.lab?`, лаба ${(q.lab||[]).length}/${l.lab.steps.length}`:''}\n`});
 if(!any)r+='- пока не начинал\n';
 const MY=net?[]:myKeys();
@@ -810,7 +836,7 @@ stats:'<path d="M5 20v-8M11 20V5M17 20v-5M3 20h18"/>',
 more:'<rect x="4" y="4" width="6.5" height="6.5" rx="2"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="2"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="2"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="2"/>'};
 function render(){
 shownDay=today();
-$('app').innerHTML={en:()=>open.en?vLesson():vEn(),net:()=>open.net&&!tz?vLesson():vNet(),cards:vCards,stats:vStats,more:vMore}[tab]();
+$('app').innerHTML={en:()=>open.en?vLesson():planV?vPlan():vEn(),net:()=>open.net&&!tz?vLesson():vNet(),cards:vCards,stats:vStats,more:vMore}[tab]();
 $('nav').innerHTML=[['en','Английский'],['net','Сети'],['cards','Карточки'],['stats','Прогресс'],['more','Ещё']].map(x=>`<button class="${tab==x[0]?'on':''}" data-a="tab" data-t="${x[0]}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[x[0]]}</svg>${x[1]}</button>`).join('')}
 
 function openSheet(title,body,onSave){
@@ -867,7 +893,9 @@ case 'startc':cs={d:deck,q:dueList(deck),i:0,flip:false,done:0,again:[]};render(
 case 'flip':{cs.flip=true;const c=S.cards[cs.q[cs.i]];if(!c.d)say([cs.q[cs.i]]);render();return}
 case 'grade':grade(+D.g);break;
 case 'cend':cs=null;hush();render();top0();return;
-case 'wk':{const w=+D.w,ls=EN.filter(l=>l.w==w),op=w in wOpen?wOpen[w]:ls.some(l=>!pr(l.id).done);wOpen[w]=!op;render();return}
+case 'wk':{const w=D.w=='old'?'old':+D.w,ls=w=='old'?ENO:ENN.filter(l=>l.w==w),op=w in wOpen?wOpen[w]:w!='old'&&ls.some(l=>!pr(l.id).done);wOpen[w]=!op;render();return}
+case 'plan':planV=true;render();top0();return;
+case 'planx':planV=false;render();top0();return;
 case 'cadd':cardSheet(null);return;
 case 'cedit':if(S.cards[D.k])cardSheet(D.k);return;
 case 'cdel':if(!S.cards[D.k]||!confirm('Удалить «'+D.k+'» из карточек?'))return;delete S.cards[D.k];closeSheet();toast('Удалил');break;

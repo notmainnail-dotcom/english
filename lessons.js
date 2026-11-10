@@ -2,7 +2,7 @@
 // id урока не менять: по нему хранится прогресс.
 // Типы заданий: ch — выбор, in — вставить слово, or — собрать предложение, tr — перевод,
 // fx — исправить ошибку (проверка с учётом больших букв), dc — диктант: послушать и написать.
-window.LESSONS_DATE = '2026-10-28';
+window.LESSONS_DATE = '2026-11-10';
 
 // Оценка уровня от Claude — показывается во вкладке «Прогресс». Меняет только Claude после проверки по отчёту:
 // по показанному в заданиях и текстах, не по числу пройденных уроков. v — процент пути до A2, null — ещё не проверялось.
@@ -18,12 +18,81 @@ skills: [
 note: 'Порог 200 слов уже взят. Дальше главное — точность от 80%: она почти вся теряется на написании. Перед «Проверить» прочитай свой ответ по буквам.'};
 // more — дополнительное чтение по желанию (без заданий), для уровня «максимум».
 
-window.WEEKS = [
+// Прежний курс (октябрь–ноябрь 2026): уроки w1…w5. Остаются для прогресса и карточек, в приложении — свёрнутый раздел.
+window.OLD_WEEKS = [
 {w:1, t:'Я и моя работа', g:'a / an / the, my / his / her, am / is / are'},
 {w:2, t:'Мой день, график 2 через 2', g:'Present Simple: don’t / doesn’t, вопросы'},
 {w:3, t:'Что вокруг меня', g:'there is / there are, предлоги места и времени, need to / have to / should'},
 {w:4, t:'Новый офис — тема 3 ещё раз, по-новому', g:'множественное число, in / on / at, there is / are, should / need to / have to'},
 {w:5, t:'Моя история', g:'прошедшее время: was / were, -ed, went / had / made, didn’t / did, could'}];
+
+// План с A1 до A2 (согласован 10.11.2026): 20 недель, 5 блоков. Уроки недели пишет Claude после проверки предыдущей.
+// lis — что слушать на этой неделе; can — что научишься делать.
+window.PLAN = {
+t: 'С A1 до A2 за 20 недель',
+about: 'A2 — это когда понимаешь фразы и короткие тексты на бытовые темы, можешь рассказать о себе, своём дне, прошлом и планах, пишешь короткие письма. Примерно 1000–1500 слов. От A1 до A2 обычно 90–100 часов — около 5 месяцев по 45 минут.',
+day: [
+['📇','Слова','10 мин','карточки: слова из уроков и твои'],
+['📖','Урок','15 мин','правило, текст, задания'],
+['🎧','Слушать','10 мин','что именно — написано у каждой недели'],
+['🗣','Сказать и написать','10 мин','3–5 предложений по теме: сначала вслух, потом в «Своё»']],
+min: 'Тяжёлый день — хватит минимума, 15 минут: слова и 5 минут слушания. День засчитан.',
+week: '5 дней — уроки. 6-й день — повторение и короткая проверка, потом отчёт Claude. 7-й — отдых.',
+blocks: [
+{b:1, t:'Настоящее'},
+{b:2, t:'Вещи, еда, места'},
+{b:3, t:'Прошлое'},
+{b:4, t:'Будущее и опыт'},
+{b:5, t:'Общение'}],
+weeks: [
+{w:1, b:1, t:'Я и люди вокруг', g:'to be, have, my / his / her / ’s, вопросы who / what / where', can:'рассказать о себе и семье, описать человека',
+ lis:'Текст каждого урока: 1-й раз без текста, 2-й — глядя в текст, 3-й — повторяй за голосом по фразе. В повторении — длинный рассказ Тима «My neighbour».'},
+{w:2, b:1, t:'Мой день', g:'Present Simple, always / usually / never, время', can:'описать свой обычный день',
+ lis:'Тексты уроков так же: без текста → с текстом → повторять за голосом.'},
+{w:3, b:1, t:'Прямо сейчас', g:'I’m working и I work: в чём разница', can:'сказать, что происходит сейчас',
+ lis:'Тексты уроков; диалоги по телефону — слушать, не глядя в текст.'},
+{w:4, b:1, t:'Повторение и контрольная', g:'всё из блока 1', can:'проверить себя',
+ lis:'Длинные тексты блока заново, без текста. Понимаешь больше 80% — блок взят.'},
+{w:5, b:2, t:'Дом и город', g:'there is / are, предлоги места, как пройти', can:'объяснить дорогу, описать квартиру',
+ lis:'Тексты уроков + 5 минут видео для начинающих с английскими субтитрами (твой курс на YouTube).'},
+{w:6, b:2, t:'Еда и магазины', g:'some / any, much / many, a lot of, How much?', can:'заказать в кафе, купить, спросить цену',
+ lis:'Диалоги уроков в кафе и магазине + 5 минут видео с английскими субтитрами.'},
+{w:7, b:2, t:'Сравнения', g:'bigger, more expensive, the best', can:'сравнить и выбрать',
+ lis:'Тексты уроков + видео с английскими субтитрами.'},
+{w:8, b:2, t:'Повторение и контрольная', g:'всё из блока 2', can:'проверить себя',
+ lis:'Тексты блока без текста + одно видео целиком.'},
+{w:9, b:3, t:'Вчера и выходные', g:'was / were, глаголы на -ed', can:'рассказать, что делал',
+ lis:'Тексты уроков + адаптированная книга с аудио уровня 1 (например, Oxford Bookworms Stage 1): глава за 2–3 дня.'},
+{w:10, b:3, t:'Истории', g:'неправильные глаголы, did / didn’t, first, then, after that, ago', can:'рассказать случай по порядку',
+ lis:'Тексты уроков + книга уровня 1 с аудио.'},
+{w:11, b:3, t:'Что было, когда…', g:'I was doing… when…', can:'описать событие',
+ lis:'Тексты уроков + книга уровня 1 с аудио.'},
+{w:12, b:3, t:'Повторение и контрольная', g:'всё из блока 3', can:'проверить себя',
+ lis:'Дослушать книгу; тексты блока без текста.'},
+{w:13, b:4, t:'Планы', g:'going to, will', can:'рассказать о планах',
+ lis:'Тексты уроков + книга уровня 2 с аудио + раз в неделю серия учебного сериала Extr@ с английскими субтитрами.'},
+{w:14, b:4, t:'Опыт', g:'Have you ever…? I’ve been to…', can:'рассказать о путешествиях и опыте',
+ lis:'Тексты уроков + книга уровня 2 + серия Extr@.'},
+{w:15, b:4, t:'Недавнее', g:'just / already / yet; I’ve done или I did', can:'сказать, что уже сделал',
+ lis:'Тексты уроков + книга уровня 2 + серия Extr@.'},
+{w:16, b:4, t:'Повторение и контрольная', g:'всё из блока 4', can:'проверить себя',
+ lis:'Серия Extr@ сначала без субтитров, потом с ними.'},
+{w:17, b:5, t:'Правила и советы', g:'can / could, have to, must, should', can:'дать совет, объяснить правило, сходить к врачу',
+ lis:'Тексты уроков + короткие видео для уровня A2: сначала без субтитров, потом с ними.'},
+{w:18, b:5, t:'Если…', g:'If it rains, I will…; because, so, but, when', can:'говорить о вариантах и причинах',
+ lis:'Тексты уроков + видео A2 без субтитров.'},
+{w:19, b:5, t:'Мнения и приглашения', g:'I like doing, I want to, I’d like, I think…', can:'пригласить, согласиться, отказаться',
+ lis:'Тексты уроков + видео A2 без субтитров.'},
+{w:20, b:5, t:'Итоговая проверка A2', g:'всё вместе', can:'чтение, письмо, слушание, речь',
+ lis:'Итоговое аудио: понять с 1–2 прослушиваний.'}],
+final: [
+'рассказать о себе, своём дне, прошлых выходных и планах — около 2 минут;',
+'понять короткое аудио на бытовую тему с 1–2 прослушиваний;',
+'прочитать простой текст на страницу и ответить на вопросы;',
+'написать письмо другу на 8–10 предложений: что было, что будет, совет или приглашение;',
+'итоговая проверка — от 80%.']
+};
+window.WEEKS = window.PLAN.weeks;
 
 window.LESSONS = [
 
@@ -1420,6 +1489,294 @@ tasks:[
 {k:'tr', ru:'Я ничего не понял.', a:['I didn’t understand anything.','I did not understand anything.']},
 {k:'tr', ru:'Вчера я ходил в зал.', a:['Yesterday I went to the gym.','I went to the gym yesterday.']},
 {k:'tr', ru:'В понедельник я позвонил коллеге.', a:['On Monday I called my colleague.','I called my colleague on Monday.','On Monday I called a colleague.','I called a colleague on Monday.']}],
-own:'Главное задание недели. Напиши свою историю (8–10 предложений): кем ты был и что делал раньше, что было трудно, чего ты не умел и что умеешь сейчас. Используй was / were, -ed, went / had / made, didn’t, couldn’t / can. Перед «Закончить» перечитай по буквам. Текст попадёт в отчёт для Claude.'}
+own:'Главное задание недели. Напиши свою историю (8–10 предложений): кем ты был и что делал раньше, что было трудно, чего ты не умел и что умеешь сейчас. Используй was / were, -ed, went / had / made, didn’t, couldn’t / can. Перед «Закончить» перечитай по буквам. Текст попадёт в отчёт для Claude.'},
+
+// ================= НОВЫЙ КУРС: план A1 → A2 =================
+// id новых уроков: a<неделя>l<n>, повторение — a<неделя>r. Старые уроки (w…) — «Прежний курс».
+// Сюжет: жизнь Дэна вне работы — его семья (родители Питер и Хелен, сестра Анна, её муж Пол, дети Мия и Лео) и соседи (Дженни и её сын Тим).
+
+// ---------- Неделя 1: Я и люди вокруг ----------
+{id:'a1l1', w:1, n:1, t:'This is my family', g:'to be: am / is / are, isn’t / aren’t, вопросы',
+rule:`<p>Глагол <b>to be</b> значит «быть». По-русски мы его выбрасываем: «Я инженер», «Она дома». По-английски он нужен всегда: I <b>am</b> an engineer. She <b>is</b> at home. Без него предложение разваливается, как дом без стены.</p>
+<p>Формы: I <b>am</b> (I’m) · he / she / it <b>is</b> (he’s, she’s, it’s) · we / you / they <b>are</b> (we’re, you’re, they’re).</p>
+<p>Отрицание — <b>not</b> сразу после глагола: I’m <b>not</b> tired. She <b>isn’t</b> a doctor. They <b>aren’t</b> at home.</p>
+<p>Вопрос — глагол меняется местами с тем, о ком спрашиваем: <b>Is</b> she a teacher? — Yes, she <b>is</b>. / No, she <b>isn’t</b>. <b>Are</b> they at home? — Yes, they <b>are</b>.</p>
+<p>Возраст тоже через to be: She <b>is</b> eight (years old). Не <s>She has eight years</s> — так говорят по-русски, а не по-английски.</p>`,
+ex:[
+['My dad is sixty-two.','Моему папе шестьдесят два.'],
+['My parents aren’t young, but they are very active.','Мои родители не молодые, но очень активные.'],
+['Is your sister a teacher? — Yes, she is.','Твоя сестра учитель? — Да.'],
+['I’m not tired today.','Я сегодня не устал.']],
+text:[
+['This is a photo of my family.','Это фотография моей семьи.'],
+['The man in the middle is my dad, Peter. He’s sixty-two.','Мужчина в центре — мой папа, Питер. Ему шестьдесят два.'],
+['The woman next to him is my mom, Helen. She’s sixty.','Женщина рядом с ним — моя мама, Хелен. Ей шестьдесят.'],
+['My parents aren’t young, but they are very active.','Мои родители не молодые, но очень активные.'],
+['They live in a small town by the sea.','Они живут в маленьком городке у моря.'],
+['The woman with long hair is my sister, Anna. She’s a teacher.','Женщина с длинными волосами — моя сестра Анна. Она учитель.'],
+['Anna is married. Her husband is Paul. He’s a bus driver.','Анна замужем. Её муж — Пол. Он водитель автобуса.'],
+['Their children are Mia and Leo.','Их дети — Мия и Лео.'],
+['Mia is eight, and Leo is five.','Мие восемь, а Лео пять.'],
+['Mia is very clever, and Leo is very noisy!','Мия очень умная, а Лео очень шумный!'],
+['And who is the man with the big black dog? That’s me, Dan, with Rex.','А кто мужчина с большой чёрной собакой? Это я, Дэн, с Рексом.'],
+['I’m Mia and Leo’s uncle, and Rex is their best friend.','Я дядя Мии и Лео, а Рекс — их лучший друг.'],
+['We aren’t together very often, but we are a happy family.','Мы собираемся не очень часто, но мы счастливая семья.']],
+words:[
+['parents','родители'],['in the middle','в центре, посередине'],['active','активный'],['by the sea','у моря'],
+['married','женатый, замужем'],['husband','муж'],['wife','жена'],['children','дети'],['clever','умный'],
+['noisy','шумный'],['uncle','дядя'],['aunt','тётя'],['together','вместе'],['often','часто']],
+tasks:[
+{k:'ch', q:'How old is Dan’s dad?', o:['sixty','sixty-two','sixty-five'], a:1},
+{k:'ch', q:'What is Anna’s job?', o:['a teacher','a bus driver','a nurse'], a:0},
+{k:'ch', q:'Who is Paul?', o:['Dan’s brother','Anna’s husband','Dan’s dad'], a:1},
+{k:'ch', q:'My parents ___ very active.', o:['is','am','are'], a:2},
+{k:'ch', q:'___ she a teacher? — Yes, she is.', o:['Is','Are','Does'], a:0},
+{k:'ch', q:'Как сказать «Ей восемь лет»?', o:['She has eight years.','She is eight.','She is eight years.'], a:1, e:'Возраст — через to be: She is eight (years old).'},
+{k:'ch', q:'They ___ at home now. (не)', o:['isn’t','aren’t','not'], a:1},
+{k:'in', q:'I ___ Mia and Leo’s uncle.', a:['am']},
+{k:'in', q:'Leo ___ five.', a:['is']},
+{k:'or', ru:'Моя сестра — учитель.', a:'My sister is a teacher.'},
+{k:'or', ru:'Они не молодые.', a:'They aren’t young.'},
+{k:'fx', q:'My sister is teacher and her husband are a driver.', a:['My sister is a teacher and her husband is a driver.','My sister is a teacher, and her husband is a driver.'], e:'Перед профессией — a; husband один — is.'},
+{k:'fx', q:'i am thirty-five years and my dog is three.', a:['I am thirty-five and my dog is three.','I am thirty-five years old and my dog is three.','I’m thirty-five and my dog is three.','I’m thirty-five years old and my dog is three.'], e:'I — с большой. Возраст: I am thirty-five или thirty-five years old, но не просто years.'},
+{k:'dc', a:['My parents aren’t young, but they are very active.'], ru:'Мои родители не молодые, но очень активные.'},
+{k:'tr', ru:'Ему шестьдесят два.', a:['He is sixty-two.','He’s sixty-two.','He is 62.','He’s 62.','He is sixty-two years old.','He’s sixty-two years old.']},
+{k:'tr', ru:'Их дети — Мия и Лео.', a:['Their children are Mia and Leo.','Mia and Leo are their children.','Their kids are Mia and Leo.']}],
+own:'Опиши свою семью или людей, которые тебе близки (можно и придуманную семью): 5–6 предложений через is / are / isn’t. Кто это, сколько лет, кем работают, где живут. Сначала скажи вслух, потом запиши.'},
+
+{id:'a1l2', w:1, n:2, t:'Do you have a cat?', g:'have / has, don’t have, Do you have…?',
+rule:`<p>«У меня есть» по-английски — <b>I have</b>. Не «у меня», а «я имею»: I have a dog. She has a son.</p>
+<p>Формы: I / you / we / they <b>have</b> · he / she / it <b>has</b>.</p>
+<p>Отрицание: I <b>don’t have</b> a car. She <b>doesn’t have</b> a car. После doesn’t снова <b>have</b>, а не has: -s уже «ушло» в does.</p>
+<p>Вопрос: <b>Do</b> you have pets? — Yes, I <b>do</b>. / No, I <b>don’t</b>. <b>Does</b> he have a car? — Yes, he <b>does</b>.</p>
+<p>В фильмах часто слышно <b>have got</b> — это то же самое, британский вариант: I’ve got a cat = I have a cat. She’s got two kids = She has two kids.</p>
+<p>Ещё have бывает не «иметь», а «делать»: have breakfast — завтракать, have a shower — принимать душ, have a good day — хорошего дня.</p>`,
+ex:[
+['I have a dog, but I don’t have a cat.','У меня есть собака, а кошки нет.'],
+['She has a son. He’s ten.','У неё есть сын. Ему десять.'],
+['Do you have children? — Yes, I do.','У тебя есть дети? — Да.'],
+['He doesn’t have a car.','У него нет машины.']],
+text:[
+['On Saturday morning, I meet a new neighbour on the stairs.','В субботу утром я встречаю на лестнице новую соседку.'],
+['Jenny: Hi! I’m Jenny. I’m in flat 14, next to you.','Дженни: Привет! Я Дженни. Я в квартире 14, рядом с тобой.'],
+['Dan: Nice to meet you, Jenny. I’m Dan. And this is Rex.','Дэн: Приятно познакомиться, Дженни. Я Дэн. А это Рекс.'],
+['Jenny: Oh, he’s lovely! Does he bark at night?','Дженни: Ой, какой милый! Он лает по ночам?'],
+['Dan: No, he doesn’t. He’s very quiet. Do you have pets?','Дэн: Нет. Он очень тихий. А у тебя есть питомцы?'],
+['Jenny: Yes, I have a cat. Her name is Snowball, because she’s white.','Дженни: Да, у меня кошка. Её зовут Снежок, потому что она белая.'],
+['Dan: Do you have children?','Дэн: А дети у тебя есть?'],
+['Jenny: Yes, I have a son, Tim. He’s ten. He has a lot of questions about everything!','Дженни: Да, сын Тим. Ему десять. У него куча вопросов обо всём!'],
+['Dan: Ha! My niece is the same. Do you work near here?','Дэн: Ха! Моя племянница такая же. Ты работаешь где-то рядом?'],
+['Jenny: Yes, I’m a nurse at the city hospital. I have night shifts twice a week.','Дженни: Да, я медсестра в городской больнице. Ночные смены у меня два раза в неделю.'],
+['Dan: I work from home, so I’m here a lot. If you need help, just knock.','Дэн: Я работаю из дома, так что часто бываю здесь. Если нужна помощь — просто постучи.'],
+['Jenny: Thanks! We don’t have Wi-Fi yet, and Tim is very unhappy about it.','Дженни: Спасибо! У нас пока нет вайфая, и Тим этим очень недоволен.'],
+['Dan: I’m a network engineer. I can help with that!','Дэн: Я сетевой инженер. С этим я помогу!']],
+words:[
+['neighbour','сосед, соседка'],['stairs','лестница'],['flat','квартира'],['Nice to meet you','приятно познакомиться'],
+['lovely','милый, чудесный'],['bark','лаять'],['pet','домашний питомец'],['son','сын'],['daughter','дочь'],['niece','племянница'],
+['nephew','племянник'],['nurse','медсестра'],['hospital','больница'],['knock','стучать'],['yet','ещё, пока (в отрицании)'],['unhappy','недовольный, несчастный']],
+tasks:[
+{k:'ch', q:'Where does Jenny live?', o:['in flat 14','in flat 40','in a house by the sea'], a:0},
+{k:'ch', q:'What is Snowball?', o:['Jenny’s son','Jenny’s cat','Dan’s dog'], a:1},
+{k:'ch', q:'Why is Tim unhappy?', o:['They don’t have Wi-Fi.','He doesn’t have a cat.','He has a lot of homework.'], a:0},
+{k:'ch', q:'She ___ a son.', o:['have','has'], a:1},
+{k:'ch', q:'Does he bark? — No, he ___.', o:['isn’t','doesn’t','don’t'], a:1},
+{k:'ch', q:'Jenny doesn’t ___ a car.', o:['has','have'], a:1, e:'После doesn’t — have.'},
+{k:'ch', q:'I have breakfast at 7 — это…', o:['У меня есть завтрак в 7.','Я завтракаю в 7.'], a:1},
+{k:'in', q:'___ you have pets?', a:['do']},
+{k:'in', q:'Tim ___ a lot of questions.', a:['has']},
+{k:'or', ru:'У тебя есть дети?', a:'Do you have children?'},
+{k:'or', ru:'У нас пока нет вайфая.', a:'We don’t have Wi-Fi yet.'},
+{k:'fx', q:'She have a cat and she don’t have a dog.', a:['She has a cat and she doesn’t have a dog.','She has a cat, and she doesn’t have a dog.','She has a cat and she does not have a dog.'], e:'she — has; отрицание — doesn’t have.'},
+{k:'fx', q:'Does your son has a phone?', a:['Does your son have a phone?'], e:'После does — have.'},
+{k:'dc', a:['Her name is Snowball, because she’s white.'], ru:'Её зовут Снежок, потому что она белая.'},
+{k:'tr', ru:'У моего брата есть машина.', a:['My brother has a car.','My brother has got a car.','My brother’s got a car.']},
+{k:'tr', ru:'У меня нет кошки.', a:['I don’t have a cat.','I do not have a cat.','I haven’t got a cat.','I have no cat.']}],
+own:'Представь, что встретил нового соседа. Расскажи о себе 5–6 предложений через have / don’t have: что у тебя есть, чего нет (питомцы, машина, работа, хобби). Потом задай соседу 2 вопроса с Do you have…? Сначала вслух, потом запиши.'},
+
+{id:'a1l3', w:1, n:3, t:'Whose phone is this?', g:'my / your / his / her / our / their, ’s, whose',
+rule:`<p>Чтобы сказать «чей», ставим маленькое слово перед предметом:</p>
+<p>I → <b>my</b> · you → <b>your</b> · he → <b>his</b> · she → <b>her</b> · it → <b>its</b> · we → <b>our</b> · they → <b>their</b></p>
+<p>Главная ловушка: his / her выбираем <b>по хозяину</b>, а не по предмету. У Анны муж — <b>her</b> husband (хозяйка — она). У папы очки — <b>his</b> glasses.</p>
+<p>Вторая ловушка: <b>its</b> — «его / её» (чей), а <b>it’s</b> — это it is. The dog is happy. <b>Its</b> name is Rex. <b>It’s</b> a big dog.</p>
+<p>С именами — <b>’s</b>: Anna<b>’s</b> car — машина Анны, Dad<b>’s</b> glasses — папины очки. Если хозяев несколько и слово уже на -s, ставим только апостроф: my parents<b>’</b> house — дом моих родителей.</p>
+<p>Вопрос «чей?» — <b>Whose</b>: Whose phone is this? — It’s Paul’s.</p>`,
+ex:[
+['Whose phone is this? — It’s Paul’s.','Чей это телефон? — Пола.'],
+['Anna is married. Her husband is Paul.','Анна замужем. Её муж — Пол.'],
+['We have lunch at our parents’ house.','Мы обедаем в доме наших родителей.'],
+['Rex is a dog. Its name is short.','Рекс — собака. Его кличка короткая.']],
+text:[
+['On Sunday, we have lunch at our parents’ house.','В воскресенье мы обедаем в доме у родителей.'],
+['After lunch, there are things everywhere.','После обеда вещи повсюду.'],
+['Mom asks, “Whose phone is this?”','Мама спрашивает: «Чей это телефон?»'],
+['“It’s Paul’s,” says Anna. “His phone is always on the table.”','«Пола, — говорит Анна. — Его телефон вечно на столе».'],
+['“And whose glasses are these?”','«А чьи это очки?»'],
+['“They’re Dad’s. His glasses are always somewhere!”','«Папины. Его очки вечно где-нибудь лежат!»'],
+['Leo has a small red car in his hand. “Is it your car, Leo?”','У Лео в руке маленькая красная машинка. «Это твоя машинка, Лео?»'],
+['“No, it’s Mia’s. Her car is red. My car is blue.”','«Нет, Мии. Её машинка красная. Моя — синяя».'],
+['Rex has a sock in his mouth. Whose sock is it? Nobody knows.','У Рекса во рту носок. Чей это носок? Никто не знает.'],
+['Mia laughs, “It’s Grandpa’s sock! Look at his feet!”','Мия смеётся: «Это дедушкин носок! Посмотрите на его ноги!»'],
+['Dad looks down. One of his feet is in a sock, and one isn’t.','Папа смотрит вниз. Одна нога в носке, а другая — нет.'],
+['Everybody laughs, and Dad takes his sock back from Rex.','Все смеются, и папа забирает свой носок у Рекса.'],
+['Our family lunches are always like this: noisy, funny and a little crazy.','Наши семейные обеды всегда такие: шумные, весёлые и немного сумасшедшие.']],
+words:[
+['whose','чей'],['glasses','очки'],['everywhere','везде, повсюду'],['somewhere','где-то'],['in his hand','у него в руке'],
+['sock','носок'],['mouth','рот'],['nobody','никто'],['grandpa','дедушка'],['grandma','бабушка'],['feet','ступни, ноги (одна — foot)'],
+['look down','посмотреть вниз'],['take back','забрать обратно'],['crazy','сумасшедший']],
+tasks:[
+{k:'ch', q:'Whose phone is on the table?', o:['Dad’s','Paul’s','Anna’s'], a:1},
+{k:'ch', q:'What colour is Leo’s car?', o:['red','blue','green'], a:1},
+{k:'ch', q:'Whose sock is in Rex’s mouth?', o:['Leo’s','Grandpa’s','Dan’s'], a:1},
+{k:'ch', q:'Anna and Paul have a son. ___ son is Leo.', o:['His','Her','Their'], a:2, e:'Хозяева — они двое: their.'},
+{k:'ch', q:'Dad has glasses. ___ glasses are on the table.', o:['His','Her','Its'], a:0},
+{k:'ch', q:'Rex is a dog. ___ name is Rex.', o:['It’s','Its'], a:1, e:'its — «его» (чей); it’s = it is.'},
+{k:'ch', q:'___ bag is this? — It’s Mia’s.', o:['Who','Whose','Who’s'], a:1},
+{k:'in', q:'This is my sister’s car. It’s ___ car. (её)', a:['her']},
+{k:'in', q:'We have a dog. ___ dog is big. (наша)', a:['our']},
+{k:'or', ru:'Это папины очки.', a:'These are Dad’s glasses.'},
+{k:'or', ru:'Чей это телефон?', a:'Whose phone is this?'},
+{k:'fx', q:'Anna has a husband. Her husband name is Paul.', a:['Anna has a husband. Her husband’s name is Paul.','Anna has a husband. His name is Paul.'], e:'«Имя её мужа» — her husband’s name. Или проще: His name is Paul.'},
+{k:'fx', q:'Dan has a dog. Its very friendly and his name is Rex.', a:['Dan has a dog. It’s very friendly and its name is Rex.','Dan has a dog. It’s very friendly and his name is Rex.','Dan has a dog. It is very friendly and its name is Rex.','Dan has a dog. It is very friendly and his name is Rex.','Dan has a dog. It’s very friendly, and its name is Rex.'], e:'«Она очень дружелюбная» — It’s (= it is) very friendly.'},
+{k:'dc', a:['Whose glasses are these?'], ru:'Чьи это очки?'},
+{k:'tr', ru:'Это машина моего брата.', a:['This is my brother’s car.','It’s my brother’s car.','It is my brother’s car.','That is my brother’s car.','That’s my brother’s car.']},
+{k:'tr', ru:'Их дом у моря.', a:['Their house is by the sea.','Their house is near the sea.','Their house is next to the sea.']}],
+own:'Опиши 5–6 вещей у тебя дома или на работе и чьи они: my laptop, my mom’s photo, my dog’s bed… Используй my / his / her / their и ’s. Сначала вслух, потом запиши.'},
+
+{id:'a1l4', w:1, n:4, t:'What does she look like?', g:'внешность и характер',
+rule:`<p>Есть два похожих вопроса, и они про разное:</p>
+<p><b>What does she look like?</b> — Как она выглядит? (внешность)<br><b>What is she like?</b> — Какая она? (характер)</p>
+<p><b>Внешность:</b> He is tall / short / slim. He has short dark hair / long blond hair / blue eyes / a beard. She wears glasses (носит очки).</p>
+<p>Обрати внимание: hair — «волосы» — без -s, это одна масса, как вода: <b>long dark hair</b>, а не <s>long dark hairs</s>. И прилагательные стоят перед словом: long dark hair, а не <s>hair long</s>.</p>
+<p><b>Характер:</b> kind (добрый), friendly (дружелюбный), funny (весёлый, смешной), quiet (тихий), shy (застенчивый), clever (умный), lazy (ленивый), hard-working (трудолюбивый), strict (строгий).</p>
+<p>Насколько: <b>very</b> — очень, <b>quite</b> — довольно, <b>a bit</b> — немного (обычно о плохом: a bit lazy, a bit strict).</p>`,
+ex:[
+['What does your sister look like? — She’s tall with long dark hair.','Как выглядит твоя сестра? — Высокая, с длинными тёмными волосами.'],
+['What is your boss like? — He’s kind, but a bit strict.','Какой у тебя начальник? — Добрый, но немного строгий.'],
+['He has blue eyes and a small beard.','У него голубые глаза и небольшая борода.'],
+['She wears glasses when she reads.','Она носит очки, когда читает.']],
+text:[
+['At school, Mia has a task: “Describe two people in your family.”','В школе у Мии задание: «Опиши двух людей из своей семьи».'],
+['This is her text.','Вот её текст.'],
+['My mom’s name is Anna. She is quite tall and slim.','Мою маму зовут Анна. Она довольно высокая и стройная.'],
+['She has long dark hair and brown eyes.','У неё длинные тёмные волосы и карие глаза.'],
+['She wears glasses when she reads.','Она носит очки, когда читает.'],
+['My mom is kind and very clever, but she is a bit strict about homework.','Мама добрая и очень умная, но немного строгая насчёт домашки.'],
+['My uncle Dan is tall too. He has short hair and a small beard.','Мой дядя Дэн тоже высокий. У него короткие волосы и небольшая борода.'],
+['He has blue eyes, like my grandpa.','У него голубые глаза, как у дедушки.'],
+['Uncle Dan is quiet, but he is very funny when he plays with us.','Дядя Дэн тихий, но очень весёлый, когда играет с нами.'],
+['He is hard-working. He often works late with his two monitors.','Он трудолюбивый. Он часто работает допоздна за своими двумя мониторами.'],
+['He isn’t lazy, but on Sundays he sleeps on Grandpa’s sofa after lunch!','Он не ленивый, но по воскресеньям после обеда спит на дедушкином диване!'],
+['Rex is Uncle Dan’s dog. He is big, black and very friendly.','Рекс — собака дяди Дэна. Он большой, чёрный и очень дружелюбный.'],
+['I love my family, and I love Rex too.','Я люблю свою семью, и Рекса тоже люблю.']],
+words:[
+['describe','описывать'],['look like','выглядеть (как)'],['slim','стройный'],['dark hair','тёмные волосы'],['blond hair','светлые волосы'],
+['brown eyes','карие глаза'],['wear glasses','носить очки'],['beard','борода'],['kind','добрый'],['friendly','дружелюбный'],
+['shy','застенчивый'],['strict','строгий'],['hard-working','трудолюбивый'],['lazy','ленивый'],['quite','довольно'],['a bit','немного']],
+tasks:[
+{k:'ch', q:'What does Anna look like?', o:['short with blond hair','tall and slim with long dark hair','tall with a beard'], a:1},
+{k:'ch', q:'What is Dan like?', o:['quiet but funny','noisy and lazy','very strict'], a:0},
+{k:'ch', q:'What does Dan do on Sundays after lunch?', o:['He plays football.','He sleeps on the sofa.','He works.'], a:1},
+{k:'ch', q:'«Какой он по характеру?» — это…', o:['What does he look like?','What is he like?'], a:1},
+{k:'ch', q:'She has ___.', o:['hair long dark','long dark hair','long dark hairs'], a:1, e:'Прилагательные — перед словом; hair без -s.'},
+{k:'ch', q:'He ___ glasses.', o:['wears','dresses','puts'], a:0},
+{k:'ch', q:'My boss is ___ strict. (немного)', o:['a bit','very','a lot'], a:0},
+{k:'in', q:'She has blue ___. (глаза)', a:['eyes']},
+{k:'in', q:'He isn’t lazy. He is hard-___.', a:['working']},
+{k:'or', ru:'Он высокий и стройный.', a:'He is tall and slim.'},
+{k:'or', ru:'Как выглядит твоя сестра?', a:'What does your sister look like?'},
+{k:'fx', q:'My father is tall and he has a short hairs.', a:['My father is tall and he has short hair.','My father is tall, and he has short hair.'], e:'hair — без -s и без a.'},
+{k:'fx', q:'What is your brother look like?', a:['What does your brother look like?'], e:'Внешность: What does … look like?'},
+{k:'dc', a:['She wears glasses when she reads.'], ru:'Она носит очки, когда читает.'},
+{k:'tr', ru:'У него короткие тёмные волосы.', a:['He has short dark hair.','He has got short dark hair.','He’s got short dark hair.']},
+{k:'tr', ru:'Моя мама добрая и весёлая.', a:['My mom is kind and funny.','My mum is kind and funny.','My mother is kind and funny.','My mom is kind and cheerful.','My mother is kind and cheerful.']}],
+own:'Опиши двух людей: какие они внешне (tall, short hair, blue eyes…) и по характеру (kind, funny, quiet…). Это могут быть родные, друг, коллега или известный человек. 6–8 предложений, сначала вслух.'},
+
+{id:'a1l5', w:1, n:5, t:'Who, what, where?', g:'вопросы: who, what, where, when, why, how old, how many',
+rule:`<p>Вопросительное слово ставим <b>в начало</b>, а дальше — как в обычном вопросе.</p>
+<p>С глаголом to be: <b>Where is</b> he? <b>How old are</b> you?<br>С другими глаголами нужен do / does: <b>Where do</b> you live? <b>What does</b> she do?</p>
+<p>Исключение: если спрашиваем, <b>кто</b> что-то делает, do не нужен: <b>Who lives</b> here? — Jenny. Сравни: Who do you live with? — с кем живёшь (тут «кто» — не тот, кто делает).</p>
+<p>Слова: <b>who</b> — кто · <b>what</b> — что, какой · <b>where</b> — где, куда · <b>when</b> — когда · <b>why</b> — почему (ответ — because…) · <b>how</b> — как · <b>how old</b> — сколько лет · <b>how many</b> — сколько (штук) · <b>which</b> — какой из.</p>
+<p>Полезная фраза: <b>What do you do?</b> — не «что ты делаешь», а «кем ты работаешь».</p>`,
+ex:[
+['Where do you live? — In flat 15.','Где ты живёшь? — В квартире 15.'],
+['What do you do? — I’m a network engineer.','Кем ты работаешь? — Я сетевой инженер.'],
+['Who lives in flat 14? — Jenny and Tim.','Кто живёт в квартире 14? — Дженни и Тим.'],
+['Why do you like your job? — Because it’s interesting.','Почему тебе нравится твоя работа? — Потому что она интересная.']],
+text:[
+['Tim knocks on my door. He has a notebook in his hand.','Тим стучит в мою дверь. У него в руке блокнот.'],
+['Tim: Hi, Dan! I have a school project: “Interview a neighbour.” Can I ask you some questions?','Тим: Привет, Дэн! У меня школьный проект: «Возьми интервью у соседа». Можно задать тебе несколько вопросов?'],
+['Dan: Sure. Come in.','Дэн: Конечно. Заходи.'],
+['Tim: What’s your full name?','Тим: Как тебя зовут полностью?'],
+['Dan: Daniel Green. But everybody calls me Dan.','Дэн: Дэниел Грин. Но все зовут меня Дэн.'],
+['Tim: How old are you? — Dan: I’m thirty-four.','Тим: Сколько тебе лет? — Дэн: Тридцать четыре.'],
+['Tim: What do you do? — Dan: I’m a network engineer. I fix the internet for a lot of people.','Тим: Кем ты работаешь? — Дэн: Я сетевой инженер. Чиню интернет многим людям.'],
+['Tim: Where do you work? — Dan: Here, at home, and sometimes in the office.','Тим: Где ты работаешь? — Дэн: Здесь, дома, и иногда в офисе.'],
+['Tim: How many brothers and sisters do you have? — Dan: One sister, Anna.','Тим: Сколько у тебя братьев и сестёр? — Дэн: Одна сестра, Анна.'],
+['Tim: When do you walk Rex? — Dan: Twice a day, at seven in the morning and at six in the evening.','Тим: Когда ты гуляешь с Рексом? — Дэн: Два раза в день, в семь утра и в шесть вечера.'],
+['Tim: Why do you like your job? — Dan: Because every day there is a new problem to solve.','Тим: Почему тебе нравится твоя работа? — Дэн: Потому что каждый день есть новая задачка.'],
+['Tim: Who is your best friend? — Dan: Rex, of course!','Тим: Кто твой лучший друг? — Дэн: Рекс, конечно!'],
+['Tim writes everything in his notebook and smiles. “Thanks! This is a great interview.”','Тим всё записывает в блокнот и улыбается: «Спасибо! Отличное интервью».']],
+words:[
+['notebook','блокнот, тетрадь'],['project','проект'],['interview','интервью; взять интервью'],['Sure.','Конечно.'],['Come in.','Заходи.'],
+['full name','полное имя'],['everybody','все'],['call','звать, называть; звонить'],['fix','чинить'],['solve','решать (задачу)'],
+['best friend','лучший друг'],['of course','конечно'],['which','какой (из)']],
+tasks:[
+{k:'ch', q:'How old is Dan?', o:['thirty','thirty-four','forty'], a:1},
+{k:'ch', q:'Why does Dan like his job?', o:['Every day there is a new problem to solve.','He works at home.','He has a lot of money.'], a:0},
+{k:'ch', q:'Who is Dan’s best friend?', o:['Tim','Rex','Anna'], a:1},
+{k:'ch', q:'___ do you live? — In flat 15.', o:['What','Where','Who'], a:1},
+{k:'ch', q:'___ is your sister? — She’s thirty.', o:['How many','How old','What'], a:1},
+{k:'ch', q:'What do you do? — это…', o:['Что ты делаешь сейчас?','Кем ты работаешь?'], a:1},
+{k:'ch', q:'___ lives in flat 14? — Jenny.', o:['Who','Who does','Whose'], a:0, e:'Спрашиваем, кто делает, — без do: Who lives…?'},
+{k:'in', q:'___ do you like your job? — Because it’s interesting.', a:['why']},
+{k:'in', q:'How ___ children do they have? — Two.', a:['many']},
+{k:'or', ru:'Где ты работаешь?', a:'Where do you work?'},
+{k:'or', ru:'Сколько тебе лет?', a:'How old are you?'},
+{k:'fx', q:'Where you live?', a:['Where do you live?'], e:'С обычным глаголом нужен do: Where do you live?'},
+{k:'fx', q:'What time your shift start?', a:['What time does your shift start?'], e:'shift — она одна, значит does; start — без -s.'},
+{k:'dc', a:['Every day there is a new problem to solve.'], ru:'Каждый день есть новая задачка.'},
+{k:'tr', ru:'Кем работает твой брат?', a:['What does your brother do?','What is your brother’s job?','What’s your brother’s job?']},
+{k:'tr', ru:'Когда ты гуляешь с собакой?', a:['When do you walk your dog?','When do you walk the dog?','When do you walk with your dog?']}],
+own:'Представь, что Тим пришёл к тебе. Ответь на его вопросы полными предложениями: What’s your name? How old are you? What do you do? Where do you live? How many brothers and sisters do you have? Why do you learn English? Сначала вслух, потом запиши.'},
+
+{id:'a1r', w:1, n:6, review:true, t:'Повторение недели: «My neighbour»', g:'всё вместе',
+text:[
+['My Neighbour. A school project by Tim Walker.','Мой сосед. Школьный проект Тима Уокера.'],
+['My neighbour’s name is Daniel Green, but everybody calls him Dan.','Моего соседа зовут Дэниел Грин, но все зовут его Дэн.'],
+['He is thirty-four, and he lives in flat 15, next to our flat.','Ему тридцать четыре, он живёт в квартире 15, рядом с нашей.'],
+['Dan is tall. He has short hair, blue eyes and a small beard.','Дэн высокий. У него короткие волосы, голубые глаза и небольшая борода.'],
+['He is quiet, but he is very funny and kind.','Он тихий, но очень весёлый и добрый.'],
+['He is a network engineer. He fixes the internet for a lot of people.','Он сетевой инженер. Он чинит интернет многим людям.'],
+['He works at home, so he has two big monitors on his desk.','Он работает дома, поэтому у него на столе два больших монитора.'],
+['Dan has a sister, Anna. She is a teacher at my school!','У Дэна есть сестра Анна. Она учительница в моей школе!'],
+['Her children are Mia and Leo. Mia is eight, and she is my friend.','Её дети — Мия и Лео. Мие восемь, и мы дружим.'],
+['Dan doesn’t have a cat, but he has a big black dog, Rex.','Кошки у Дэна нет, зато есть большая чёрная собака Рекс.'],
+['Rex is very friendly. He isn’t afraid of our cat, Snowball, but Snowball is afraid of him!','Рекс очень дружелюбный. Он не боится нашей кошки Снежка, а вот Снежок боится его!'],
+['Dan walks Rex twice a day, at seven in the morning and at six in the evening.','Дэн гуляет с Рексом два раза в день, в семь утра и в шесть вечера.'],
+['He likes his job because every day there is a new problem to solve.','Ему нравится его работа, потому что каждый день есть новая задачка.'],
+['When our Wi-Fi doesn’t work, Dan always helps us.','Когда у нас не работает вайфай, Дэн всегда нам помогает.'],
+['I think he is the best neighbour in our building.','Я думаю, он лучший сосед в нашем доме.']],
+words:[['afraid of','бояться (кого-то)'],['building','здание, дом'],['I think','я думаю'],['the best','лучший'],['help','помогать'],['desk','письменный стол']],
+tasks:[
+{k:'ch', q:'Where does Dan live?', o:['in flat 14','in flat 15','in a house by the sea'], a:1},
+{k:'ch', q:'Who is Anna?', o:['Tim’s mom','Dan’s sister and a teacher at Tim’s school','Dan’s wife'], a:1},
+{k:'ch', q:'Who is afraid of who?', o:['Rex is afraid of Snowball.','Snowball is afraid of Rex.'], a:1},
+{k:'ch', q:'Dan ___ a cat.', o:['doesn’t have','don’t have','isn’t have'], a:0},
+{k:'ch', q:'Mia ___ eight.', o:['has','is','are'], a:1},
+{k:'ch', q:'Snowball is a cat. ___ white.', o:['Its','It’s'], a:1, e:'It’s = it is. Its — «её / его» (чей).'},
+{k:'ch', q:'What does Dan look like?', o:['He is tall with short hair and a beard.','He is short and slim with long hair.'], a:0},
+{k:'in', q:'___ old is Dan? — Thirty-four.', a:['how']},
+{k:'in', q:'Dan ___ two big monitors. (есть)', a:['has']},
+{k:'or', ru:'Как выглядит твой сосед?', a:'What does your neighbour look like?'},
+{k:'fx', q:'He is thirty-four years and he have a dog.', a:['He is thirty-four and he has a dog.','He is thirty-four years old and he has a dog.','He’s thirty-four and he has a dog.','He’s thirty-four years old and he has a dog.'], e:'Возраст — thirty-four или thirty-four years old; he — has.'},
+{k:'fx', q:'i think my neighbour is very kindly.', a:['I think my neighbour is very kind.','I think my neighbor is very kind.'], e:'I — с большой; «добрый» — kind (kindly — «любезно»).'},
+{k:'dc', a:['He isn’t afraid of our cat.'], ru:'Он не боится нашей кошки.'},
+{k:'tr', ru:'У моей сестры двое детей.', a:['My sister has two children.','My sister has two kids.','My sister has got two children.','My sister’s got two children.']},
+{k:'tr', ru:'Моя соседка — медсестра.', a:['My neighbour is a nurse.','My neighbor is a nurse.']},
+{k:'tr', ru:'Почему ты учишь английский?', a:['Why do you learn English?','Why are you learning English?','Why do you study English?','Why are you studying English?']}],
+own:'Главное задание недели. Сначала расскажи вслух, потом напиши «My neighbour» или «My friend»: 8–10 предложений о реальном человеке — кто он, сколько лет, как выглядит, какой по характеру, что у него есть, чем занимается. Используй is / has / his / her и хотя бы один вопрос с ответом. Текст попадёт в отчёт для Claude.'}
 
 ];
+
+// уроки прежнего курса помечаем: в списке они отдельно, текущий урок выбирается только из нового плана
+window.LESSONS.forEach(l => { if (/^w\d/.test(l.id)) l.old = 1 });
