@@ -46,6 +46,19 @@ const TTS = (() => {
     clear: 'клир', process: 'процесс', extended: 'экстендед', summary: 'саммари', redistribute: 'редистрибьют', connected: 'коннектед', static: 'статик',
     'passive-interface': 'пассив-интерфейс', 'hello-interval': 'хэллоу-интервал', 'dead-interval': 'дэд-интервал', 'mtu-ignore': 'эм-тэ-у-игнор', nssa: 'эн-эс-эс-а',
     'link-state': 'линк-стейт', 'distance-vector': 'дистанс-вектор', 'router-id': 'роутер-ай-ди',
+    // L3VPN и BGP (глава 11)
+    VRF: 'вэ-эр-эф', RD: 'эр-дэ', RT: 'эр-тэ', VPNv4: 'вэ-пэ-эн вэ четыре', iBGP: 'ай-бэ-гэ-пэ', eBGP: 'и-бэ-гэ-пэ', 'MP-BGP': 'эм-пэ бэ-гэ-пэ', RR: 'эр-эр',
+    AS_PATH: 'эй-эс пас', AS: 'эй-эс', SVC: 'сервис', DNS: 'дэ-эн-эс', 'as-override': 'эй-эс оверрайд', 'allowas-in': 'алловас-ин', 'update-source': 'апдейт-сорс',
+    'send-community': 'сенд-комьюнити', community: 'комьюнити', 'route-target': 'роут-таргет', 'route target': 'роут таргет', 'route reflector': 'роут рефлектор',
+    'address-family': 'эдрес-фэмили', 'address family': 'эдрес фэмили', activate: 'эктивейт', unicast: 'юникаст', vpnv4: 'вэ-пэ-эн вэ четыре', vrf: 'вэ-эр-эф',
+    definition: 'дефинишн', both: 'боус', 'remote-as': 'ремоут-эй-эс', redistribute: 'редистрибьют', Established: 'истеблишт', Idle: 'айдл', Active: 'эктив',
+    extranet: 'экстранет', 'export map': 'экспорт мэп', export: 'экспорт', import: 'импорт', 'hub-and-spoke': 'хаб-энд-споук', 'shared services': 'шэрд сервисиз',
+    // L2VPN (глава 12)
+    'E-Line': 'и-лайн', 'E-LAN': 'и-лан', 'H-VPLS': 'аш ви-пи-эл-эс', PW: 'пи-дабл-ю', VPWS: 'ви-пи-дабл-ю-эс', EFP: 'и-эф-пи', CFM: 'си-эф-эм', MEP: 'меп',
+    CCM: 'си-си-эм', EPL: 'и-пи-эл', EVPL: 'и-ви-пи-эл', MEF: 'меф', QinQ: 'кью-ин-кью', xconnect: 'иксконнект', service: 'сервис', instance: 'инстанс',
+    encapsulation: 'инкапсуляция', dot1q: 'дот-уан-кью', rewrite: 'рирайт', ingress: 'ингресс', tag: 'тэг', symmetric: 'симметрик', 'bridge-domain': 'бридж-домейн',
+    l2transport: 'эл-два-транспорт', vc: 'вэ-цэ', 'storm-control': 'шторм-контрол', targeted: 'таргетед', 'Control Word': 'контрол ворд', pseudowire: 'псевдовайр',
+    'split horizon': 'сплит хорайзон', vfi: 'вэ-эф-и', context: 'контекст', member: 'мембер', vpn: 'вэ-пэ-эн', id: 'ай-ди',
     // MPLS (глава 10)
     LER: 'эл-е-эр', LIB: 'либ', LFIB: 'эл-фиб', FEC: 'фек', PHP: 'пэ-аш-пэ', CEF: 'цэф', SID: 'сид', SRGB: 'эс-эр-джи-би', MRU: 'эм-эр-ю', TC: 'тэ-цэ', EXP: 'экс-пи',
     push: 'пуш', swap: 'своп', pop: 'поп', Pop: 'поп', label: 'лейбл', Label: 'лейбл', Labels: 'лейблы', No: 'ноу', Untagged: 'антэгд', Oper: 'опер',
