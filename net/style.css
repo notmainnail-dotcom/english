@@ -181,8 +181,8 @@ input:focus,textarea:focus,select:focus{outline:2px solid var(--acc);outline-off
 .task.done{border-color:rgba(34,197,94,.45)}
 .task .th{display:flex;gap:12px;align-items:flex-start}
 .task .th input{width:20px;height:20px;margin-top:3px;accent-color:var(--ok);flex:none;cursor:pointer}
-.task .tt{flex:1}
-.task .tt b{display:block}
+.task .tt{flex:1;min-width:0}
+.task .tt>b{display:block}
 .task .tools{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
 .task .rev{margin-top:8px}
 .nodes td{font-size:13.5px}
@@ -328,3 +328,7 @@ figure.dg.wide{max-width:760px}
 .ttstop{margin-bottom:12px}
 .ttscard .tc-q{font-size:18px;font-weight:600;margin:4px 0 14px}
 .ttscard .lbl{font-size:12px;text-transform:uppercase;letter-spacing:.6px}
+
+/* лаба: зачем и раздел книги у задания */
+.task .twhy{margin:6px 0 2px;font-size:14px;line-height:1.5;color:var(--tx)}
+.task .tread{margin:2px 0 4px;font-size:13.5px;color:var(--tx2)}

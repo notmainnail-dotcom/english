@@ -735,12 +735,22 @@ function tLab(b, ch, id) {
     </div>
     ${L.init ? `<details class="more"><summary>Стартовые конфиги (уже вшиты в .unl — применятся при первом запуске)</summary>${Object.entries(L.init).map(([k, v]) => `<h4>${esc(k)}</h4>${cliBlock(v)}`).join('')}</details>` : ''}
     ${L.pre ? `<div class="callout info"><b>Перед началом</b>${L.pre}</div>` : ''}
-    <h2>Задания</h2><div id="tasks"></div>
+    <h2>Задания</h2>
+    <div class="callout pro"><b>Как не бросить лабу на середине</b><ol style="margin:4px 0 0;padding-left:20px">
+      <li><b>Одно задание за подход.</b> Сделал, отметил галочкой, остановился — это нормально.</li>
+      <li><b>Сначала раздел книги.</b> У задания есть ссылка «📖 Перед заданием» — прочитай его, если не помнишь, о чём речь.</li>
+      <li><b>Прочитай «🎯 Зачем»</b> и, не начиная, скажи себе, что должно получиться. Потом сравни с «✅ Что должно получиться».</li>
+      <li><b>Застрял на 15 минут</b> — «💡 Подсказка», потом «🔍 Как проверить». Не помогло — скопируй вывод команды и пришли мне в чат. Не бросай: непонятное место и есть то, ради чего лаба.</li></ol></div>
+    <div id="tasks"></div>
     ${L.brk && L.brk.length ? `<h2>Сломай и почини</h2><p class="sub">Внеси поломку командой из блока (или попроси кого-то), потом найди её только по выводам show/debug. Это ровно то, что ты делаешь на смене.</p><div id="brk"></div>` : ''}
     ${L.extra ? `<h2>Со звёздочкой</h2><div class="content card">${L.extra}</div>` : ''}`;
   const tk = $('#tasks', b);
-  tk.innerHTML = L.tasks.map((t, i) => `<div class="task ${st.lab.t[i] ? 'done' : ''}" data-i="${i}"><div class="th"><input type="checkbox" ${st.lab.t[i] ? 'checked' : ''}><div class="tt"><b>${i + 1}. ${t.t}</b><div class="content">${t.d || ''}</div>
-    <div class="tools">${t.hint ? '<button class="btn sm" data-x="hint">💡 Подсказка</button>' : ''}${t.check ? '<button class="btn sm" data-x="check">🔍 Как проверить</button>' : ''}${t.sol ? '<button class="btn sm" data-x="sol">🔑 Решение</button>' : ''}</div>
+  // перед заданием: раздел книги главы (read — номер раздела с нуля)
+  const bkL = bookOf(id);
+  const readLink = t => t.read != null && bkL && bkL.parts[t.read] ? `<div class="tread">📖 Перед заданием: <a href="#/c/${id}/book/${t.read}">раздел ${t.read + 1} «${bkL.parts[t.read].h}»</a></div>` : '';
+  tk.innerHTML = L.tasks.map((t, i) => `<div class="task ${st.lab.t[i] ? 'done' : ''}" data-i="${i}"><div class="th"><input type="checkbox" ${st.lab.t[i] ? 'checked' : ''}><div class="tt"><b>${i + 1}. ${t.t}</b>${t.why ? `<div class="twhy">🎯 <b>Зачем:</b> ${t.why}</div>` : ''}${readLink(t)}<div class="content">${t.d || ''}</div>
+    <div class="tools">${t.expect ? '<button class="btn sm" data-x="expect">✅ Что должно получиться</button>' : ''}${t.hint ? '<button class="btn sm" data-x="hint">💡 Подсказка</button>' : ''}${t.check ? '<button class="btn sm" data-x="check">🔍 Как проверить</button>' : ''}${t.sol ? '<button class="btn sm" data-x="sol">🔑 Решение</button>' : ''}</div>
+    ${t.expect ? `<div class="rev content" data-r="expect" hidden><div class="callout ok"><b>Если всё сделано правильно</b>${t.expect}</div></div>` : ''}
     ${t.hint ? `<div class="rev content" data-r="hint" hidden><div class="callout info"><b>Подсказка</b>${t.hint}</div></div>` : ''}
     ${t.check ? `<div class="rev" data-r="check" hidden><b>Проверка:</b>${cliBlock(t.check)}</div>` : ''}
     ${t.sol ? `<div class="rev" data-r="sol" hidden><b>Решение:</b>${cliBlock(t.sol)}</div>` : ''}</div></div></div>`).join('');
@@ -755,7 +765,7 @@ function tLab(b, ch, id) {
   });
   if (L.brk && L.brk.length) {
     const bk = $('#brk', b);
-    bk.innerHTML = L.brk.map((t, i) => `<div class="task ${st.lab.b[i] ? 'done' : ''}" data-i="${i}"><div class="th"><input type="checkbox" ${st.lab.b[i] ? 'checked' : ''}><div class="tt"><b>🧨 ${t.t}</b>
+    bk.innerHTML = L.brk.map((t, i) => `<div class="task ${st.lab.b[i] ? 'done' : ''}" data-i="${i}"><div class="th"><input type="checkbox" ${st.lab.b[i] ? 'checked' : ''}><div class="tt"><b>🧨 ${t.t}</b>${readLink(t)}
       <div class="tools">${t.inj ? '<button class="btn sm" data-x="inj">Поломка</button>' : ''}<button class="btn sm" data-x="h">💡 Где искать</button><button class="btn sm" data-x="f">🔑 Причина и решение</button></div>
       ${t.inj ? `<div class="rev" data-r="inj" hidden>${cliBlock(t.inj)}</div>` : ''}
       <div class="rev content" data-r="h" hidden><div class="callout info"><b>Где искать</b>${t.h}</div></div>
