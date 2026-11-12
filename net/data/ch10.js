@@ -240,29 +240,96 @@ P1#show mpls ldp bindings 10.255.0.4 32
     })(),
     pre: 'IS-IS в ядре и BGP на CE уже работают. На PE пока нет BGP. Проверь <code>show isis neighbors</code> и что PE1 видит Lo0 PE2.',
     tasks: [
-      { t: 'BGP на PE и чёрная дыра', d: 'На PE1 и PE2: eBGP к своему CE, iBGP PE1 ↔ PE2 по loopback с next-hop-self. Проверь, что CE1 видит 192.168.2.0/24. Пингани с CE1 <code>192.168.2.1 source Lo1</code>. Где теряется пакет? Подтверди на P1: <code>show ip route 192.168.2.1</code>.',
+      { t: 'BGP на PE и чёрная дыра', read: 0, why: `Своими глазами увидеть, зачем нужен MPLS: маршруты у PE и CE есть, BGP в порядке, а трафик клиентов пропадает посередине ядра.`, expect: `<p>На PE1 в <code>show ip bgp summary</code> два соседа — 10.0.1.2 (CE1) и 10.255.0.4 (PE2), у обоих в последнем столбце <b>1</b>. На CE1 в <code>show ip bgp</code> есть 192.168.2.0/24.</p>
+<pre class="cli">CE1#ping 192.168.2.1 source Lo1
+[[.....]]
+CE1#traceroute 192.168.2.1 source Lo1 numeric
+  1 10.0.1.1 1 msec 1 msec 1 msec
+  2  *  *  *
+  3  *  *  *
+P1#show ip route 192.168.2.1
+[[% Network not in table]]</pre>
+<p>Traceroute будет печатать звёздочки до 30-го хопа — прерви его <b>Ctrl+Shift+6</b>. Это и есть чёрная дыра: PE1 отдал пакет P1, а P1 сети клиента не знает. Даже сообщить о гибели пакета он не может — дороги к 192.168.1.1 у него тоже нет. Ядро при этом исправно: <code>ping 10.255.0.4 source Lo0</code> с PE1 проходит.</p>`, d: 'На PE1 и PE2: eBGP к своему CE, iBGP PE1 ↔ PE2 по loopback с next-hop-self. Проверь, что CE1 видит 192.168.2.0/24. Пингани с CE1 <code>192.168.2.1 source Lo1</code>. Где теряется пакет? Подтверди на P1: <code>show ip route 192.168.2.1</code>.',
         check: 'PE1#show ip bgp summary\nCE1#show ip bgp\nCE1#ping 192.168.2.1 source Lo1\nCE1#traceroute 192.168.2.1 source Lo1 numeric\nP1#show ip route 192.168.2.1',
         sol: 'PE1(config)#router bgp 64500\nPE1(config-router)#bgp router-id 10.255.0.1\nPE1(config-router)#neighbor 10.0.1.2 remote-as 65001\nPE1(config-router)#neighbor 10.255.0.4 remote-as 64500\nPE1(config-router)#neighbor 10.255.0.4 update-source Loopback0\nPE1(config-router)#neighbor 10.255.0.4 next-hop-self\n! PE2 зеркально' },
-      { t: 'Включи LDP — получи BGP-free core', d: 'На всех PE и P: <code>mpls ldp router-id Loopback0 force</code> и <code>mpls ip</code> на внутренних интерфейсах (или <code>mpls ldp autoconfig</code> в IS-IS). Проверь LDP-соседей, затем снова ping и traceroute CE1 → CE2. Что изменилось в traceroute?',
+      { t: 'Включи LDP — получи BGP-free core', read: 3, why: `Включить раздачу меток в ядре. На P не появится ни строчки BGP, а чёрная дыра из задания 1 исчезнет — это и есть BGP-free core.`, expect: `<pre class="cli">P1#show mpls ldp neighbor | include Ident|State
+    Peer LDP Ident: 10.255.0.1:0; Local LDP Ident 10.255.0.2:0
+        State: [[Oper]]; Msgs sent/rcvd: 25/24; Downstream
+    Peer LDP Ident: 10.255.0.3:0; Local LDP Ident 10.255.0.2:0
+        State: [[Oper]]; Msgs sent/rcvd: 26/25; Downstream
+CE1#ping 192.168.2.1 source Lo1
+[[!!!!!]]
+CE1#traceroute 192.168.2.1 source Lo1 numeric
+  1 10.0.1.1 1 msec 1 msec 1 msec
+  2 10.1.12.1 [[[MPLS: Label 18 Exp 0]]] 4 msec 3 msec 4 msec
+  3 10.1.23.1 [[[MPLS: Label 22 Exp 0]]] 3 msec 4 msec 3 msec
+  4 10.1.34.1 3 msec 3 msec 3 msec
+  5 192.168.2.1 4 msec 4 msec 4 msec</pre>
+<p>Номера меток у тебя будут свои. Главное: у P1 два соседа в состоянии <b>Oper</b> (у PE1 тоже два — P1 и P3), пинг проходит, а на хопах ядра появилась надпись <b>MPLS: Label</b> — пакет едет по метке. В <code>show mpls interfaces</code> на PE1 только Gi0/1 и Gi0/2: к клиенту LDP не включается.</p>`, d: 'На всех PE и P: <code>mpls ldp router-id Loopback0 force</code> и <code>mpls ip</code> на внутренних интерфейсах (или <code>mpls ldp autoconfig</code> в IS-IS). Проверь LDP-соседей, затем снова ping и traceroute CE1 → CE2. Что изменилось в traceroute?',
         check: 'P1#show mpls ldp neighbor\nP1#show mpls interfaces\nCE1#ping 192.168.2.1 source Lo1\nCE1#traceroute 192.168.2.1 source Lo1 numeric',
-        sol: 'P1(config)#mpls ldp router-id Loopback0 force\nP1(config)#router isis CORE\nP1(config-router)#mpls ldp autoconfig\n! или interface range Gi0/1 - 2 / mpls ip\n! на PE: только на интерфейсах к ядру, НЕ к CE' },
-      { t: 'Метки на каждом хопе — руками', d: 'Не запуская захват, по командам заполни таблицу для пакета CE1 → 192.168.2.1: какую метку навешивает PE1 (<code>show ip cef 192.168.2.1 detail</code>), что делает P1 и P2 (<code>show mpls forwarding-table 10.255.0.4 32</code>), что получает PE2. Потом сними захват на линках PE1–P1 и P2–PE2 и сверь.',
+        sol: 'P1(config)#mpls ldp router-id Loopback0 force\nP1(config)#interface range Gi0/1 - 2\nP1(config-if-range)#mpls ip\n! на PE: только на интерфейсах к ядру (Gi0/1, Gi0/2), НЕ к CE\n! другой способ: mpls ldp autoconfig в router isis CORE (LDP на всех интерфейсах IS-IS).\n! в этой лабе удобнее mpls ip: поломки выключают LDP именно на интерфейсе' },
+      { t: 'Метки на каждом хопе — руками', read: 6, why: `Научиться читать путь пакета по таблицам. На работе захвата трафика в ядре почти никогда нет, а show-команды есть всегда.`, expect: `<p>Таблица получится как в разделе 7 книги (числа свои):</p>
+<table><tr><th>Кто</th><th>Пришло</th><th>Что сделал</th></tr>
+<tr><td>PE1</td><td>IP 192.168.2.1</td><td>push X, отдал P1</td></tr>
+<tr><td>P1</td><td>метка X</td><td>swap X → Y, отдал P2</td></tr>
+<tr><td>P2</td><td>метка Y</td><td>Pop Label, отдал PE2</td></tr>
+<tr><td>PE2</td><td>IP 192.168.2.1</td><td>отдал CE2</td></tr></table>
+<p>Проверка цепочки: <b>Outgoing Label на PE1 = Local Label на P1</b>, <b>Outgoing Label на P1 = Local Label на P2</b>. Каждый ставит ту метку, которую назначил следующий. В захвате на линке PE1–P1: тип 0x8847, одна метка X, внутри IP 192.168.1.1 → 192.168.2.1. На линке P2–PE2 метки нет, обычный IP (тип 0x0800): её снял P2.</p>`, d: 'Не запуская захват, по командам заполни таблицу для пакета CE1 → 192.168.2.1: какую метку навешивает PE1 (<code>show ip cef 192.168.2.1 detail</code>), что делает P1 и P2 (<code>show mpls forwarding-table 10.255.0.4 32</code>), что получает PE2. Потом сними захват на линках PE1–P1 и P2–PE2 и сверь.',
         check: 'PE1#show ip cef 192.168.2.1 detail\nP1#show mpls forwarding-table 10.255.0.4 32\nP2#show mpls forwarding-table 10.255.0.4 32\nP1#show mpls ldp bindings 10.255.0.4 32' },
-      { t: 'Liberal retention и перестроение', d: 'На PE1 посмотри LIB для 10.255.0.4/32: метки от P1 и от P3. Какую использует LFIB? Выключи линк PE1–P1 и посмотри LFIB снова. Почему переключение на метку P3 мгновенное (метку не пришлось запрашивать)?',
+      { t: 'Liberal retention и перестроение', read: 4, why: `Увидеть, что PE1 заранее хранит запасную метку и при аварии сразу берёт её, ничего не запрашивая у соседей.`, expect: `<pre class="cli">PE1#show mpls ldp bindings 10.255.0.4 32
+  lib entry: 10.255.0.4/32, rev 14
+        local binding:  label: 20
+        remote binding: lsr: 10.255.0.2:0, label: [[18]]        ! от P1
+        remote binding: lsr: 10.255.0.5:0, label: [[24]]        ! от P3
+PE1#show mpls forwarding-table 10.255.0.4 32
+Local      Outgoing   Prefix           Bytes Label   Outgoing   Next Hop
+Label      Label      or Tunnel Id     Switched      interface
+20         [[18]]         10.255.0.4/32    0             Gi0/1      10.1.12.1</pre>
+<p>В LIB две метки, в LFIB работает одна — от P1, лучший путь по IS-IS. После <code>shutdown</code> на Gi0/1 в LFIB: метка P3 (здесь 24), интерфейс <b>Gi0/2</b>, next hop <b>10.1.15.1</b>. Метка P1 из LIB исчезнет: сессия с ним упала. Пинг CE1 → CE2 потеряет пакет-другой и пойдёт дальше. Не забудь <code>no shutdown</code>.</p>`, d: 'На PE1 посмотри LIB для 10.255.0.4/32: метки от P1 и от P3. Какую использует LFIB? Выключи линк PE1–P1 и посмотри LFIB снова. Почему переключение на метку P3 мгновенное (метку не пришлось запрашивать)?',
         check: 'PE1#show mpls ldp bindings 10.255.0.4 32\nPE1#show mpls forwarding-table 10.255.0.4 32' },
-      { t: 'Фильтр меток и explicit null', d: 'Сделай, чтобы LDP раздавал метки только для /32 (<code>mpls ldp label</code> → <code>allocate global host-routes</code>) на всех. Сравни размер LFIB до и после. Затем на PE2 включи <code>mpls ldp explicit-null</code>: что изменилось в LFIB на P2 для 10.255.0.4/32?',
+      { t: 'Фильтр меток и explicit null', read: 5, why: `Две настройки, которые встречаются у провайдеров: метки только для loopback'ов (трафик едет только к ним) и explicit null, чтобы до PE доезжало поле QoS.`, expect: `<p>Фильтр: на P1 до — 7 строк в LFIB (4 чужих loopback'а и 3 чужих линка /31), после — <b>4</b>, только 10.255.0.x/32. Если LFIB не изменился, перезапусти сессии: <code>clear mpls ldp neighbor *</code>.</p>
+<pre class="cli">P2#show mpls forwarding-table 10.255.0.4 32
+Local      Outgoing   Prefix           Bytes Label   Outgoing   Next Hop
+Label      Label      or Tunnel Id     Switched      interface
+22         [[explicit-n]]     10.255.0.4/32    0             Gi0/1      10.1.34.1</pre>
+<p>Было «Pop Label», стало <b>explicit-n</b> — так IOS сокращает explicit-null. P2 больше не снимает метку, а ставит 0, и до PE2 доезжает поле TC. То же самое увидишь на P3: он тоже предпоследний, на запасном пути.</p>`, d: 'Сделай, чтобы LDP раздавал метки только для /32 (<code>mpls ldp label</code> → <code>allocate global host-routes</code>) на всех. Сравни размер LFIB до и после. Затем на PE2 включи <code>mpls ldp explicit-null</code>: что изменилось в LFIB на P2 для 10.255.0.4/32?',
         check: 'P1#show mpls forwarding-table | count Pop|[0-9]\nP2#show mpls forwarding-table 10.255.0.4 32' },
-      { t: 'TTL: скрыть ядро', d: 'На PE1 и PE2: <code>no mpls ip propagate-ttl forwarded</code>. Сравни traceroute с CE1 (клиентский) и с PE1 (<code>traceroute 192.168.2.1 source Lo0</code>). Почему они разные?',
+      { t: 'TTL: скрыть ядро', read: 7, why: `Увидеть, как провайдер прячет ядро от абонентов, и убедиться, что инженер с PE по-прежнему видит все хопы.`, expect: `<pre class="cli">CE1#traceroute 192.168.2.1 source Lo1 numeric
+  1 10.0.1.1 1 msec 1 msec 1 msec
+  2 10.1.34.1 4 msec 3 msec 3 msec
+  3 192.168.2.1 4 msec 4 msec 4 msec
+PE1#traceroute 10.255.0.4 source Lo0 numeric
+  1 10.1.12.1 [MPLS: Label 18 Exp 0] 3 msec 2 msec 3 msec
+  2 10.1.23.1 [MPLS: Label 22 Exp 0] 2 msec 3 msec 2 msec
+  3 10.1.34.1 3 msec 3 msec 3 msec</pre>
+<p>У клиента вместо пяти хопов три: после PE1 сразу PE2, всё ядро — один прыжок. С PE1 видны P1 и P2: слово <b>forwarded</b> в команде значит «только для транзитного трафика клиентов», свой трафик PE копирует TTL как раньше. Если explicit null из задания 5 ещё включён, у 10.1.34.1 может появиться «MPLS: Label 0» — это та самая метка 0.</p>`, d: 'На PE1 и PE2: <code>no mpls ip propagate-ttl forwarded</code>. Сравни traceroute с CE1 (клиентский) и с PE1 до loopback PE2 (<code>traceroute 10.255.0.4 source Lo0 numeric</code>). Почему они разные?',
         check: 'CE1#traceroute 192.168.2.1 source Lo1 numeric\nPE1#traceroute 10.255.0.4 source Lo0 numeric' },
-      { t: 'MTU в MPLS', d: 'С CE1 найди максимальный проходящий размер пинга с DF до 192.168.2.1. Затем поставь на линке P1–P2 <code>mtu 1500</code> и <code>mpls mtu 1500</code> (если отличаются) и пингани 1500 с DF. Объясни, где и почему пакет пропадает. Как это выглядело бы для клиента (браузер)?',
-        check: 'CE1#ping 192.168.2.1 source Lo1 size 1500 df-bit\nCE1#ping 192.168.2.1 source Lo1 size 1496 df-bit\nP1#show interfaces Gi0/2 | include MTU\nP1#show mpls interfaces Gi0/2 detail | include MTU' },
-      { t: 'LSP ping и LDP-IGP sync', d: 'С PE1 выполни <code>ping mpls ipv4 10.255.0.4/32</code> и <code>traceroute mpls ipv4 10.255.0.4/32</code>. Затем включи <code>mpls ldp sync</code> в IS-IS на всех. Выключи LDP на P1 Gi0/2 (<code>no mpls ip</code>) и посмотри: какую метрику IS-IS теперь показывает этот линк и куда ушёл трафик?',
-        check: 'PE1#ping mpls ipv4 10.255.0.4/32\nPE1#traceroute mpls ipv4 10.255.0.4/32\nP1#show mpls ldp igp sync\nPE1#traceroute 10.255.0.4 source Lo0' }
+      { t: 'MTU в MPLS', read: 7, why: `Поймать самую коварную жалобу абонента — «пинг идёт, а большие файлы не качаются» — и найти её причину в ядре.`, expect: `<pre class="cli">CE1#ping 192.168.2.1 source Lo1 size 1500 df-bit
+[[M.M.M]]
+CE1#ping 192.168.2.1 source Lo1 size 1496 df-bit
+[[!!!!!]]
+CE1#ping 192.168.2.1 source Lo1 size 1500
+!!!!!
+PE1#show mpls interfaces Gi0/1 detail | include MTU
+        MTU = 1500</pre>
+<p>Пакет 1500 + метка 4 байта = 1504, а MTU MPLS на линке 1500. Выбрасывает его <b>PE1</b> — тот, кто ставит метку. Он же отвечает CE1 «нужно разрезать пакет, а DF запрещает», это и есть буква <b>M</b>. Без DF пакет 1500 проходит: PE1 режет его на два. Для абонента это выглядит так: сайты и пинг работают, а большие загрузки и его собственный VPN, где стоит DF, зависают. Лечат MTU на линках ядра с запасом под метки (jumbo 9000+). В EVE-NG поднять MTU выше 1500 получается не всегда — виртуальные линки могут не пропускать большие кадры, это ограничение стенда.</p>`, d: 'С CE1 найди максимальный размер пинга до 192.168.2.1 с запретом фрагментации (df-bit): начни с 1500, потом 1496. Посчитай, почему проходит именно 1496 (подсказка: у vIOS MTU всех линков 1500). Найди, какой маршрутизатор выбрасывает пакет 1500 и почему CE1 видит букву M. Пингани 1500 без df-bit — почему так проходит? Как это выглядело бы для абонента?',
+        check: 'CE1#ping 192.168.2.1 source Lo1 size 1500 df-bit\nCE1#ping 192.168.2.1 source Lo1 size 1496 df-bit\nCE1#ping 192.168.2.1 source Lo1 size 1500\nPE1#show interfaces Gi0/1 | include MTU\nPE1#show mpls interfaces Gi0/1 detail | include MTU' },
+      { t: 'LSP ping и LDP-IGP sync', read: 8, why: `Проверять транспорт правильным инструментом и включить защиту, которая не даёт IGP вести трафик по линку, где ещё нет меток.`, expect: `<pre class="cli">PE1#ping mpls ipv4 10.255.0.4/32
+[[!!!!!]]
+PE1#traceroute mpls ipv4 10.255.0.4/32
+  0 10.1.12.0 MRU 1500 [Labels: 18 Exp: 0]
+L 1 10.1.12.1 MRU 1500 [Labels: 22 Exp: 0] 3 ms
+L 2 10.1.23.1 MRU 1504 [Labels: implicit-null Exp: 0] 2 ms
+! 3 10.1.34.1 3 ms</pre>
+<p>Если explicit null из задания 5 включён, на шаге 2 будет «explicit-null». После ACL: в <code>show mpls ldp igp sync</code> на P1 у Gi0/2 — <b>sync not achieved</b>; в базе IS-IS (<code>show isis database detail P1.00-00</code>) у соседа P2 метрика уже не 10, а максимальная (для wide-метрик 16777214). <code>traceroute 10.255.0.4 source Lo0 numeric</code> с PE1 теперь идёт через P3: 10.1.15.1 → 10.1.45.1. Сняли ACL — сессия поднялась, метрика снова 10, трафик вернулся на P1–P2.</p>
+<p>Почему ACL, а не <code>no mpls ip</code>: sync следит только за интерфейсами, где LDP настроен. Он защищает от ситуации «LDP настроен, но ещё не поднялся» — после перезагрузки или восстановления линка.</p>`, d: 'С PE1 выполни <code>ping mpls ipv4 10.255.0.4/32</code> и <code>traceroute mpls ipv4 10.255.0.4/32</code>. Затем включи <code>mpls ldp sync</code> в IS-IS на всех. Теперь сломай LDP-сессию P1–P2, не трогая настройку LDP: повесь на P1 Gi0/2 входящий ACL, который режет порт 646 (готовый — под кнопкой «Решение»). Через 15 секунд посмотри: какую метрику IS-IS теперь объявляет этот линк и куда ушёл трафик? В конце сними ACL.',
+        check: 'PE1#ping mpls ipv4 10.255.0.4/32\nPE1#traceroute mpls ipv4 10.255.0.4/32\nP1#show mpls ldp igp sync\nPE1#show isis database detail P1.00-00\nPE1#traceroute 10.255.0.4 source Lo0 numeric',
+        sol: 'P1(config)#router isis CORE\nP1(config-router)#mpls ldp sync\n! и так на всех PE и P\nP1(config)#ip access-list extended NO-LDP\nP1(config-ext-nacl)#deny udp any any eq 646\nP1(config-ext-nacl)#deny tcp any any eq 646\nP1(config-ext-nacl)#deny tcp any eq 646 any\nP1(config-ext-nacl)#permit ip any any\nP1(config)#interface Gi0/2\nP1(config-if)#ip access-group NO-LDP in\n! снять: no ip access-group NO-LDP in' }
     ],
     brk: [
-      { t: 'CE1 → CE2 снова не работает, LDP-сессии на месте', inj: 'P2(config)#interface Gi0/1\nP2(config-if)#no mpls ip', h: '<code>show mpls forwarding-table 10.255.0.4 32</code> на P1 и P2 — где «No Label»? <code>traceroute mpls ipv4</code> с PE1.', f: 'На линке P2–PE2 выключен LDP: P2 не получает метку от PE2 для его loopback. Получается «No Label», и пакет уходит к PE2 голым IP. Это работает, если PE2 знает адрес назначения (он знает, это PE). Но если бы за PE2 был ещё один P без BGP, была бы чёрная дыра. LSP формально разорван. Включи <code>mpls ip</code> (и LDP-IGP sync, чтобы IGP не вёл трафик по линку без LDP).' },
-      { t: 'LDP-сессия P1–P2 не поднимается, hello видны', inj: 'P2(config)#no mpls ldp router-id Loopback0 force\nP2(config)#interface Loopback9\nP2(config-if)#ip address 172.31.9.9 255.255.255.255\nP2(config)#mpls ldp router-id Loopback9 force', h: '<code>show mpls ldp discovery detail</code> на P1: какой transport address у P2? Есть ли к нему маршрут?', f: 'LDP router-id P2 = 172.31.9.9 (Loopback9 не в IS-IS). P1 видит hello, но не может открыть TCP 646 к transport address. Верни router-id на Lo0 или добавь Lo9 в IGP.' },
-      { t: 'iBGP PE1–PE2 Established, маршрут на PE1 есть, но трафик CE1 → CE2 теряется сразу за PE1', inj: 'PE1(config)#interface Gi0/1\nPE1(config-if)#no mpls ip\n! и на PE1 сделай путь через P3 дороже: isis metric 500 на Gi0/2', h: '<code>show ip cef 192.168.2.1 detail</code> на PE1 — навешивается ли метка? <code>show mpls forwarding-table 10.255.0.4 32</code> на PE1. Что P1 делает с голым IP-пакетом на 192.168.2.1?', f: 'На линке PE1–P1 нет LDP: PE1 не получает от P1 метку для 10.255.0.4 и отправляет пакет голым IP. P1 (без BGP) не знает 192.168.2.0/24 и отбрасывает его. Классическая чёрная дыра BGP-free core. Включи <code>mpls ip</code>, а от повторения защищает LDP-IGP sync.' }
+      { t: 'CE1 → CE2 снова не работает, LDP-сессии на месте', read: 8, inj: 'P2(config)#interface Gi0/1\nP2(config-if)#no mpls ip\n! если в задании 2 включал mpls ldp autoconfig: вместо no mpls ip — no mpls ldp igp autoconfig', h: '<code>show mpls forwarding-table 10.255.0.4 32</code> на P2 и <code>show mpls forwarding-table 10.255.0.1 32</code> на PE2 — где «No Label»? Помни: ответ CE2 едет обратно по своему LSP, «до PE1».', f: 'На линке P2–PE2 выключен LDP, и сессии P2–PE2 нет. Туда: у P2 для 10.255.0.4 «No Label», пакет уходит к PE2 голым IP — и всё равно доходит: PE2 знает сеть клиента. Обратно: у PE2 для 10.255.0.1 тоже «No Label», ответ CE2 уходит к P2 голым IP, а P2 без BGP не знает 192.168.1.0/24 и выбрасывает его. Запрос доходит, ответ теряется — поэтому метки проверяют в обе стороны. Включи <code>mpls ip</code> на P2 Gi0/1 и проверь LFIB с обеих сторон.' },
+      { t: 'LDP-сессия P1–P2 не поднимается, hello видны', read: 3, inj: 'P2(config)#no mpls ldp router-id Loopback0 force\nP2(config)#interface Loopback9\nP2(config-if)#ip address 172.31.9.9 255.255.255.255\nP2(config)#mpls ldp router-id Loopback9 force', h: '<code>show mpls ldp discovery detail</code> на P1: какой transport address у P2? Есть ли к нему маршрут?', f: 'LDP router-id P2 = 172.31.9.9 (Loopback9 не в IS-IS). P1 видит hello, но не может открыть TCP 646 к transport address. Верни router-id на Lo0 или добавь Lo9 в IGP.' },
+      { t: 'iBGP PE1–PE2 Established, маршрут на PE1 есть, но трафик CE1 → CE2 теряется сразу за PE1', read: 8, inj: 'PE1(config)#interface Gi0/1\nPE1(config-if)#no mpls ip\n! и на PE1 сделай путь через P3 дороже: isis metric 500 на Gi0/2\n! если в задании 2 включал mpls ldp autoconfig: вместо no mpls ip — no mpls ldp igp autoconfig', h: '<code>show ip cef 192.168.2.1 detail</code> на PE1 — навешивается ли метка? <code>show mpls forwarding-table 10.255.0.4 32</code> на PE1. Что P1 делает с голым IP-пакетом на 192.168.2.1?', f: 'На линке PE1–P1 нет LDP: PE1 не получает от P1 метку для 10.255.0.4 и отправляет пакет голым IP. P1 (без BGP) не знает 192.168.2.0/24 и отбрасывает его. Классическая чёрная дыра BGP-free core. Включи <code>mpls ip</code>, а от повторения защищает LDP-IGP sync.' }
     ],
     extra: '<p><b>Segment Routing вместо LDP (CSR1000v).</b> Замени PE и P на CSR1000v (или только часть, если не хватает памяти) и включи <code>segment-routing mpls</code>, в IS-IS — <code>segment-routing mpls</code>, на Lo0 — <code>prefix-sid index N</code>. Выключи LDP. Посмотри <code>show isis segment-routing prefix-sid-map active-policy</code> и LFIB: метки 16000+N одинаковы на всех узлах.</p>'
   }
