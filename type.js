@@ -41,7 +41,8 @@
   }
 
   // ---------- состояние ----------
-  let S = { mode: 'dialog', stage: 1, done: {}, cur: null, days: {}, kb: true, tr: true };
+  // done/cur — диалоги, sdone/scur — рассказы (главы идут по порядку)
+  let S = { mode: 'dialog', stage: 1, done: {}, cur: null, sdone: {}, scur: null, days: {}, kb: true, tr: true };
   try { S = Object.assign(S, JSON.parse(localStorage.getItem(KEY)) || {}); } catch { /* с начала */ }
   const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch { /* без сохранения */ } };
 
@@ -88,9 +89,26 @@
     return (d || pick(TYPE_DIALOGS)).id;
   }
 
+  const STORIES = typeof TYPE_STORIES === 'undefined' ? [] : TYPE_STORIES;
+  const story = () => STORIES.find((s) => s.id === (S.scur && S.scur.id)) || STORIES[0];
+  function startStory(id) {
+    S.scur = { id, i: 0 };
+    finished = false;
+    save();
+    newLine();
+  }
+  function nextStoryId() {
+    const s = STORIES.find((x) => !S.sdone[x.id]);
+    return (s || STORIES[0]).id;
+  }
+
   function newLine() {
     typed = []; errs = 0; active = 0; lastKey = 0;
-    if (S.mode === 'dialog') {
+    if (S.mode === 'story') {
+      if (!S.scur) S.scur = { id: nextStoryId(), i: 0 };
+      target = story().s[S.scur.i][0];
+      words = [];
+    } else if (S.mode === 'dialog') {
       if (!S.cur) S.cur = { id: nextDialogId(), i: 0 };
       target = dialog().l[S.cur.i][1];
       words = [];
@@ -158,7 +176,11 @@
     record();
     save();
     setTimeout(() => {
-      if (S.mode === 'dialog') {
+      if (S.mode === 'story') {
+        const st = story();
+        if (S.scur.i < st.s.length - 1) { S.scur.i++; save(); newLine(); }
+        else { S.sdone[st.id] = true; finished = true; save(); renderList(); render(); }
+      } else if (S.mode === 'dialog') {
         const d = dialog();
         if (S.cur.i < d.l.length - 1) { S.cur.i++; save(); newLine(); }
         else { S.done[d.id] = true; finished = true; save(); renderList(); render(); }
@@ -174,7 +196,7 @@
     if (coarse || e.ctrlKey || e.altKey || e.metaKey) return;
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
     if (e.code === 'Backspace') { e.preventDefault(); backspace(); return; }
-    if (e.code === 'Enter' && finished) { e.preventDefault(); startDialog(nextDialogId()); return; }
+    if (e.code === 'Enter' && finished) { e.preventDefault(); if (S.mode === 'story') startStory(nextStoryId()); else startDialog(nextDialogId()); return; }
     const m = CODE[e.code];
     if (m) { e.preventDefault(); typeChar(e.shiftKey ? m[1] : m[0]); return; }
     if (e.key.length === 1) { e.preventDefault(); typeChar(e.key); }
@@ -228,7 +250,26 @@
       h += '<p class="mu tip">Пальцы на ряду ASDF и JKL (на F и J есть бугорки). Смотри на экран, а не на клавиатуру.</p>';
     }
 
-    if (S.mode === 'dialog') {
+    if (S.mode === 'story') {
+      const st = story(), n = STORIES.indexOf(st) + 1;
+      const shown = st.s.slice(0, finished ? st.s.length : S.scur.i);
+      h += `<div class="dhead"><b>📖 Глава ${n}. ${esc(st.t)}</b><span class="mu">${finished ? 'глава готова' : `предложение ${S.scur.i + 1} из ${st.s.length}`}</span></div>`;
+      // уже напечатанное — цельным текстом, как страница книги
+      if (shown.length) h += `<p class="story">${shown.map((x) => esc(x[0])).join(' ')}</p>`;
+      if (finished) {
+        if (S.tr) h += `<p class="story ru">${st.s.map((x) => esc(x[1])).join(' ')}</p>`;
+        h += `<div class="kw"><b>Слова главы</b>${st.w.map((w) => `<span><b>${esc(w[0])}</b> — ${esc(w[1])}</span>`).join('')}</div>`;
+        const left = STORIES.filter((x) => !S.sdone[x.id]).length;
+        h += `<div class="done">Глава напечатана ✓<div class="mu">${left ? `Осталось глав: ${left} из ${STORIES.length}` : 'Все главы пройдены. Новые появятся позже.'}</div>
+          ${voiceOk() ? '<button class="btn g" data-a="sayall">🔊 Послушать главу целиком</button>' : ''}
+          <button class="btn" data-a="nexts">${left ? 'Следующая глава (Enter)' : 'С первой главы (Enter)'}</button>
+          <button class="btn g" data-a="agains">Ещё раз эту</button></div>`;
+      } else {
+        h += `<div class="who">✍ ${voiceOk() ? '<button class="say" data-a="say">🔊</button>' : ''}</div>`;
+        h += `<div class="line" id="area">${lineHtml()}</div>`;
+        if (S.tr) h += `<div class="trn">${esc(st.s[S.scur.i][1])}</div>`;
+      }
+    } else if (S.mode === 'dialog') {
       const d = dialog();
       h += `<div class="dhead"><b>💬 ${esc(d.t)}</b><span class="mu">${finished ? 'готово' : `реплика ${S.cur.i + 1} из ${d.l.length}`}</span></div>`;
       h += '<div class="chat">' + d.l.slice(0, finished ? d.l.length : S.cur.i).map((x) =>
@@ -279,7 +320,7 @@
   $('modes').addEventListener('click', (e) => {
     const b = e.target.closest('[data-m]');
     if (!b) return;
-    S.mode = b.dataset.m; finished = false; save(); newLine();
+    S.mode = b.dataset.m; finished = false; save(); renderList(); newLine();
   });
   $('game').addEventListener('click', (e) => {
     const st = e.target.closest('[data-st]');
@@ -288,19 +329,33 @@
     if (!a) return;
     if (a.dataset.a === 'nextd') startDialog(nextDialogId());
     if (a.dataset.a === 'again') startDialog(dialog().id);
+    if (a.dataset.a === 'nexts') startStory(nextStoryId());
+    if (a.dataset.a === 'agains') startStory(story().id);
+    if (a.dataset.a === 'sayall') say(story().s.map((x) => x[0]).join(' '));
     if (a.dataset.a === 'say') say(target);
     a.blur(); // чтобы пробел/Enter не нажимали кнопку повторно
   });
-  $('list').addEventListener('change', (e) => { S.mode = 'dialog'; startDialog(e.target.value); e.target.blur(); });
+  $('list').addEventListener('change', (e) => {
+    const v = e.target.value;
+    if (!v) return;
+    if (v.startsWith('story:')) { S.mode = 'story'; startStory(v.slice(6)); }
+    else { S.mode = 'dialog'; startDialog(v); }
+    e.target.blur();
+  });
   $('opt-kb').addEventListener('change', (e) => { S.kb = e.target.checked; save(); render(); e.target.blur(); });
   $('opt-tr').addEventListener('change', (e) => { S.tr = e.target.checked; save(); render(); e.target.blur(); });
 
   if (coarse) $('opt-kb').parentElement.hidden = true;
 
-  // список диалогов (✓ — уже напечатан)
+  // список: в режиме рассказов — главы, иначе диалоги (✓ — уже напечатан)
   function renderList() {
-    $('list').innerHTML = '<option value="">Выбрать диалог…</option>' +
-      TYPE_DIALOGS.map((d) => `<option value="${d.id}">${S.done[d.id] ? '✓ ' : ''}${esc(d.t)}</option>`).join('');
+    if (S.mode === 'story') {
+      $('list').innerHTML = '<option value="">Выбрать главу…</option>' +
+        STORIES.map((s, i) => `<option value="story:${s.id}">${S.sdone[s.id] ? '✓ ' : ''}${i + 1}. ${esc(s.t)}</option>`).join('');
+    } else {
+      $('list').innerHTML = '<option value="">Выбрать диалог…</option>' +
+        TYPE_DIALOGS.map((d) => `<option value="${d.id}">${S.done[d.id] ? '✓ ' : ''}${esc(d.t)}</option>`).join('');
+    }
   }
   renderList();
 

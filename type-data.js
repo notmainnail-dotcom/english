@@ -256,3 +256,139 @@ const TYPE_DIALOGS = [
     ['B', "Thank you. You're the best.", 'Спасибо. Ты самый лучший.'],
   ] },
 ];
+
+// Рассказы: одна история с продолжением — Том (из диалога «Знакомство») в новом городе.
+// Цельный текст держит слова в памяти лучше, чем отдельные реплики. Слова диалогов повторяются внутри истории.
+// s — предложения [английский, русский]; w — слова главы для повторения. Только печатаемые символы (прямые кавычки ' и ").
+// id не менять: по ним отметки ✓. Новые главы — дописывать в конец.
+const TYPE_STORIES = [
+  { id: 's01', t: 'Новый город', s: [
+    ['Tom is from Russia, but now he lives in a new city.', 'Том из России, но теперь он живёт в новом городе.'],
+    ['He has a new job here. He repairs bikes in a bike shop.', 'У него здесь новая работа. Он ремонтирует велосипеды в веломастерской.'],
+    ['The city is big and very green.', 'Город большой и очень зелёный.'],
+    ['There are many parks, cafes and small shops.', 'Здесь много парков, кафе и маленьких магазинов.'],
+    ['Tom lives on the fifth floor of an old building.', 'Том живёт на пятом этаже старого дома.'],
+    ['His flat is small, but it is warm and quiet.', 'Его квартира маленькая, но тёплая и тихая.'],
+    ['From his window, he can see a park and a river.', 'Из окна ему видны парк и река.'],
+    ["Tom doesn't know anyone here yet.", 'Том пока никого здесь не знает.'],
+    ['In the evening, he walks in the park and looks at the people.', 'Вечером он гуляет в парке и смотрит на людей.'],
+    ['He wants to make new friends in this city.', 'Он хочет найти новых друзей в этом городе.'],
+  ], w: [['city', 'город'], ['repair', 'ремонтировать'], ['floor', 'этаж'], ['flat', 'квартира'], ['quiet', 'тихий'], ['yet', 'пока, ещё'], ['make friends', 'заводить друзей']] },
+
+  { id: 's02', t: 'Первое утро', s: [
+    ["Tom's alarm rings at seven o'clock.", 'Будильник Тома звонит в семь часов.'],
+    ['He gets up, opens the window and looks outside.', 'Он встаёт, открывает окно и смотрит на улицу.'],
+    ["It's cold and a little cloudy.", 'Холодно и немного облачно.'],
+    ['He takes a shower and makes breakfast: two eggs, bread and black coffee.', 'Он принимает душ и готовит завтрак: два яйца, хлеб и чёрный кофе.'],
+    ['His fridge is almost empty. He needs to go to the shop.', 'Холодильник почти пустой. Ему нужно сходить в магазин.'],
+    ['Tom puts on a warm jacket and his old shoes.', 'Том надевает тёплую куртку и старые ботинки.'],
+    ['The bike shop is not far, about ten minutes on foot.', 'Веломастерская недалеко, минут десять пешком.'],
+    ['On the way, he sees a small cafe on the corner.', 'По дороге он видит маленькое кафе на углу.'],
+    ['It smells of fresh bread and coffee.', 'Там пахнет свежим хлебом и кофе.'],
+    [`He thinks, "I'll try this cafe on Saturday."`, 'Он думает: «В субботу попробую это кафе».'],
+  ], w: [['alarm', 'будильник'], ['outside', 'на улице, снаружи'], ['cloudy', 'облачно'], ['fridge', 'холодильник'], ['empty', 'пустой'], ['on foot', 'пешком'], ['smell', 'пахнуть']] },
+
+  { id: 's03', t: 'В магазине', s: [
+    ['After work, Tom goes to the shop near his building.', 'После работы Том идёт в магазин рядом с домом.'],
+    ['He needs milk, eggs, bread, apples and some cheese.', 'Ему нужны молоко, яйца, хлеб, яблоки и немного сыра.'],
+    ['The shop is small, but it has everything.', 'Магазин маленький, но в нём есть всё.'],
+    ["Tom can't find the bread, so he asks a woman.", 'Том не может найти хлеб и спрашивает у женщины.'],
+    [`She smiles and says, "It's over there, next to the milk."`, 'Она улыбается и говорит: «Вон там, рядом с молоком».'],
+    ['At the checkout, Tom pays by card.', 'На кассе Том платит картой.'],
+    ['The bag is heavy, but his flat is close.', 'Сумка тяжёлая, но квартира близко.'],
+    ['At home, he puts the food in the fridge.', 'Дома он кладёт продукты в холодильник.'],
+    ['Now the fridge is full, and Tom is happy.', 'Теперь холодильник полный, и Том доволен.'],
+    ['He cooks pasta with cheese and watches TV.', 'Он готовит макароны с сыром и смотрит телевизор.'],
+  ], w: [['near', 'рядом с'], ['cheese', 'сыр'], ['checkout', 'касса'], ['pay by card', 'платить картой'], ['heavy', 'тяжёлый'], ['close', 'близко'], ['full', 'полный']] },
+
+  { id: 's04', t: 'Кафе на углу', s: [
+    ['On Saturday morning, Tom goes to the cafe on the corner.', 'В субботу утром Том идёт в кафе на углу.'],
+    ['Inside, it is warm and there is soft music.', 'Внутри тепло и играет тихая музыка.'],
+    ['He orders a large black coffee and a sandwich.', 'Он заказывает большой чёрный кофе и сэндвич.'],
+    ['All the tables are busy, except one next to the window.', 'Все столики заняты, кроме одного у окна.'],
+    ['A woman with a book sits at the next table.', 'За соседним столиком сидит женщина с книгой.'],
+    [`She looks at Tom's hands and asks, "Do you work with bikes?"`, 'Она смотрит на руки Тома и спрашивает: «Ты работаешь с велосипедами?»'],
+    [`Tom laughs. "Yes, I repair them. How do you know?"`, 'Том смеётся: «Да, ремонтирую. Как ты догадалась?»'],
+    ['Her name is Anna. She is from Canada, and she teaches English.', 'Её зовут Анна. Она из Канады и преподаёт английский.'],
+    ['They talk about the city, books and the weather.', 'Они говорят о городе, книгах и погоде.'],
+    [`When Anna leaves, she says, "See you here next Saturday!"`, 'Уходя, Анна говорит: «Увидимся здесь в следующую субботу!»'],
+  ], w: [['inside', 'внутри'], ['order', 'заказывать'], ['busy', 'занятый'], ['except', 'кроме'], ['next table', 'соседний столик'], ['teach', 'преподавать'], ['leave', 'уходить']] },
+
+  { id: 's05', t: 'Дождь', s: [
+    ['On Monday, it rains all day.', 'В понедельник весь день идёт дождь.'],
+    ['Tom forgets his umbrella at home.', 'Том забывает зонт дома.'],
+    ['When he gets to work, he is wet from head to toe.', 'Когда он добирается до работы, он мокрый с головы до ног.'],
+    ['His boss, Mike, gives him a towel and a hot tea.', 'Его начальник Майк даёт ему полотенце и горячий чай.'],
+    ['Mike is fifty years old and very kind.', 'Майку пятьдесят лет, и он очень добрый.'],
+    ['He knows everything about bikes.', 'Он знает о велосипедах всё.'],
+    ['In the rain, many bikes break, so there is a lot of work.', 'В дождь многие велосипеды ломаются, поэтому работы много.'],
+    ['Tom fixes three bikes before lunch.', 'До обеда Том чинит три велосипеда.'],
+    ['In the afternoon, the sun comes out.', 'Днём выходит солнце.'],
+    [`Tom thinks, "Tomorrow I'll check the weather before I leave."`, 'Том думает: «Завтра проверю погоду, прежде чем выйти».'],
+  ], w: [['forget', 'забывать'], ['umbrella', 'зонт'], ['wet', 'мокрый'], ['boss', 'начальник'], ['towel', 'полотенце'], ['kind', 'добрый'], ['break', 'ломаться']] },
+
+  { id: 's06', t: 'Спортзал', s: [
+    ['Tom wants to be strong and healthy.', 'Том хочет быть сильным и здоровым.'],
+    ['There is a gym near his building, so he goes there on Tuesday evening.', 'Рядом с домом есть спортзал, и во вторник вечером он идёт туда.'],
+    ['A tall man called Sam is the trainer. He shows Tom the gym.', 'Тренер — высокий мужчина по имени Сэм. Он показывает Тому зал.'],
+    ['Tom starts with a short run and some easy exercises.', 'Том начинает с короткой пробежки и лёгких упражнений.'],
+    ['After twenty minutes, he is tired, but he feels good.', 'Через двадцать минут он устал, но чувствует себя хорошо.'],
+    [`Sam says, "Come three times a week, at the same time."`, 'Сэм говорит: «Приходи три раза в неделю, в одно и то же время».'],
+    ['Tom decides to go on Tuesday, Thursday and Saturday.', 'Том решает ходить по вторникам, четвергам и субботам.'],
+    ['At the gym, he meets other people from his street.', 'В зале он знакомится с другими людьми со своей улицы.'],
+    ['One of them, Ben, invites him to play football on Sunday.', 'Один из них, Бен, зовёт его поиграть в футбол в воскресенье.'],
+    ['Tom says yes. He loves football.', 'Том соглашается. Он обожает футбол.'],
+  ], w: [['healthy', 'здоровый'], ['gym', 'спортзал'], ['trainer', 'тренер'], ['exercise', 'упражнение'], ['the same time', 'одно и то же время'], ['decide', 'решать'], ['invite', 'приглашать']] },
+
+  { id: 's07', t: 'Футбол в воскресенье', s: [
+    ['On Sunday, Tom goes to the park with a ball.', 'В воскресенье Том идёт в парк с мячом.'],
+    ['Ben and his friends are already there.', 'Бен и его друзья уже там.'],
+    ['There are ten people, so they play five against five.', 'Их десять человек, поэтому они играют пять на пять.'],
+    ['Tom is not very fast, but he passes the ball well.', 'Том не очень быстрый, но хорошо отдаёт пасы.'],
+    ["Ben's team wins three to two.", 'Команда Бена выигрывает три — два.'],
+    ['After the game, everybody is hungry.', 'После игры все голодные.'],
+    ['They go to a small restaurant and order pizza.', 'Они идут в маленький ресторан и заказывают пиццу.'],
+    ['They talk and laugh for two hours.', 'Они два часа болтают и смеются.'],
+    [`Ben says, "Every Sunday at ten, OK?"`, 'Бен говорит: «Каждое воскресенье в десять, договорились?»'],
+    ["On the way home, Tom smiles. The city doesn't feel new anymore.", 'По дороге домой Том улыбается. Город уже не кажется чужим.'],
+  ], w: [['already', 'уже'], ['against', 'против'], ['pass the ball', 'отдавать пас'], ['win', 'выигрывать'], ['hungry', 'голодный'], ['laugh', 'смеяться'], ['anymore', 'больше (не)']] },
+
+  { id: 's08', t: 'Трудный ремонт', s: [
+    ['On Wednesday, a man brings an expensive bike to the shop.', 'В среду мужчина приносит в мастерскую дорогой велосипед.'],
+    ["The bike makes a strange noise, and the brakes don't work well.", 'Велосипед странно шумит, и тормоза плохо работают.'],
+    ['Mike is at the doctor, so Tom is alone in the shop.', 'Майк у врача, поэтому Том в мастерской один.'],
+    ['Tom looks at the bike for a long time.', 'Том долго смотрит на велосипед.'],
+    ["At first, he doesn't understand the problem.", 'Сначала он не понимает, в чём проблема.'],
+    ["He doesn't panic. He takes a short break and drinks some water.", 'Он не паникует. Делает короткий перерыв и пьёт воды.'],
+    ['Then he checks every part, one by one.', 'Потом он проверяет каждую деталь, одну за другой.'],
+    ['Finally, he finds it: a small stone inside the brake.', 'Наконец он находит её: маленький камешек внутри тормоза.'],
+    ['The man is very happy and pays for the repair.', 'Мужчина очень доволен и платит за ремонт.'],
+    [`In the evening, Mike calls and says, "Good job, Tom!"`, 'Вечером звонит Майк и говорит: «Отличная работа, Том!»'],
+  ], w: [['expensive', 'дорогой'], ['strange', 'странный'], ['noise', 'шум'], ['brakes', 'тормоза'], ['alone', 'один'], ['at first', 'сначала'], ['one by one', 'по одному']] },
+
+  { id: 's09', t: 'День рождения Анны', s: [
+    ['On Saturday, Tom sees Anna at the cafe again.', 'В субботу Том снова видит Анну в кафе.'],
+    [`She says, "It's my birthday next Friday. Do you want to come to my party?"`, 'Она говорит: «В следующую пятницу у меня день рождения. Придёшь на праздник?»'],
+    [`Tom says, "Of course! What do you want for your birthday?"`, 'Том отвечает: «Конечно! Что ты хочешь на день рождения?»'],
+    [`Anna laughs. "Nothing. Just come."`, 'Анна смеётся: «Ничего. Просто приходи».'],
+    ['Tom thinks about a present all week.', 'Всю неделю Том думает о подарке.'],
+    ['Anna loves books, so he buys her a book about Russia with beautiful photos.', 'Анна любит книги, и он покупает ей книгу о России с красивыми фотографиями.'],
+    ["The party is at Anna's flat. There are a lot of people.", 'Праздник у Анны дома. Там много людей.'],
+    ["Tom doesn't know many of them, but they are friendly.", 'Многих Том не знает, но все приветливые.'],
+    [`Anna opens the present and says, "I love it! Thank you!"`, 'Анна открывает подарок и говорит: «Мне очень нравится! Спасибо!»'],
+    ['That night, Tom goes home late, tired and happy.', 'В ту ночь Том возвращается домой поздно, уставший и счастливый.'],
+  ], w: [['again', 'снова'], ['birthday', 'день рождения'], ['party', 'праздник'], ['present', 'подарок'], ['beautiful', 'красивый'], ['friendly', 'приветливый'], ['late', 'поздно']] },
+
+  { id: 's10', t: 'Звонок домой', s: [
+    ['On Sunday evening, Tom calls his mother in Russia.', 'В воскресенье вечером Том звонит маме в Россию.'],
+    [`She asks, "How is your new life? Are you OK?"`, 'Она спрашивает: «Как твоя новая жизнь? У тебя всё хорошо?»'],
+    ['Tom tells her about his flat, his job and Mike.', 'Том рассказывает ей о квартире, работе и Майке.'],
+    ['He tells her about the gym and Sunday football with Ben.', 'Он рассказывает о спортзале и воскресном футболе с Беном.'],
+    ['He also tells her about Anna and the cafe on the corner.', 'Ещё он рассказывает об Анне и кафе на углу.'],
+    [`His mother is quiet for a moment. Then she says, "I'm happy for you."`, 'Мама на мгновение замолкает. Потом говорит: «Я рада за тебя».'],
+    ['After the call, Tom opens the window.', 'После звонка Том открывает окно.'],
+    ['The park is dark, and the river is quiet.', 'В парке темно, река тихая.'],
+    ["Three months ago, he didn't know anyone here.", 'Три месяца назад он никого здесь не знал.'],
+    ['Now this city is his home.', 'Теперь этот город — его дом.'],
+  ], w: [['mother', 'мама'], ['life', 'жизнь'], ['tell', 'рассказывать'], ['also', 'также, ещё'], ['for a moment', 'на мгновение'], ['dark', 'тёмный'], ['ago', 'назад']] },
+];
