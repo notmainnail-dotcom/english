@@ -78,7 +78,12 @@ const TTS = (() => {
     schedule: 'скеджул', 'fall-over': 'фол-овер', 'no-export': 'ноу-экспорт', 'no-advertise': 'ноу-эдвертайз', additive: 'эддитив', blackhole: 'блэкхол', BLACKHOLE: 'блэкхол',
     Blackhole: 'блэкхол', scrubbing: 'скраббинг', 'multipath-relax': 'малтипас-рилакс', 'maximum-paths': 'максимум-пасс', bestpath: 'бестпас', 'ebgp-multihop': 'и-бэ-гэ-пэ малтихоп',
     'ttl-security': 'ти-ти-эл секьюрити', password: 'пассворд', description: 'дескрипшн', 'aggregate-address': 'эгрегейт-эдрес', 'summary-only': 'саммари-онли',
-    Valid: 'валид', Invalid: 'инвалид', NotFound: 'нот фаунд', Routinator: 'рутинатор', 'new-format': 'нью-формат', 'MSK-IX': 'эм-эс-ка ай-экс', 'aut-num': 'от-нам'
+    Valid: 'валид', Invalid: 'инвалид', NotFound: 'нот фаунд', Routinator: 'рутинатор', 'new-format': 'нью-формат', 'MSK-IX': 'эм-эс-ка ай-экс', 'aut-num': 'от-нам',
+    // iBGP и route reflector (глава 8.1)
+    'route-reflector-client': 'роут-рефлектор-клиент', 'cluster-id': 'кластер-ай-ди', ORIGINATOR_ID: 'ориджинейтор ай-ди', CLUSTER_LIST: 'кластер лист',
+    Originator: 'ориджинейтор', 'Cluster list': 'кластер лист', 'add-path': 'эд-пас', ORR: 'о-эр-эр', 'peer-group': 'пир-груп', 'full mesh': 'фулл меш',
+    'next-hop-self': 'некст-хоп-селф', inaccessible: 'инэксессибл', 'peer-session': 'пир-сешн', 'peer-policy': 'пир-полиси', template: 'темплейт',
+    'Local host': 'локал хост', 'Foreign host': 'форин хост', 'control-plane': 'контрол-плейн', CUST: 'каст', reflector: 'рефлектор', bgp: 'бэ-гэ-пэ'
   };
   const LET = { A: 'а', B: 'бэ', C: 'цэ', D: 'дэ', E: 'е', F: 'эф', G: 'гэ', H: 'аш', I: 'и', J: 'джей', K: 'ка', L: 'эл', M: 'эм', N: 'эн', O: 'о', P: 'пэ', Q: 'кью', R: 'эр', S: 'эс', T: 'тэ', U: 'у', V: 'вэ', W: 'дабл-ю', X: 'икс', Y: 'игрек', Z: 'зэд' };
   const ABBR_RE = new RegExp('(^|[^A-Za-z0-9])(' + Object.keys(ABBR).sort((a, b) => b.length - a.length).map(k => k.replace(/[-]/g, '\\-')).join('|') + ')(?![A-Za-z0-9]|-[a-z])', 'g');

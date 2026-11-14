@@ -200,28 +200,95 @@ R5#show ip bgp 8.8.8.0/24
     })(),
     pre: 'UP и CUST уже настроены. Обрати внимание на путь трафика R2 ↔ R6: через R3 и R4 (P) — это кратчайший по IGP путь. R1 стоит сбоку: линки R1–R2 и R1–R6 сделай дорогими в IS-IS (metric 1000), чтобы трафик через RR не шёл.',
     tasks: [
-      { t: 'IGP ядра', d: 'IS-IS level-2-only, wide metrics, p2p на всех внутренних линках R1–R6, loopback\'и passive. На линках R1–R2 и R1–R6 metric 1000, на остальных 10. Внешние линки (к UP и CUST) в IS-IS не включай.',
-        check: 'R6#show isis neighbors\nR6#show ip route isis\nR6#traceroute 10.255.0.2 source Lo0' },
-      { t: 'eBGP на краях', d: 'R2 ↔ UP (AS64510), R6 ↔ CUST (AS64600). Проверь, что R2 знает 8.8.8.0/24, а R6 — 198.18.0.0/24.',
-        check: 'R2#show ip bgp summary\nR6#show ip bgp' },
-      { t: 'iBGP R2–R6 «как в учебнике» и invalid next-hop', d: 'Подними iBGP R2 ↔ R6 между loopback\'ами (update-source), <b>без</b> next-hop-self. Посмотри <code>show ip bgp 8.8.8.0/24</code> на R6. Почему путь невалиден? Почини через next-hop-self и объясни, почему так правильнее, чем включить 10.24.0.0/30 в IS-IS.',
+      { t: 'IGP ядра', read: 0, why: `Построить фундамент: iBGP будет ходить между loopback'ами, и IS-IS должен знать к ним дорогу — а трафик не должен идти через R1.`, expect: `<pre class="cli">R6#show isis neighbors
+System Id      Type Interface   IP Address      State Holdtime Circuit Id
+R1             L2   Gi0/2       10.1.16.0       UP    27       00
+R4             L2   Gi0/1       10.1.46.0       UP    25       00
+R6#traceroute 10.255.0.2 source Lo0 numeric
+  1 10.1.46.0 …
+  2 10.1.34.0 …
+  3 10.255.0.2 …</pre>
+<p>У R6 два соседа IS-IS — R1 и R4. Путь к loopback R2 идёт через R4 и R3 (метрика 30), а не через R1 (1000 + 1000). В <code>show ip route isis</code> на R6 — loopback'и четырёх других маршрутизаторов и линки ядра, а сетей 10.24.0.0/30 и 10.66.0.0/30 нет: внешние линки в IS-IS не включены.</p>`, d: 'IS-IS level-2-only, wide metrics, p2p на всех внутренних линках R1–R6, loopback\'и passive. На линках R1–R2 и R1–R6 metric 1000, на остальных 10. Внешние линки (к UP и CUST) в IS-IS не включай.',
+        check: 'R6#show isis neighbors\nR6#show ip route isis\nR6#traceroute 10.255.0.2 source Lo0 numeric',
+        sol: 'R3(config)#router isis CORE\nR3(config-router)#net 49.0001.0000.0000.0003.00\nR3(config-router)#is-type level-2-only\nR3(config-router)#metric-style wide\nR3(config-router)#passive-interface Loopback0\nR3(config)#interface range Gi0/1 - 2\nR3(config-if-range)#ip router isis CORE\nR3(config-if-range)#isis network point-to-point\n! так же на R1, R2, R4, R6 (NET со своим номером)\n! на линках R1–R2 и R1–R6 с обеих сторон: isis metric 1000\n! Gi0/0 на R2 (к UP) и на R6 (к CUST) в IS-IS не включать' },
+      { t: 'eBGP на краях', read: 0, why: `Получить внешние маршруты на краях сети: сеть аплинка на R2 и сеть клиента на R6.`, expect: `<pre class="cli">R2#show ip bgp summary | begin Neighbor
+Neighbor        V    AS MsgRcvd MsgSent   TblVer  InQ OutQ Up/Down  State/PfxRcd
+10.24.0.2       4 64510       6       5        2    0    0 00:02:10        [[1]]
+R6#show ip bgp
+     Network          Next Hop            Metric LocPrf Weight Path
+ *>  198.18.0.0       10.66.0.2                0             0 64600 i</pre>
+<p>R2 получил от аплинка одну сеть, 8.8.8.0/24, R6 от клиента — 198.18.0.0/24 (IOS не пишет «/24»: для этой сети маска классовая). Друг о друге они пока не знают: iBGP ещё нет.</p>`, d: 'R2 ↔ UP (AS64510), R6 ↔ CUST (AS64600). Проверь, что R2 знает 8.8.8.0/24, а R6 — 198.18.0.0/24.',
+        check: 'R2#show ip bgp summary\nR6#show ip bgp',
+        sol: 'R2(config)#router bgp 64500\nR2(config-router)#neighbor 10.24.0.2 remote-as 64510\nR6(config)#router bgp 64500\nR6(config-router)#neighbor 10.66.0.2 remote-as 64600' },
+      { t: 'iBGP R2–R6 «как в учебнике» и invalid next-hop', read: 2, why: `Своими глазами увидеть первое правило iBGP — next-hop не меняется — и починить его так, как это делают в рабочих сетях.`, expect: `<pre class="cli">R6#show ip bgp 8.8.8.0/24
+Paths: (1 available, [[no best path]])
+  64510
+    [[10.24.0.2 (inaccessible)]] from 10.255.0.2 (10.255.0.2)
+R6#show ip route 8.8.8.0
+% Network not in table</pre>
+<p>После next-hop-self с обеих сторон:</p>
+<pre class="cli">R6#show ip bgp 8.8.8.0/24
+  64510
+    [[10.255.0.2]] (metric 30) from 10.255.0.2 (10.255.0.2)
+      Origin IGP, metric 0, localpref 100, valid, internal, [[best]]</pre>
+<p>Next-hop стал loopback'ом R2, до него по IS-IS метрика 30. Маршрут попал в таблицу маршрутов: <code>show ip route 8.8.8.0</code> — «Known via "bgp 64500", distance 200». У R2 так же появилась 198.18.0.0/24 с next-hop 10.255.0.6.</p>`, d: 'Подними iBGP R2 ↔ R6 между loopback\'ами (update-source), <b>без</b> next-hop-self. Посмотри <code>show ip bgp 8.8.8.0/24</code> на R6. Почему путь невалиден? Почини через next-hop-self и объясни, почему так правильнее, чем включить 10.24.0.0/30 в IS-IS.',
         check: 'R6#show ip bgp 8.8.8.0/24\nR6#show ip route 8.8.8.0',
         sol: 'R2(config)#router bgp 64500\nR2(config-router)#neighbor 10.255.0.6 remote-as 64500\nR2(config-router)#neighbor 10.255.0.6 update-source Loopback0\nR6(config)#router bgp 64500\nR6(config-router)#neighbor 10.255.0.2 remote-as 64500\nR6(config-router)#neighbor 10.255.0.2 update-source Loopback0\n! next hop 10.24.0.2 (inaccessible) → \nR2(config-router)#neighbor 10.255.0.6 next-hop-self\nR6(config-router)#neighbor 10.255.0.2 next-hop-self' },
-      { t: 'Транзит без BGP — чёрная дыра', d: 'Теперь у R2 и R6 есть все маршруты. С CUST: <code>ping 8.8.8.8 source Lo1</code>. Не работает? Найди, на каком хопе теряется пакет (traceroute с CUST и <code>show ip route 8.8.8.8</code> на R4 и R3). Запиши, почему так происходит. Это главная мотивация MPLS.',
+      { t: 'Транзит без BGP — чёрная дыра', read: 3, why: `Найти чёрную дыру посередине сети и понять, почему рабочий маршрут на краю не спасает транзитные маршрутизаторы.`, expect: `<pre class="cli">CUST#ping 8.8.8.8 source Lo1
+[[.....]]
+CUST#traceroute 8.8.8.8 source Lo1 numeric
+  1 10.66.0.1 …
+  2  *  *  *
+R4#show ip route 8.8.8.8
+[[% Network not in table]]</pre>
+<p>Пакет дошёл до R6 и пропал на R4: у R4 нет маршрута к 8.8.8.8. Сообщить об этом CUST R4 тоже не может — он не знает и сети 198.18.0.0/24, поэтому в traceroute звёздочки, а не «недоступно» (прерви: Ctrl+Shift+6). На обратном пути так же: у R3 нет маршрута к 198.18.0.1.</p>`, d: 'Теперь у R2 и R6 есть все маршруты. С CUST: <code>ping 8.8.8.8 source Lo1</code>. Не работает? Найди, на каком хопе теряется пакет (traceroute с CUST и <code>show ip route 8.8.8.8</code> на R4 и R3). Запиши, почему так происходит. Это главная мотивация MPLS.',
         check: 'CUST#traceroute 8.8.8.8 source Lo1 numeric\nR4#show ip route 8.8.8.8\nR3#show ip route 198.18.0.1',
         hint: 'R6 отправляет пакет к next-hop 10.255.0.2 по IGP через R4. R4 смотрит на адрес назначения 8.8.8.8, а маршрута у него нет.' },
-      { t: 'Временное решение: iBGP и на P', d: 'Чтобы трафик пошёл, R3 и R4 тоже должны знать внешние маршруты. Сделай full mesh iBGP между R2, R3, R4, R6 и проверь пинг CUST → 8.8.8.8. Посчитай, сколько сессий понадобилось и сколько понадобилось бы для 50 маршрутизаторов.',
-        check: 'CUST#ping 8.8.8.8 source Lo1\nR3#show ip bgp summary' },
-      { t: 'Route reflector', d: 'Убери full mesh. Сделай R1 route reflector: R2, R3, R4, R6 — его клиенты (peer-group, update-source, send-community). На клиентах — только сессия к R1. next-hop-self на бордерах (R2, R6) к R1. Проверь на R4 атрибуты маршрута 8.8.8.0/24: Originator, Cluster list, next-hop. Пинг CUST → 8.8.8.8 работает?',
+      { t: 'Временное решение: iBGP и на P', read: 4, why: `Увидеть второе правило iBGP в деле и посчитать, во что обходится полная сетка.`, expect: `<pre class="cli">R3#show ip bgp summary | begin Neighbor
+Neighbor        V    AS MsgRcvd MsgSent   TblVer  InQ OutQ Up/Down  State/PfxRcd
+10.255.0.2      4 64500      12      10        5    0    0 00:04:10        1
+10.255.0.4      4 64500       9       9        5    0    0 00:03:55        0
+10.255.0.6      4 64500      10       9        5    0    0 00:03:40        1
+CUST#ping 8.8.8.8 source Lo1
+[[!!!!!]]</pre>
+<p>У каждого из четырёх — по три соседа, всего в сетке 6 сессий. R3 получил сеть аплинка от R2 и сеть клиента от R6, а от R4 — 0: своих внешних сетей у R4 нет, а чужие он по правилу iBGP не передаёт. Для 50 маршрутизаторов понадобилось бы 50 × 49 / 2 = 1225 сессий.</p>`, d: 'Чтобы трафик пошёл, R3 и R4 тоже должны знать внешние маршруты. Сделай full mesh iBGP между R2, R3, R4, R6 и проверь пинг CUST → 8.8.8.8. Посчитай, сколько сессий понадобилось и сколько понадобилось бы для 50 маршрутизаторов. Не забудь next-hop-self на R2 и R6 и к новым соседям.',
+        check: 'CUST#ping 8.8.8.8 source Lo1\nR3#show ip bgp summary',
+        sol: 'R3(config)#router bgp 64500\nR3(config-router)#neighbor 10.255.0.2 remote-as 64500\nR3(config-router)#neighbor 10.255.0.2 update-source Loopback0\n! так же к 10.255.0.4 и 10.255.0.6; на R4 — к R2, R3, R6\nR2(config-router)#neighbor 10.255.0.3 remote-as 64500\nR2(config-router)#neighbor 10.255.0.3 update-source Loopback0\nR2(config-router)#neighbor 10.255.0.3 next-hop-self\n! так же к 10.255.0.4; на R6 — к R3 и R4, тоже с next-hop-self' },
+      { t: 'Route reflector', read: 5, why: `Заменить полную сетку отражателем и научиться читать, откуда на самом деле пришёл отражённый маршрут.`, expect: `<pre class="cli">R1#show ip bgp summary | begin Neighbor
+10.255.0.2      4 64500      15      14        5    0    0 00:02:30        1
+10.255.0.3      4 64500       8      12        5    0    0 00:02:28        0
+10.255.0.4      4 64500       8      12        5    0    0 00:02:27        0
+10.255.0.6      4 64500      15      13        5    0    0 00:02:25        1
+R4#show ip bgp 8.8.8.0/24
+  64510
+    10.255.0.2 (metric 20) from 10.255.0.1 (10.255.0.1)
+      Origin IGP, metric 0, localpref 100, valid, internal, best
+      [[Originator: 10.255.0.2, Cluster list: 1.1.1.1]]
+CUST#ping 8.8.8.8 source Lo1
+[[!!!!!]]</pre>
+<p>У R1 четыре клиента: от R2 и R6 — по одной сети, от R3 и R4 — 0. У R4 маршрут пришёл «from 10.255.0.1» — от RR, а Originator показывает, кто на самом деле ввёл его в AS. Next-hop — loopback R2: RR его не менял. У каждого клиента одна сессия — с R1.</p>`, d: 'Убери full mesh. Сделай R1 route reflector: R2, R3, R4, R6 — его клиенты (peer-group, update-source, send-community). На клиентах — только сессия к R1. next-hop-self на бордерах (R2, R6) к R1. Проверь на R4 атрибуты маршрута 8.8.8.0/24: Originator, Cluster list, next-hop. Пинг CUST → 8.8.8.8 работает?',
         check: 'R4#show ip bgp 8.8.8.0/24\nR1#show ip bgp summary\nCUST#ping 8.8.8.8 source Lo1',
         sol: 'R1(config)#router bgp 64500\nR1(config-router)#bgp router-id 10.255.0.1\nR1(config-router)#bgp cluster-id 1.1.1.1\nR1(config-router)#neighbor CLIENTS peer-group\nR1(config-router)#neighbor CLIENTS remote-as 64500\nR1(config-router)#neighbor CLIENTS update-source Loopback0\nR1(config-router)#neighbor CLIENTS route-reflector-client\nR1(config-router)#neighbor CLIENTS send-community both\nR1(config-router)#neighbor 10.255.0.2 peer-group CLIENTS\nR1(config-router)#neighbor 10.255.0.3 peer-group CLIENTS\nR1(config-router)#neighbor 10.255.0.4 peer-group CLIENTS\nR1(config-router)#neighbor 10.255.0.6 peer-group CLIENTS\n! на R2: neighbor 10.255.0.1 remote-as 64500 / update-source Lo0 / next-hop-self' },
-      { t: 'Community-политика провайдера', d: 'На R6 метить маршруты клиента <code>64500:100</code>, на R2 маршруты аплинка — <code>64500:300</code>. На R2 разреши экспорт к UP только маршрутов с 64500:100 (без своих P2P и чужих). Проверь на UP, что он видит 198.18.0.0/24, а на CUST — что видит 8.8.8.0/24.',
-        check: 'R2#show ip bgp 198.18.0.0/24\nR2#show ip bgp neighbors 10.24.0.2 advertised-routes\nUP#show ip bgp' }
+      { t: 'Community-политика провайдера', read: 7, why: `Сделать так, как в настоящей сети: решение «откуда маршрут» — на входе ярлыком, а на выходе — фильтр по ярлыку.`, expect: `<pre class="cli">R2#show ip bgp 198.18.0.0
+  64600
+    10.255.0.6 (metric 30) from 10.255.0.1 (10.255.0.1)
+      Origin IGP, metric 0, localpref 100, valid, internal, best
+      Community: [[64500:100]]
+      Originator: 10.255.0.6, Cluster list: 1.1.1.1
+R2#show ip bgp neighbors 10.24.0.2 advertised-routes
+     Network          Next Hop            Metric LocPrf Weight Path
+ *>i 198.18.0.0       10.255.0.6               0    100      0 64600 i
+UP#show ip bgp
+ *>  8.8.8.0/24       0.0.0.0                  0         32768 i
+ *>  198.18.0.0       10.24.0.1                              0 64500 64600 i</pre>
+<p>Ярлык 64500:100 доехал от R6 через RR до R2, и к аплинку уходит только сеть клиента. CUST по-прежнему видит 8.8.8.0/24. Если сети клиента у UP нет — проверь send-community на R6 к R1: без него ярлык теряется по дороге, и R2 сеть не выпускает.</p>`, d: 'На R6 метить маршруты клиента <code>64500:100</code>, на R2 маршруты аплинка — <code>64500:300</code>. На R2 разреши экспорт к UP только маршрутов с 64500:100 (без своих P2P и чужих). Не забудь send-community на R6 и R2 к R1 — иначе ярлык потеряется по дороге. Проверь на UP, что он видит 198.18.0.0/24, а на CUST — что видит 8.8.8.0/24.',
+        check: 'R2#show ip bgp 198.18.0.0/24\nR2#show ip bgp neighbors 10.24.0.2 advertised-routes\nUP#show ip bgp',
+        sol: 'R6(config)#route-map FROM-CUST permit 10\nR6(config-route-map)#set community 64500:100\nR6(config)#router bgp 64500\nR6(config-router)#neighbor 10.66.0.2 route-map FROM-CUST in\nR6(config-router)#neighbor 10.255.0.1 send-community\nR2(config)#route-map FROM-UP permit 10\nR2(config-route-map)#set community 64500:300\nR2(config)#ip community-list standard CUSTOMERS permit 64500:100\nR2(config)#route-map TO-UP permit 10\nR2(config-route-map)#match community CUSTOMERS\nR2(config)#router bgp 64500\nR2(config-router)#neighbor 10.24.0.2 route-map FROM-UP in\nR2(config-router)#neighbor 10.24.0.2 route-map TO-UP out\nR2(config-router)#neighbor 10.255.0.1 send-community\nR2#clear ip bgp * soft\n! на всех: ip bgp-community new-format — чтобы видеть 64500:100, а не число' }
     ],
     brk: [
-      { t: 'R4 потерял все BGP-маршруты, хотя сессия с R1 Established', inj: 'R1(config)#router bgp 64500\nR1(config-router)#no neighbor 10.255.0.4 route-reflector-client', h: '<code>show ip bgp summary</code> на R4 — сколько префиксов? <code>show ip bgp neighbors 10.255.0.4</code> на R1 — клиент ли он?', f: 'R4 больше не клиент RR: R1 не отражает ему маршруты от других iBGP-соседей (split horizon). R4 получает только маршруты, которые R1 сгенерировал сам (их нет). Верни route-reflector-client.' },
-      { t: 'iBGP R2–R1 флапает при каждом изменении на линке R1–R2', inj: 'R2(config)#router bgp 64500\nR2(config-router)#no neighbor 10.255.0.1 update-source Loopback0', h: '<code>show ip bgp neighbors 10.255.0.1 | include Local host|Foreign host</code> на R2: с какого адреса R2 устанавливает TCP?', f: 'R2 шлёт TCP с адреса физического интерфейса, а R1 ждёт сессию от 10.255.0.2 (loopback). Соединение отвергается. Для iBGP по loopback нужен update-source с обеих сторон.' },
-      { t: 'На R6 маршрут 8.8.8.0/24 есть, но «inaccessible»', inj: 'R2(config)#router bgp 64500\nR2(config-router)#no neighbor 10.255.0.1 next-hop-self', h: '<code>show ip bgp 8.8.8.0/24</code> на R6 — какой next-hop? Знает ли его IS-IS?', f: 'Бордер перестал менять next-hop: на RR и клиентах next-hop = 10.24.0.2 (внешний линк), неизвестный IGP. RR next-hop не меняет. Верни next-hop-self на R2.' }
+      { t: 'Клиенты RR потеряли чужие маршруты, хотя все сессии с R1 Established', read: 5, inj: 'R1(config)#router bgp 64500\nR1(config-router)#no neighbor CLIENTS route-reflector-client', h: '<code>show ip bgp summary</code> на R4 и R6 — сколько префиксов? <code>show ip bgp</code> на R1 — у самого RR маршруты есть? <code>show ip bgp neighbors 10.255.0.4 | include Reflector</code> на R1.', f: 'У peer-group CLIENTS пропал route-reflector-client. R1 стал обычным iBGP-соседом и по правилу iBGP не передаёт маршрут, полученный от одного iBGP-соседа, другому. Сам R1 все маршруты видит, а отдать их никому не может: у R3 и R4 — 0, у R2 нет сети клиента, у R6 — сети аплинка. Верни <code>neighbor CLIENTS route-reflector-client</code>. Заметь: если снять клиента только с одного соседа, он маршруты всё равно получит — RR отражает маршруты от клиентов всем, в том числе не-клиентам.' },
+      { t: 'iBGP R2–R1 висит в Active, хотя loopback\'и пингуются', read: 1, inj: 'R2(config)#router bgp 64500\nR2(config-router)#neighbor 10.255.0.1 update-source GigabitEthernet0/2', h: '<code>ping 10.255.0.1 source Loopback0</code> с R2 — связность есть? <code>show run | section router bgp</code> на R2: с какого адреса R2 открывает сессию к R1?', f: 'update-source указан не на тот интерфейс. R2 открывает TCP с адреса Gi0/2 (10.1.12.1), а R1 ждёт соседа 10.255.0.2 и такие попытки сбрасывает. Встречные попытки R1 на 10.255.0.2 R2 тоже не принимает: они пришли не на адрес из update-source. Верни <code>neighbor 10.255.0.1 update-source Loopback0</code>. Для сессии по loopback\'ам update-source нужен с обеих сторон, и это должен быть тот адрес, что прописан у соседа.' },
+      { t: 'На R6 маршрут 8.8.8.0/24 есть, но «inaccessible»', read: 2, inj: 'R2(config)#router bgp 64500\nR2(config-router)#no neighbor 10.255.0.1 next-hop-self\nR2#clear ip bgp 10.255.0.1 soft out', h: '<code>show ip bgp 8.8.8.0/24</code> на R6 — какой next-hop? Знает ли его IS-IS?', f: 'Бордер перестал менять next-hop: на RR и клиентах next-hop = 10.24.0.2 (внешний линк), неизвестный IGP. RR next-hop не меняет. Верни next-hop-self на R2.' }
     ],
     extra: '<p><b>Проблема «лучшего пути RR».</b> Добавь второй аплинк к UP с R6 (линк R6–UP) и анонсируй 8.8.8.0/24 через оба бордера. Перенеси RR ближе к R2 (metric 10 на R1–R2, 1000 на R1–R6). Посмотри, через какой бордер выходит R4 и R6. Затем на R1 включи <code>bgp additional-paths send</code> / <code>neighbor CLIENTS advertise additional-paths best 2</code> (IOS-XE / CSR) и сравни.</p>'
   }
