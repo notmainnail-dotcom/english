@@ -65,7 +65,20 @@ const TTS = (() => {
     'next-hop': 'некст-хоп', 'BGP-free': 'бэ-гэ-пэ фри', core: 'кор', 'black hole': 'блэк хол', implicit: 'имплисит', explicit: 'эксплисит', null: 'нал',
     'liberal retention': 'либерал ретеншн', 'penultimate hop popping': 'пенальтимейт хоп поппинг', 'label stack': 'лейбл стэк', 'Segment Routing': 'сегмент роутинг',
     mpls: 'эм-пэ-эл-эс', ldp: 'эл-дэ-пэ', cef: 'цэф', bindings: 'байндингс', 'forwarding-table': 'форвардинг-тейбл', ipv4: 'ай-пи вэ четыре', sync: 'синк',
-    'propagate-ttl': 'пропагейт ти-ти-эл', forwarded: 'форвардед', 'df-bit': 'ди-эф бит', size: 'сайз', jumbo: 'джамбо', autoconfig: 'автоконфиг', force: 'форс', statistics: 'статистикс', logging: 'логгинг', interfaces: 'интерфейсы', 'default': 'дефолт', 'on-startup': 'он-стартап'
+    'propagate-ttl': 'пропагейт ти-ти-эл', forwarded: 'форвардед', 'df-bit': 'ди-эф бит', size: 'сайз', jumbo: 'джамбо', autoconfig: 'автоконфиг', force: 'форс', statistics: 'статистикс', logging: 'логгинг', interfaces: 'интерфейсы', 'default': 'дефолт', 'on-startup': 'он-стартап',
+    // BGP с другими AS (глава 8)
+    ASN: 'эй-эс-эн', PI: 'пэ-ай', PA: 'пэ-а', RIR: 'эр-ай-эр', LIR: 'эл-ай-эр', NCC: 'эн-си-си', RIPE: 'райп', IRR: 'ай-ар-ар', RPKI: 'эр-пэ-ка-ай', ROA: 'эр-о-а',
+    RTBH: 'эр-тэ-бэ-аш', MED: 'мед', LOCAL_PREF: 'локал преф', 'local-pref': 'локал-преф', 'local-preference': 'локал-преференс', ORIGIN: 'ориджин', Weight: 'вейт', weight: 'вейт',
+    GTSM: 'джи-ти-эс-эм', MD5: 'эм-дэ пять', OPEN: 'опен', UPDATE: 'апдейт', KEEPALIVE: 'кипэлайв', NOTIFICATION: 'нотификейшн', 'ROUTE-REFRESH': 'роут-рифреш',
+    OpenSent: 'опен-сент', OpenConfirm: 'опен-конферм', Connect: 'коннект', Admin: 'админ', PfxCt: 'префикс каунт', MANRS: 'мэнрс', DDoS: 'дэ-дос', FlowSpec: 'флоуспек',
+    prepend: 'препенд', 'prefix-list': 'префикс-лист', 'route-map': 'роут-мэп', 'filter-list': 'фильтр-лист', 'as-path': 'эй-эс пас', 'AS-path': 'эй-эс пас', 'community-list': 'комьюнити-лист',
+    'maximum-prefix': 'максимум-префикс', 'default-originate': 'дефолт-ориджинейт', 'soft-reconfiguration': 'софт-реконфигурейшн', 'received-routes': 'рисивд-роутс',
+    'advertised-routes': 'эдвертайзд-роутс', soft: 'софт', inbound: 'инбаунд', 'full view': 'фулл вью', 'partial view': 'паршл вью', hijack: 'хайджек', 'route leak': 'роут лик',
+    peering: 'пиринг', transit: 'транзит', 'Gao-Rexford': 'Гао — Рексфорд', Null0: 'нал ноль', track: 'трек', 'icmp-echo': 'ай-си-эм-пи эхо', reachability: 'ричабилити',
+    schedule: 'скеджул', 'fall-over': 'фол-овер', 'no-export': 'ноу-экспорт', 'no-advertise': 'ноу-эдвертайз', additive: 'эддитив', blackhole: 'блэкхол', BLACKHOLE: 'блэкхол',
+    Blackhole: 'блэкхол', scrubbing: 'скраббинг', 'multipath-relax': 'малтипас-рилакс', 'maximum-paths': 'максимум-пасс', bestpath: 'бестпас', 'ebgp-multihop': 'и-бэ-гэ-пэ малтихоп',
+    'ttl-security': 'ти-ти-эл секьюрити', password: 'пассворд', description: 'дескрипшн', 'aggregate-address': 'эгрегейт-эдрес', 'summary-only': 'саммари-онли',
+    Valid: 'валид', Invalid: 'инвалид', NotFound: 'нот фаунд', Routinator: 'рутинатор', 'new-format': 'нью-формат', 'MSK-IX': 'эм-эс-ка ай-экс', 'aut-num': 'от-нам'
   };
   const LET = { A: 'а', B: 'бэ', C: 'цэ', D: 'дэ', E: 'е', F: 'эф', G: 'гэ', H: 'аш', I: 'и', J: 'джей', K: 'ка', L: 'эл', M: 'эм', N: 'эн', O: 'о', P: 'пэ', Q: 'кью', R: 'эр', S: 'эс', T: 'тэ', U: 'у', V: 'вэ', W: 'дабл-ю', X: 'икс', Y: 'игрек', Z: 'зэд' };
   const ABBR_RE = new RegExp('(^|[^A-Za-z0-9])(' + Object.keys(ABBR).sort((a, b) => b.length - a.length).map(k => k.replace(/[-]/g, '\\-')).join('|') + ')(?![A-Za-z0-9]|-[a-z])', 'g');
